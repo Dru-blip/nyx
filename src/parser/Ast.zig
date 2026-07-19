@@ -56,3 +56,7 @@ pub fn deinit(self: *Ast) void {
     self.gpa.free(self.extra);
     self.nodes.deinit(self.gpa);
 }
+
+pub fn getSource(self: *Ast, node: Node) []const u8 {
+    return self.source[node.span.start..node.span.end];
+}
