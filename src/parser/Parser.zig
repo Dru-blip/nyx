@@ -74,13 +74,13 @@ fn addNode(p: *Parser, node: Node) !Node.Index {
     return @intCast(p.nodes.len - 1);
 }
 
-fn scratchToExtra(p: *Parser, start: u32) !Node.Range {
-    const range: Node.Range = .{
-        .start = start,
+fn scratchToRange(p: *Parser, scratch_start: u32) !Node.Range {
+    const extra_start: u32 = @intCast(p.extra.items.len);
+    try p.extra.appendSlice(p.gpa, p.scratch.items[scratch_start..]);
+    return .{
+        .start = extra_start,
         .end = @intCast(p.extra.items.len),
     };
-    try p.extra.appendSlice(p.gpa, p.scratch.items[start..]);
-    return range;
 }
 
 pub fn parse(p: *Parser) !void {
@@ -94,7 +94,7 @@ pub fn parse(p: *Parser) !void {
         try p.scratch.append(p.gpa, stmt);
     }
 
-    const range = try p.scratchToExtra(@intCast(scratch_top));
+    const range = try p.scratchToRange(@intCast(scratch_top));
 
     p.setNode(root, .{
         .tag = .root,
@@ -113,6 +113,7 @@ fn parseReturn(p: *Parser) !Node.Index {
     const ret_index = try p.reserveNode(.ret);
     const ret_tok = p.eat(.keyword_return).?;
     const value = try p.parseExpression();
+    //TODO: expect semicolon
     p.setNode(
         ret_index,
         .{
