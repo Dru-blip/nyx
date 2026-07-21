@@ -1,2 +1,15 @@
-.zig-cache/
-zig-out/
+# Xmake cache
+.xmake/
+build/
+
+# MacOS Cache
+.DS_Store
+
+
+compile_commands.json
+
+.idea/
+
+.cache/
+
+.vs/
