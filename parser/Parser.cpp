@@ -1,5 +1,8 @@
 #include "Parser.h"
 #include <cstdint>
+#include <cstdio>
+#include <iostream>
+#include <print>
 #include "parser/Ast.h"
 #include "parser/Token.h"
 
@@ -41,13 +44,13 @@ namespace Nyx {
     Ast Parser::into_ast() { return {m_nodes, m_extra, m_source}; }
 
     NodeRange Parser::to_node_range(std::uint32_t scratch_index) {
-        const auto extra_index = m_extra.size();
-        m_extra.resize(m_extra.size() + m_scratch.size());
-        m_extra.insert(m_extra.end(), m_scratch.begin(), m_scratch.end());
+        const auto start = m_extra.size();
 
+        m_extra.insert(m_extra.end(), m_scratch.begin(), m_scratch.end());
+        const auto end = m_extra.size();
         m_scratch.resize(scratch_index);
 
-        return NodeRange(extra_index, extra_index + m_scratch.size());
+        return NodeRange(start, end);
     }
 
     void Parser::parse() {
@@ -57,6 +60,7 @@ namespace Nyx {
         while (!is_at_end()) {
             m_scratch.push_back(parse_stmt());
         }
+
 
         const auto node_range = to_node_range(scratch_index);
         const Node root(NodeTag::Root, Span(0, 0), node_range);

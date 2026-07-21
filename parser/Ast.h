@@ -65,6 +65,8 @@ namespace Nyx {
                                                    node.span.end - node.span.start);
         }
 
+        NodeIndex extra(uint32_t index) const { return m_extras[index]; }
+
     private:
         std::string_view source;
         std::vector<uint32_t> m_extras;

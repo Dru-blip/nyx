@@ -1,6 +1,7 @@
 #include "bytecode/Compiler.h"
 #include <charconv>
 #include <cstdint>
+#include <cstdio>
 #include <string_view>
 #include "bytecode/Opcode.h"
 #include "parser/Ast.h"
@@ -11,7 +12,8 @@ namespace Nyx {
         const Node &rootNode = m_ast.node(0);
         const NodeRange roots = std::get<NodeRange>(rootNode.data);
 
-        for (NodeIndex index = roots.start; index < roots.end; ++index) {
+        for (NodeIndex extra_index = roots.start; extra_index < roots.end; ++extra_index) {
+            const NodeIndex index = m_ast.extra(extra_index);
             lowerRoot(m_ast.node(index));
         }
     }
