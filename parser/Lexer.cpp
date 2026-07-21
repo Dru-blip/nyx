@@ -2,9 +2,7 @@
 
 
 namespace Nyx {
-    bool Lexer::is_end() const {
-        return m_pos >= m_source.length();
-    }
+    bool Lexer::is_end() const { return m_pos >= m_source.length(); }
 
     void Lexer::skip_whitespaces() {
         while (!is_end() && std::isspace(m_source[m_pos])) {
@@ -12,9 +10,7 @@ namespace Nyx {
         }
     }
 
-    char Lexer::current_char() const {
-        return is_end() ? '\0' : m_source[m_pos];
-    }
+    char Lexer::current_char() const { return is_end() ? '\0' : m_source[m_pos]; }
 
     void Lexer::eat_number() {
         while (!is_end() && std::isdigit(m_source[m_pos])) {
@@ -62,13 +58,13 @@ namespace Nyx {
             }
         }
 
-        return Token(tag,Span(start,m_pos));
+        return Token(tag, Span(start, m_pos));
     }
 
     std::vector<Token> Lexer::tokenize() {
         auto tokens = std::vector<Token>();
         while (true) {
-            const Token token=next_token();
+            const Token token = next_token();
             tokens.push_back(token);
             if (token.tag == TokenTag::Eof) {
                 break;
@@ -76,4 +72,4 @@ namespace Nyx {
         }
         return tokens;
     }
-}
+} // namespace Nyx

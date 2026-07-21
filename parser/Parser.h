@@ -15,6 +15,8 @@ namespace Nyx {
 
         Token consume_token();
 
+        NodeRange to_node_range(std::uint32_t scratch_index);
+
         NodeIndex parse_stmt();
         NodeIndex parse_return_stmt();
         NodeIndex parse_expression();

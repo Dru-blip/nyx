@@ -1,4 +1,7 @@
 #include "Parser.h"
+#include <cstdint>
+#include "parser/Ast.h"
+#include "parser/Token.h"
 
 namespace Nyx {
     Parser::Parser(const std::string_view source) : m_source(source), m_lexer(Lexer(source)) {
@@ -11,9 +14,7 @@ namespace Nyx {
         m_next = m_lexer.next_token();
     }
 
-    bool Parser::is_at_end() const {
-        return m_cur.tag == TokenTag::Eof;
-    }
+    bool Parser::is_at_end() const { return m_cur.tag == TokenTag::Eof; }
 
     Token Parser::consume_token() {
         const auto tok = m_cur;
@@ -33,42 +34,37 @@ namespace Nyx {
         return index;
     }
 
-    void Parser::set_node(NodeIndex index, Node node) {
-        m_nodes[index] = node;
-    }
+    void Parser::set_node(NodeIndex index, Node node) { m_nodes[index] = node; }
 
-    Span Parser::get_node_span(NodeIndex index) {
-        return m_nodes[index].span;
-    }
+    Span Parser::get_node_span(NodeIndex index) { return m_nodes[index].span; }
 
-    Ast Parser::into_ast() {
-        return {m_nodes, m_extra};
+    Ast Parser::into_ast() { return {m_nodes, m_extra}; }
+
+    NodeRange Parser::to_node_range(std::uint32_t scratch_index) {
+        const auto extra_index = m_extra.size();
+        m_extra.resize(m_extra.size() + m_scratch.size());
+        m_extra.insert(m_extra.end(), m_scratch.begin(), m_scratch.end());
+
+        m_scratch.resize(scratch_index);
+
+        return NodeRange(extra_index, extra_index + m_scratch.size());
     }
 
     void Parser::parse() {
         const auto root_index = reserve_node(NodeTag::Root);
         const auto scratch_index = m_scratch.size();
+
         while (!is_at_end()) {
             m_scratch.push_back(parse_stmt());
         }
 
-
-        const auto extra_index = m_extra.size();
-        m_extra.resize(m_extra.size() + m_scratch.size());
-        m_extra.insert(m_extra.end(), m_scratch.begin(), m_scratch.end());
-
-        const Node root(NodeTag::Root, {
-                            .start = 0,
-                            .end = 0,
-                        }, {
-                            .range = NodeRange(extra_index, extra_index + m_scratch.size()),
-                        });
-        m_scratch.resize(scratch_index);
+        const auto node_range = to_node_range(scratch_index);
+        const Node root(NodeTag::Root, Span(0, 0), node_range);
         set_node(root_index, root);
     }
 
     NodeIndex Parser::parse_stmt() {
-        const auto [tag,span] = m_cur;
+        const auto [tag, span] = m_cur;
         switch (tag) {
             case TokenTag::Return: {
                 return parse_return_stmt();
@@ -88,21 +84,15 @@ namespace Nyx {
         const Span value_span = get_node_span(value);
         const Span ret_span = ret_token.span.merge(value_span);
 
-        const Node n(NodeTag::Ret, ret_span, {
-                         .opt_node = std::make_optional<NodeIndex>(value),
-                     });
-
+        const Node n(NodeTag::Ret, ret_span, std::make_optional<NodeIndex>(value));
         set_node(ret_index, n);
-
         return ret_index;
     }
 
-    NodeIndex Parser::parse_expression() {
-        return parse_number();
-    }
+    NodeIndex Parser::parse_expression() { return parse_number(); }
 
     NodeIndex Parser::parse_number() {
         const auto token = consume_token();
         return add_node(NodeTag::Number, token.span);
     }
-}
+} // namespace Nyx
