@@ -5,7 +5,7 @@
 
 namespace Nyx {
     enum class TokenTag {
-        Number,
+        Integer,
         Return,
         Invalid,
         Eof,

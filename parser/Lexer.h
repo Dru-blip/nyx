@@ -17,7 +17,7 @@ namespace Nyx {
         void skip_whitespaces();
         bool is_end() const;
         char current_char() const;
-        void eat_number();
+        void eat_integer();
         TokenTag eat_identifier();
 
         const std::string_view m_source;

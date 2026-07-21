@@ -1,5 +1,6 @@
 #pragma once
 #include <optional>
+#include <string>
 #include <string_view>
 #include <variant>
 #include <vector>
@@ -12,7 +13,7 @@ namespace Nyx {
 
     enum class NodeTag {
         Root,
-        Number,
+        Integer,
         Ret,
     };
 
@@ -37,19 +38,35 @@ namespace Nyx {
         Node(NodeTag tag, Span span, NodeRange range) : tag(tag), span(span), data(range) {}
         Node(NodeTag tag, Span span, std::optional<NodeIndex> opt) :
             tag(tag), span(span), data(opt.value_or(INVALID_NODE_INDEX)) {}
+
+        std::optional<NodeIndex> index() const {
+            if (auto value = std::get_if<NodeIndex>(&data)) {
+                if (*value != INVALID_NODE_INDEX) {
+                    return *value;
+                }
+            }
+            return std::nullopt;
+        }
     };
 
 
     class Ast {
     public:
-        Ast(std::vector<Node> &nodes, std::vector<uint32_t> &extras) :
-            m_extras(std::move(extras)), m_nodes(std::move(nodes)) {};
+        Ast(std::vector<Node> &nodes, std::vector<uint32_t> &extras, std::string_view source) :
+            source(source), m_extras(std::move(extras)), m_nodes(std::move(nodes)) {};
 
         static Ast parse(std::string_view source);
 
         uint32_t length() const;
 
+        const Node &node(NodeIndex index) const { return m_nodes[index]; }
+        std::string_view getSource(const Node &node) const {
+            return std::string_view(source).substr(node.span.start,
+                                                   node.span.end - node.span.start);
+        }
+
     private:
+        std::string_view source;
         std::vector<uint32_t> m_extras;
         std::vector<Node> m_nodes;
     };

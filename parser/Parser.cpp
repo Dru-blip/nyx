@@ -38,7 +38,7 @@ namespace Nyx {
 
     Span Parser::get_node_span(NodeIndex index) { return m_nodes[index].span; }
 
-    Ast Parser::into_ast() { return {m_nodes, m_extra}; }
+    Ast Parser::into_ast() { return {m_nodes, m_extra, m_source}; }
 
     NodeRange Parser::to_node_range(std::uint32_t scratch_index) {
         const auto extra_index = m_extra.size();
@@ -89,10 +89,10 @@ namespace Nyx {
         return ret_index;
     }
 
-    NodeIndex Parser::parse_expression() { return parse_number(); }
+    NodeIndex Parser::parse_expression() { return parse_integer(); }
 
-    NodeIndex Parser::parse_number() {
+    NodeIndex Parser::parse_integer() {
         const auto token = consume_token();
-        return add_node(NodeTag::Number, token.span);
+        return add_node(NodeTag::Integer, token.span);
     }
 } // namespace Nyx

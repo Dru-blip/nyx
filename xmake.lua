@@ -1,5 +1,7 @@
 add_rules("mode.debug", "mode.release")
 
+set_defaultmode("debug")
+
 target("nyx")
     set_kind("binary")
     set_toolchains("clang")
@@ -7,6 +9,7 @@ target("nyx")
     set_warnings("allextra")
     add_includedirs(".")
     add_files("parser/*.cpp")
+    add_files("bytecode/*.cpp")
     add_files("main.cpp")
 
 

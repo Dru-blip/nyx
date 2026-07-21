@@ -20,7 +20,7 @@ namespace Nyx {
         NodeIndex parse_stmt();
         NodeIndex parse_return_stmt();
         NodeIndex parse_expression();
-        NodeIndex parse_number();
+        NodeIndex parse_integer();
 
         NodeIndex reserve_node(NodeTag tag);
         NodeIndex add_node(NodeTag tag,Span span);

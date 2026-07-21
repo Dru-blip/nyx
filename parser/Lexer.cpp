@@ -12,7 +12,7 @@ namespace Nyx {
 
     char Lexer::current_char() const { return is_end() ? '\0' : m_source[m_pos]; }
 
-    void Lexer::eat_number() {
+    void Lexer::eat_integer() {
         while (!is_end() && std::isdigit(m_source[m_pos])) {
             m_pos++;
         }
@@ -46,8 +46,8 @@ namespace Nyx {
             }
             default: {
                 if (std::isdigit(c)) {
-                    tag = TokenTag::Number;
-                    eat_number();
+                    tag = TokenTag::Integer;
+                    eat_integer();
                     break;
                 }
                 if (std::isalpha(c)) {
