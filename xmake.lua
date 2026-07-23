@@ -6,6 +6,8 @@ if is_mode("debug") then
     set_optimize("none")
 end
 
+add_requires("mimalloc 3.4.1")
+
 target("nyx")
     set_kind("binary")
     set_toolchains("clang")
@@ -15,6 +17,7 @@ target("nyx")
     add_files("parser/*.cpp")
     add_files("bytecode/*.cpp")
     add_files("main.cpp")
+    add_packages("mimalloc")
 
 
 

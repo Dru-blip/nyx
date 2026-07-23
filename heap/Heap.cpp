@@ -7,6 +7,6 @@ namespace Nyx {
         const size_t bin_index = Bin::getBinIndex(size);
         Bin &bin = m_bins[bin_index];
 
-        bin.acquire_cell(Bin::Sizes[bin_index]);
+        bin.allocate(Bin::Sizes[bin_index]);
     }
 } // namespace Nyx

@@ -5,6 +5,7 @@
 #include <cmath>
 #include <cstdint>
 #include <memory>
+#include <vector>
 #include "heap/BlockAllocator.h"
 #include "heap/Cell.h"
 
@@ -25,13 +26,15 @@ namespace Nyx {
             return std::log2l(nearest_two_power) - std::log2l(Sizes[0]);
         }
 
-        Cell *acquire_cell(size_t size);
 
-        Bin();
+        Bin(BlockAllocator &block_allocator) : m_block_allocator(block_allocator) {};
+        void *allocate(size_t size);
+        void try_acquire_block(size_t size);
+
 
     private:
         BlockAllocator &m_block_allocator;
-        Block &m_active;
-        Block &m_used;
+        Block *m_active{nullptr};
+        std::vector<Block *> m_used;
     };
 } // namespace Nyx
