@@ -11,6 +11,7 @@ namespace Nyx {
         BlockAllocator(RegionAllocator &region_allocator) : m_region_allocator(region_allocator) {};
         Block *acquire_block();
 
+
     private:
         void grow();
 

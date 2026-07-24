@@ -16,7 +16,7 @@ namespace Nyx {
             return;
         }
 
-        Block *block = m_block_allocator.acquire_block();
+        Block *block = m_block_allocator->acquire_block();
         assert(block != nullptr);
         block->format(size);
         m_active = block;

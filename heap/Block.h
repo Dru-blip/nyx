@@ -17,6 +17,7 @@ namespace Nyx {
         void set_region(Region *region) { m_region = region; }
         FreeCell *get_free_cell();
         bool has_free_cells() const { return m_free_list != nullptr; }
+        void set_data(uint8_t *data) { m_data = data; }
 
         void format(size_t c_size);
 

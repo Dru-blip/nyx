@@ -24,6 +24,5 @@ namespace Nyx {
         mi_heap_t *m_heap;
         uint8_t *m_data;
         std::array<Block, BlockCount> m_blocks;
-        Region *m_next{nullptr};
     };
 } // namespace Nyx
