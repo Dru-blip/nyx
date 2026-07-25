@@ -3,6 +3,7 @@
 
 namespace Nyx {
     class Cell {
+    public:
         enum class State {
             Dead,
             Alive,

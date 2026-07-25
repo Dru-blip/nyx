@@ -1,14 +1,15 @@
-#include "bytecode/Compiler.h"
+#include "bytecode/Generator.h"
 #include <charconv>
 #include <cstdint>
 #include <cstdio>
 #include <string_view>
-#include "bytecode/Opcode.h"
+
+#include "bytecode/Operand.h"
 #include "parser/Ast.h"
 
 
-namespace Nyx {
-    void Compiler::compile() {
+namespace Nyx::bytecode {
+    void Generator::compile() {
         const Node &rootNode = m_ast.node(0);
         const NodeRange roots = std::get<NodeRange>(rootNode.data);
 
@@ -18,7 +19,7 @@ namespace Nyx {
         }
     }
 
-    void Compiler::lowerRoot(const Node &node) {
+    void Generator::lowerRoot(const Node &node) {
         switch (node.tag) {
             case NodeTag::Ret: {
                 lowerRet(node);
@@ -28,20 +29,25 @@ namespace Nyx {
         }
     }
 
-    void Compiler::lowerRet(const Node &node) {
+    void Generator::lowerRet(const Node &node) {
         const auto index = node.index();
         if (index.has_value()) {
             const Node &expr = m_ast.node(index.value());
-            lowerExpr(expr);
+            Operand result = lowerExpr(expr);
+
+            if (result.isConstInt()) {
+                m_emitter.emit_ret_imm(result.as.imm);
+                return;
+            }
         }
-        emit(static_cast<uint8_t>(Opcode::Ret));
+
+        m_emitter.emit_ret();
     }
 
-    void Compiler::lowerExpr(const Node &node) {
+    Operand Generator::lowerExpr(const Node &node) {
         switch (node.tag) {
             case NodeTag::Integer: {
-                lowerInt(node);
-                break;
+                return lowerInt(node);
             }
             default: {
             }
@@ -49,20 +55,13 @@ namespace Nyx {
     }
 
 
-    void Compiler::lowerInt(const Node &node) {
+    Operand Generator::lowerInt(const Node &node) {
         const auto int_str = m_ast.getSource(node);
 
         int64_t value = 0;
         // handle error
         std::from_chars(int_str.data(), int_str.data() + int_str.size(), value);
 
-        emit(static_cast<uint8_t>(Opcode::LdaImmInt));
-
-        for (uint8_t i = 0; i < 8; i++) {
-            emit(static_cast<uint8_t>(value >> (8 * i) & 0xff));
-        }
+        return {OperandType::ConstInt, {.imm = value}};
     }
-
-
-    void Compiler::emit(uint8_t byte) { m_code.push_back(byte); }
-} // namespace Nyx
+} // namespace Nyx::bytecode
