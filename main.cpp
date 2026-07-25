@@ -10,7 +10,8 @@ int main() {
     std::shared_ptr<Nyx::Heap> heap = std::make_shared<Nyx::Heap>();
 
     Nyx::bytecode::Generator generator(ast, heap);
+    Nyx::bytecode::Executable *executable = generator.compile();
 
-
+    executable->print_code();
     return 0;
 }

@@ -8,4 +8,9 @@ namespace Nyx::bytecode {
         RetImm ret_imm{Opcode::RetImm, imm};
         emit(ret_imm);
     }
+
+    void InstructionEmitter::emit_ret() {
+        Ret ret{Opcode::Ret};
+        emit(ret);
+    }
 } // namespace Nyx::bytecode

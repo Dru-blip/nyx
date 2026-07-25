@@ -13,7 +13,7 @@ namespace Nyx::bytecode {
     class Generator {
     public:
         Generator(Ast &ast, std::shared_ptr<Heap> heap) : m_ast(std::move(ast)), m_heap(heap) {};
-        void compile();
+        Executable *compile();
         Executable *build_executable();
 
     private:

@@ -1,5 +1,6 @@
 #include "bytecode/Generator.h"
 #include <charconv>
+#include <corecrt_terminate.h>
 #include <cstdint>
 #include <string_view>
 
@@ -13,7 +14,7 @@ namespace Nyx::bytecode {
         return m_heap->alloc<Executable>(m_emitter.code());
     }
 
-    void Generator::compile() {
+    Executable *Generator::compile() {
         const Node &rootNode = m_ast.node(0);
         const NodeRange roots = std::get<NodeRange>(rootNode.data);
 
@@ -21,6 +22,8 @@ namespace Nyx::bytecode {
             const NodeIndex index = m_ast.extra(extra_index);
             lowerRoot(m_ast.node(index));
         }
+
+        return build_executable();
     }
 
     void Generator::lowerRoot(const Node &node) {
@@ -54,6 +57,7 @@ namespace Nyx::bytecode {
                 return lowerInt(node);
             }
             default: {
+                abort();
             }
         }
     }
