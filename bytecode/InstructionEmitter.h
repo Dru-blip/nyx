@@ -16,6 +16,7 @@ namespace Nyx::bytecode {
         }
 
 
+        std::vector<uint8_t> &code() { return m_code; }
         void emit_ret();
         void emit_ret_imm(int64_t imm);
 

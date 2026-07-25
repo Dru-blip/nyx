@@ -11,8 +11,6 @@ int main() {
 
     Nyx::bytecode::Generator generator(ast, heap);
 
-    void *ptr = heap->allocate<Nyx::bytecode::Executable>();
-    assert(ptr != nullptr);
 
     return 0;
 }

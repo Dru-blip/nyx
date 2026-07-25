@@ -1,14 +1,18 @@
 #include "bytecode/Generator.h"
 #include <charconv>
 #include <cstdint>
-#include <cstdio>
 #include <string_view>
 
+#include "bytecode/Executable.h"
 #include "bytecode/Operand.h"
 #include "parser/Ast.h"
 
 
 namespace Nyx::bytecode {
+    Executable *Generator::build_executable() {
+        return m_heap->alloc<Executable>(m_emitter.code());
+    }
+
     void Generator::compile() {
         const Node &rootNode = m_ast.node(0);
         const NodeRange roots = std::get<NodeRange>(rootNode.data);
