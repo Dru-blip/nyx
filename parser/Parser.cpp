@@ -6,7 +6,20 @@
 #include "parser/Ast.h"
 #include "parser/Token.h"
 
+struct Operator {
+    Nyx::NodeTag tag;
+    int8_t lbp;
+    int8_t rbp;
+};
+
 namespace Nyx {
+    static std::unordered_map<TokenTag, Operator> operator_map{
+            {TokenTag::Plus, {NodeTag::Add, 50, 51}},
+            {TokenTag::Minus, {NodeTag::Sub, 50, 51}},
+            {TokenTag::Asterisk, {NodeTag::Mul, 52, 53}},
+            {TokenTag::Slash, {NodeTag::Div, 52, 53}},
+    };
+
     Parser::Parser(const std::string_view source) : m_source(source), m_lexer(Lexer(source)) {
         advance();
         advance();
@@ -83,7 +96,7 @@ namespace Nyx {
         const auto ret_index = reserve_node(NodeTag::Ret);
         const auto ret_token = consume_token();
 
-        NodeIndex value = parse_expression();
+        NodeIndex value = parse_expression(0);
 
         const Span value_span = get_node_span(value);
         const Span ret_span = ret_token.span.merge(value_span);
@@ -93,7 +106,40 @@ namespace Nyx {
         return ret_index;
     }
 
-    NodeIndex Parser::parse_expression() { return parse_integer(); }
+    NodeIndex Parser::parse_expression(int8_t prec) {
+        auto lhs = parse_primary_expression();
+
+        while (true) {
+            const auto tok = m_cur;
+            if (!operator_map.contains(tok.tag)) {
+                break;
+            }
+
+            Operator op_info = operator_map[tok.tag];
+            if (op_info.lbp < prec) {
+                break;
+            }
+
+            const auto op_token = consume_token();
+            const auto rhs = parse_expression(op_info.rbp);
+
+            lhs = rhs;
+        }
+
+        return lhs;
+    }
+
+    NodeIndex Parser::parse_primary_expression() {
+        const auto [tag, span] = m_cur;
+        switch (tag) {
+            case TokenTag::Integer: {
+                return parse_integer();
+            }
+            default: {
+                std::abort();
+            }
+        }
+    }
 
     NodeIndex Parser::parse_integer() {
         const auto token = consume_token();

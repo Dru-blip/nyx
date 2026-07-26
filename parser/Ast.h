@@ -14,6 +14,13 @@ namespace Nyx {
     enum class NodeTag {
         Root,
         Integer,
+
+        Add,
+        Sub,
+        Mul,
+        Div,
+
+
         Ret,
     };
 
