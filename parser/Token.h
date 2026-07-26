@@ -1,11 +1,17 @@
 #pragma once
-#include <cstdint>
 #include <algorithm>
+#include <cstdint>
 
 
 namespace Nyx {
     enum class TokenTag {
         Integer,
+
+        Plus,
+        Minus,
+        Asterisk,
+        Slash,
+
         Return,
         Invalid,
         Eof,
@@ -24,4 +30,4 @@ namespace Nyx {
         TokenTag tag;
         Span span;
     };
-}
+} // namespace Nyx

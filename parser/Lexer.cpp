@@ -44,6 +44,22 @@ namespace Nyx {
                 m_pos++;
                 break;
             }
+            case '+':
+                tag = TokenTag::Plus;
+                m_pos++;
+                break;
+            case '-':
+                tag = TokenTag::Minus;
+                m_pos++;
+                break;
+            case '*':
+                tag = TokenTag::Asterisk;
+                m_pos++;
+                break;
+            case '/':
+                tag = TokenTag::Slash;
+                m_pos++;
+                break;
             default: {
                 if (std::isdigit(c)) {
                     tag = TokenTag::Integer;
