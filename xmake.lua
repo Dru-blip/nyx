@@ -17,6 +17,7 @@ target("nyx")
     add_files("parser/*.cpp")
     add_files("bytecode/*.cpp")
     add_files("heap/*.cpp")
+    add_files("runtime/*.cpp")
     add_files("main.cpp")
     add_packages("mimalloc")
 
