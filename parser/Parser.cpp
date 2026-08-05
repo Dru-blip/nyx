@@ -44,10 +44,22 @@ namespace Nyx {
         return index;
     }
 
+    NodeIndex Parser::add_node(Node n) {
+        const auto index = m_nodes.size();
+        m_nodes.push_back(n);
+        return index;
+    }
+
     NodeIndex Parser::add_node(NodeTag tag, Span span) {
         const auto index = m_nodes.size();
         m_nodes.push_back(Node(tag, span));
         return index;
+    }
+
+
+    NodeIndex Parser::add_node(NodeTag tag, Span span, NodeRange range) {
+        m_nodes.push_back(Node(tag, span, range));
+        return m_nodes.size() - 1;
     }
 
     void Parser::set_node(NodeIndex index, Node node) { m_nodes[index] = node; }
@@ -120,10 +132,15 @@ namespace Nyx {
                 break;
             }
 
-            const auto op_token = consume_token();
+            const auto _ = consume_token();
             const auto rhs = parse_expression(op_info.rbp);
 
-            lhs = rhs;
+            const auto lhs_span = get_node_span(lhs);
+            const auto rhs_span = get_node_span(rhs);
+            const Span span = lhs_span.merge(rhs_span);
+
+            const Node n(op_info.tag, span, NodeRange(lhs, rhs));
+            lhs = add_node(n);
         }
 
         return lhs;

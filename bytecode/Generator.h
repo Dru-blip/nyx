@@ -20,6 +20,7 @@ namespace Nyx::bytecode {
         void lowerRoot(const Node &node);
         void lowerRet(const Node &node);
         Operand lowerExpr(const Node &node);
+        Operand lowerAdd(const Node &node);
         Operand lowerInt(const Node &node);
 
         Ast m_ast;

@@ -26,7 +26,7 @@ namespace Nyx {
             return std::log2l(nearest_two_power) - std::log2l(Sizes[0]);
         }
 
-        // Bin(BlockAllocator &block_allocator) : m_block_allocator(block_allocator) {};
+
         Bin(BlockAllocator *block_allocator) : m_block_allocator(block_allocator) {};
         Bin() = default;
 
@@ -42,8 +42,7 @@ namespace Nyx {
 
     private:
         BlockAllocator *m_block_allocator{nullptr};
-        // cannot store a reference to the Block even though block is guaranteed to be lived
-        // until the bin or region is destroyed.
+
         Block *m_active{nullptr};
         // stores pointers of used blocks in the bin.
         // but can be UB if the region holding a particular block is destroyed/released.

@@ -28,6 +28,8 @@ namespace Nyx {
 
         NodeIndex reserve_node(NodeTag tag);
         NodeIndex add_node(NodeTag tag, Span span);
+        NodeIndex add_node(Node n);
+        NodeIndex add_node(NodeTag tag, Span span, NodeRange range);
         void set_node(NodeIndex index, Node node);
         Span get_node_span(NodeIndex index);
 

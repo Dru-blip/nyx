@@ -56,12 +56,18 @@ namespace Nyx::bytecode {
             case NodeTag::Integer: {
                 return lowerInt(node);
             }
+            case NodeTag::Add: {
+                return lowerAdd(node);
+            }
             default: {
                 abort();
             }
         }
     }
 
+    Operand Generator::lowerAdd(const Node &node) {
+
+    }
 
     Operand Generator::lowerInt(const Node &node) {
         const auto int_str = m_ast.getSource(node);

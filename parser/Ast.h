@@ -68,7 +68,7 @@ namespace Nyx {
 
         const Node &node(NodeIndex index) const { return m_nodes[index]; }
         std::string_view getSource(const Node &node) const {
-            return std::string_view(source).substr(node.span.start,
+            return source.substr(node.span.start,
                                                    node.span.end - node.span.start);
         }
 

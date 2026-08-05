@@ -3,9 +3,9 @@
 #include <array>
 #include "Block.h"
 
-// TODO: i dont know how to correctly use this fucking library, i found no examples of using it
-// inside documentation. i have to find some projects that use it.
 #include <cstdint>
+
+// TODO: i dont know how to correctly use this fucking library.
 #include <mimalloc.h>
 
 
