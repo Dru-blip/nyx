@@ -1,12 +1,19 @@
 #include "Ast.h"
-
 #include "Parser.h"
 #include "mimalloc.h"
 
 namespace Nyx {
-    NodeArena::NodeArena() { m_heap = mi_heap_new(); }
+    NodeArena::NodeArena() {
+        // TODO: handle error.
+        m_heap = mi_heap_new();
+    }
 
-    NodeArena::~NodeArena() { mi_heap_destroy(m_heap); }
+    NodeArena::~NodeArena() {
+        if (m_heap) {
+            mi_heap_destroy(m_heap);
+            m_heap = nullptr;
+        }
+    }
 
     Ast Ast::parse(const std::string_view source) {
         Parser parser(source);

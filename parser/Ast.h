@@ -69,6 +69,12 @@ namespace Nyx {
         NodeArena();
         ~NodeArena();
 
+        NodeArena(NodeArena &&other) noexcept {
+            m_heap = other.m_heap;
+            other.m_heap = nullptr;
+        }
+
+
         template<std::derived_from<Node> T, typename... Args>
         T *allocate(Args... args) {
             void *slot = mi_heap_malloc(m_heap, sizeof(T));
@@ -91,17 +97,21 @@ namespace Nyx {
 
     class Ast {
     public:
-        Ast(std::string_view source, NodeArena arena, std::span<Node *> roots) :
-            arena(arena), roots(roots), source(source) {};
+        Ast(std::string_view source, NodeArena &arena, std::span<Node *> &roots) :
+            m_arena(std::move(arena)), m_roots(std::move(roots)), m_source(source) {};
 
         static Ast parse(std::string_view source);
 
         uint32_t length() const;
+        std::span<Node *> roots() const { return m_roots; }
 
+        std::string_view getSource(const Node *node) const {
+            return m_source.substr(node->span.start, node->span.end - node->span.start);
+        }
 
     private:
-        NodeArena arena;
-        std::span<Node *> roots;
-        std::string_view source;
+        NodeArena m_arena;
+        std::span<Node *> m_roots;
+        std::string_view m_source;
     };
 } // namespace Nyx

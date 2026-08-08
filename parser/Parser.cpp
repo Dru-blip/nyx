@@ -39,7 +39,7 @@ namespace Nyx {
         return tok;
     }
 
-    Ast Parser::into_ast() { return {m_source,m_arena,m_roots}; }
+    Ast Parser::into_ast() { return {m_source, m_arena, m_roots}; }
 
     void Parser::parse() {
         std::vector<Node *> stmts;
