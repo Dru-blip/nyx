@@ -15,19 +15,15 @@ namespace Nyx::bytecode {
     }
 
     Executable *Generator::compile() {
-        const Node &rootNode = m_ast.node(0);
-        const NodeRange roots = std::get<NodeRange>(rootNode.data);
-
-        for (NodeIndex extra_index = roots.start; extra_index < roots.end; ++extra_index) {
-            const NodeIndex index = m_ast.extra(extra_index);
-            lowerRoot(m_ast.node(index));
+        for (const Node *root: m_ast.roots()) {
+            lowerRoot(root);
         }
 
         return build_executable();
     }
 
-    void Generator::lowerRoot(const Node &node) {
-        switch (node.tag) {
+    void Generator::lowerRoot(const Node *node) {
+        switch (node->tag) {
             case NodeTag::Ret: {
                 lowerRet(node);
             }
@@ -36,10 +32,11 @@ namespace Nyx::bytecode {
         }
     }
 
-    void Generator::lowerRet(const Node &node) {
-        const auto index = node.index();
-        if (index.has_value()) {
-            const Node &expr = m_ast.node(index.value());
+    void Generator::lowerRet(const Node *node) {
+        const Return *ret = static_cast<const Return *>(node);
+
+        if (ret->value.has_value()) {
+            const Node *expr = *ret->value;
             Operand result = lowerExpr(expr);
 
             if (result.isConstInt()) {
@@ -51,8 +48,8 @@ namespace Nyx::bytecode {
         m_emitter.emit_ret();
     }
 
-    Operand Generator::lowerExpr(const Node &node) {
-        switch (node.tag) {
+    Operand Generator::lowerExpr(const Node *node) {
+        switch (node->tag) {
             case NodeTag::Integer: {
                 return lowerInt(node);
             }
@@ -65,11 +62,9 @@ namespace Nyx::bytecode {
         }
     }
 
-    Operand Generator::lowerAdd(const Node &node) {
+    Operand Generator::lowerAdd(const Node *node) {}
 
-    }
-
-    Operand Generator::lowerInt(const Node &node) {
+    Operand Generator::lowerInt(const Node *node) {
         const auto int_str = m_ast.getSource(node);
 
         int64_t value = 0;
