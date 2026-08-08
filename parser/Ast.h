@@ -21,7 +21,6 @@ namespace Nyx {
         Mul,
         Div,
 
-
         Ret,
     };
 
@@ -74,7 +73,6 @@ namespace Nyx {
             other.m_heap = nullptr;
         }
 
-
         template<std::derived_from<Node> T, typename... Args>
         T *allocate(Args... args) {
             void *slot = mi_heap_malloc(m_heap, sizeof(T));
@@ -89,7 +87,6 @@ namespace Nyx {
 
             return {static_cast<Node **>(mem), nodes.size()};
         }
-
 
     private:
         mi_heap_t *m_heap{nullptr};

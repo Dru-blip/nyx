@@ -13,7 +13,7 @@ namespace Nyx {
             switch (op) {
                 case bytecode::Opcode::RetImm: {
                     bytecode::RetImm *instr = frame->decode_instruction<bytecode::RetImm>();
-                    return Value::from_int(instr->value);
+                    return Value(instr->value);
                 }
                 default: {
                     break;
@@ -21,6 +21,6 @@ namespace Nyx {
             }
         }
 
-        return nil();
+        return Nil;
     }
 } // namespace Nyx

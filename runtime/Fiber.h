@@ -17,6 +17,5 @@ namespace Nyx {
     private:
         FiberId m_id{};
         CallStack m_stack;
-        std::vector<Value> registers;
     };
 } // namespace Nyx
