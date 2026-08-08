@@ -17,25 +17,16 @@ namespace Nyx {
 
         Token consume_token();
 
-        NodeRange to_node_range(std::uint32_t scratch_index);
 
-        NodeIndex parse_stmt();
-        NodeIndex parse_return_stmt();
-        NodeIndex parse_expression(int8_t prec);
-        NodeIndex parse_primary_expression();
-        NodeIndex parse_integer();
+        Node *parse_stmt();
+        Node *parse_return_stmt();
+        Node *parse_expression(int8_t prec);
+        Node *parse_primary_expression();
+        Node *parse_integer();
 
 
-        NodeIndex reserve_node(NodeTag tag);
-        NodeIndex add_node(NodeTag tag, Span span);
-        NodeIndex add_node(Node n);
-        NodeIndex add_node(NodeTag tag, Span span, NodeRange range);
-        void set_node(NodeIndex index, Node node);
-        Span get_node_span(NodeIndex index);
-
-        std::vector<std::uint32_t> m_scratch;
-        std::vector<std::uint32_t> m_extra;
-        std::vector<Node> m_nodes;
+        NodeArena m_arena;
+        std::span<Node *> m_roots;
         const std::string_view m_source;
         Lexer m_lexer;
         Token m_cur, m_next;

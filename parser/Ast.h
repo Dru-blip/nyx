@@ -1,18 +1,19 @@
 #pragma once
+#include <concepts>
+#include <cstring>
 #include <optional>
+#include <span>
 #include <string>
 #include <string_view>
 #include <variant>
 #include <vector>
 
 #include "Token.h"
+#include "mimalloc.h"
 
 
 namespace Nyx {
-    using NodeIndex = uint32_t;
-
     enum class NodeTag {
-        Root,
         Integer,
 
         Add,
@@ -24,59 +25,83 @@ namespace Nyx {
         Ret,
     };
 
-    struct NodeRange {
-        NodeIndex start;
-        NodeIndex end;
-    };
-
-    constexpr NodeIndex INVALID_NODE_INDEX = std::numeric_limits<NodeIndex>::max();
-
-    using NodeData = std::variant<NodeIndex, NodeRange>;
-
     struct Node {
         NodeTag tag;
         Span span{};
-        NodeData data{INVALID_NODE_INDEX};
 
-
-        Node(NodeTag tag) : tag(tag) {}
         Node(NodeTag tag, Span span) : tag(tag), span(span) {}
-        Node(NodeTag tag, Span span, NodeIndex index) : tag(tag), span(span), data(index) {}
-        Node(NodeTag tag, Span span, NodeRange range) : tag(tag), span(span), data(range) {}
-        Node(NodeTag tag, Span span, std::optional<NodeIndex> opt) :
-            tag(tag), span(span), data(opt.value_or(INVALID_NODE_INDEX)) {}
-
-        std::optional<NodeIndex> index() const {
-            if (auto value = std::get_if<NodeIndex>(&data)) {
-                if (*value != INVALID_NODE_INDEX) {
-                    return *value;
-                }
-            }
-            return std::nullopt;
-        }
+        virtual ~Node() = default;
     };
 
+    struct IntLiteral : Node {
+        IntLiteral(Span span) : Node(NodeTag::Integer, span) {}
+    };
+
+    struct Binary : Node {
+        Binary(NodeTag tag, Span span, Node *left, Node *right) :
+            Node(tag, span), left(left), right(right) {}
+        Node *left, *right;
+    };
+
+    struct Add : Binary {
+        Add(Span span, Node *left, Node *right) : Binary(NodeTag::Add, span, left, right) {}
+    };
+
+    struct Sub : Binary {
+        Sub(Span span, Node *left, Node *right) : Binary(NodeTag::Sub, span, left, right) {}
+    };
+
+    struct Mul : Binary {
+        Mul(Span span, Node *left, Node *right) : Binary(NodeTag::Mul, span, left, right) {}
+    };
+
+    struct Div : Binary {
+        Div(Span span, Node *left, Node *right) : Binary(NodeTag::Div, span, left, right) {}
+    };
+
+    struct Return : public Node {
+        Return(Span span, std::optional<Node *> value) : Node(NodeTag::Ret, span), value(value) {}
+        std::optional<Node *> value;
+    };
+
+    class NodeArena {
+    public:
+        NodeArena();
+        ~NodeArena();
+
+        template<std::derived_from<Node> T, typename... Args>
+        T *allocate(Args... args) {
+            void *slot = mi_heap_malloc(m_heap, sizeof(T));
+            T *node = new (slot) T(std::forward<Args>(args)...);
+            return node;
+        }
+
+        std::span<Node *> nodes_span(std::vector<Node *> &nodes) {
+            const size_t size = nodes.size() * sizeof(Node *);
+            void *mem = mi_heap_malloc(m_heap, size);
+            memcpy(mem, nodes.data(), size);
+
+            return {static_cast<Node **>(mem), nodes.size()};
+        }
+
+
+    private:
+        mi_heap_t *m_heap{nullptr};
+    };
 
     class Ast {
     public:
-        Ast(std::vector<Node> &nodes, std::vector<uint32_t> &extras, std::string_view source) :
-            source(source), m_extras(std::move(extras)), m_nodes(std::move(nodes)) {};
+        Ast(std::string_view source, NodeArena arena, std::span<Node *> roots) :
+            arena(arena), roots(roots), source(source) {};
 
         static Ast parse(std::string_view source);
 
         uint32_t length() const;
 
-        const Node &node(NodeIndex index) const { return m_nodes[index]; }
-        std::string_view getSource(const Node &node) const {
-            return source.substr(node.span.start,
-                                                   node.span.end - node.span.start);
-        }
-
-        NodeIndex extra(uint32_t index) const { return m_extras[index]; }
 
     private:
+        NodeArena arena;
+        std::span<Node *> roots;
         std::string_view source;
-        std::vector<uint32_t> m_extras;
-        std::vector<Node> m_nodes;
     };
 } // namespace Nyx

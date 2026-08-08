@@ -2,6 +2,7 @@
 #include <cstdint>
 #include <cstdio>
 #include <iostream>
+#include <optional>
 #include <print>
 #include "parser/Ast.h"
 #include "parser/Token.h"
@@ -38,61 +39,19 @@ namespace Nyx {
         return tok;
     }
 
-    NodeIndex Parser::reserve_node(NodeTag tag) {
-        const auto index = m_nodes.size();
-        m_nodes.push_back(Node(tag));
-        return index;
-    }
-
-    NodeIndex Parser::add_node(Node n) {
-        const auto index = m_nodes.size();
-        m_nodes.push_back(n);
-        return index;
-    }
-
-    NodeIndex Parser::add_node(NodeTag tag, Span span) {
-        const auto index = m_nodes.size();
-        m_nodes.push_back(Node(tag, span));
-        return index;
-    }
-
-
-    NodeIndex Parser::add_node(NodeTag tag, Span span, NodeRange range) {
-        m_nodes.push_back(Node(tag, span, range));
-        return m_nodes.size() - 1;
-    }
-
-    void Parser::set_node(NodeIndex index, Node node) { m_nodes[index] = node; }
-
-    Span Parser::get_node_span(NodeIndex index) { return m_nodes[index].span; }
-
-    Ast Parser::into_ast() { return {m_nodes, m_extra, m_source}; }
-
-    NodeRange Parser::to_node_range(std::uint32_t scratch_index) {
-        const auto start = m_extra.size();
-
-        m_extra.insert(m_extra.end(), m_scratch.begin(), m_scratch.end());
-        const auto end = m_extra.size();
-        m_scratch.resize(scratch_index);
-
-        return NodeRange(start, end);
-    }
+    Ast Parser::into_ast() { return {m_source,m_arena,m_roots}; }
 
     void Parser::parse() {
-        const auto root_index = reserve_node(NodeTag::Root);
-        const auto scratch_index = m_scratch.size();
+        std::vector<Node *> stmts;
 
         while (!is_at_end()) {
-            m_scratch.push_back(parse_stmt());
+            stmts.push_back(parse_stmt());
         }
 
-
-        const auto node_range = to_node_range(scratch_index);
-        const Node root(NodeTag::Root, Span(0, 0), node_range);
-        set_node(root_index, root);
+        m_roots = m_arena.nodes_span(stmts);
     }
 
-    NodeIndex Parser::parse_stmt() {
+    Node *Parser::parse_stmt() {
         const auto [tag, span] = m_cur;
         switch (tag) {
             case TokenTag::Return: {
@@ -104,21 +63,15 @@ namespace Nyx {
         }
     }
 
-    NodeIndex Parser::parse_return_stmt() {
-        const auto ret_index = reserve_node(NodeTag::Ret);
+    Node *Parser::parse_return_stmt() {
         const auto ret_token = consume_token();
-
-        NodeIndex value = parse_expression(0);
-
-        const Span value_span = get_node_span(value);
-        const Span ret_span = ret_token.span.merge(value_span);
-
-        const Node n(NodeTag::Ret, ret_span, std::make_optional<NodeIndex>(value));
-        set_node(ret_index, n);
-        return ret_index;
+        Node *value = parse_expression(0);
+        const Span ret_span = ret_token.span.merge(value->span);
+        Node *ret = m_arena.allocate<Return>(ret_span, std::make_optional(value));
+        return ret;
     }
 
-    NodeIndex Parser::parse_expression(int8_t prec) {
+    Node *Parser::parse_expression(int8_t prec) {
         auto lhs = parse_primary_expression();
 
         while (true) {
@@ -135,18 +88,15 @@ namespace Nyx {
             const auto _ = consume_token();
             const auto rhs = parse_expression(op_info.rbp);
 
-            const auto lhs_span = get_node_span(lhs);
-            const auto rhs_span = get_node_span(rhs);
-            const Span span = lhs_span.merge(rhs_span);
-
-            const Node n(op_info.tag, span, NodeRange(lhs, rhs));
-            lhs = add_node(n);
+            const Span span = lhs->span.merge(rhs->span);
+            Node *n = m_arena.allocate<Binary>(op_info.tag, span, lhs, rhs);
+            lhs = n;
         }
 
         return lhs;
     }
 
-    NodeIndex Parser::parse_primary_expression() {
+    Node *Parser::parse_primary_expression() {
         const auto [tag, span] = m_cur;
         switch (tag) {
             case TokenTag::Integer: {
@@ -158,8 +108,8 @@ namespace Nyx {
         }
     }
 
-    NodeIndex Parser::parse_integer() {
+    Node *Parser::parse_integer() {
         const auto token = consume_token();
-        return add_node(NodeTag::Integer, token.span);
+        return m_arena.allocate<IntLiteral>(token.span);
     }
 } // namespace Nyx
