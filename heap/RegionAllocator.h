@@ -1,9 +1,7 @@
 #pragma once
 
-
 #include <vector>
 #include "Region.h"
-
 
 namespace Nyx {
     class RegionAllocator {

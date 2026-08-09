@@ -21,7 +21,7 @@ namespace Nyx {
     Frame *FrameChunk::new_frame(size_t size) {
         uint8_t *mem = m_data + m_next_offset;
         Frame *frame = new (mem) Frame(nullptr);
-        m_next_offset = size;
+        m_next_offset += size;
         return frame;
     }
 
