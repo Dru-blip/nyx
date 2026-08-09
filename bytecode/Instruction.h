@@ -8,19 +8,14 @@ namespace Nyx::bytecode {
         LdaImmInt,
         Ret,
         RetImm,
+        Add,
     };
 
-    struct LoadImmInt {
-        Opcode opcode;
-        int32_t value;
-    };
-
-    struct Ret {
-        Opcode opcode;
-    };
-
+#pragma pack(push, 1)
     struct RetImm {
-        Opcode opcode;
-        int64_t value;
+        Opcode opcode = Opcode::RetImm;
+        int64_t imm;
     };
+#pragma pack(pop)
+
 } // namespace Nyx::bytecode

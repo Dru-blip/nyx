@@ -6,6 +6,7 @@
 #include "bytecode/Executable.h"
 #include "bytecode/InstructionEmitter.h"
 #include "bytecode/Operand.h"
+#include "bytecode/RegisterAllocator.h"
 #include "heap/Heap.h"
 #include "parser/Ast.h"
 

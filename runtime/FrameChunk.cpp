@@ -17,22 +17,20 @@ namespace Nyx {
         m_data = static_cast<uint8_t *>(mem) + sizeof(FrameChunk);
         for (size_t i = 0; i < FrameCount; i++) {
             Frame *frame = new (m_data + i * sizeof(Frame)) Frame(nullptr);
-            frame->prev = m_free_frame;
+            frame->m_prev = m_free_frame;
         }
     }
 
     FrameChunk::~FrameChunk() { mi_free(this); }
 
-
-
     Frame *FrameChunk::new_frame() {
         Frame *frame = m_free_frame;
-        m_free_frame = frame->prev;
+        m_free_frame = frame->m_prev;
         return frame;
     }
 
     void FrameChunk::acquire_frame(Frame *frame) {
-        frame->prev = m_free_frame;
+        frame->m_prev = m_free_frame;
         m_free_frame = frame;
     }
 } // namespace Nyx
