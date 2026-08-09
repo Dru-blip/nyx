@@ -20,12 +20,13 @@ namespace Nyx::bytecode {
     private:
         void lowerRoot(const Node *node);
         void lowerRet(const Node *node);
-        Operand lowerExpr(const Node *node);
-        Operand lowerAdd(const Node *node);
-        Operand lowerInt(const Node *node);
+        uint8_t lowerExpr(const Node *node);
+        uint8_t lowerAdd(const Node *node);
+        uint8_t lowerInt(const Node *node);
 
         Ast m_ast;
         InstructionEmitter m_emitter;
         std::shared_ptr<Heap> m_heap;
+        std::vector<Value> m_constants;
     };
 } // namespace Nyx::bytecode

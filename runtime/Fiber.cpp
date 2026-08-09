@@ -16,10 +16,10 @@ namespace Nyx {
         while (pc < code_end) {
             bytecode::Opcode op = static_cast<bytecode::Opcode>(*pc);
             switch (op) {
-                case bytecode::Opcode::RetImm: {
-                    bytecode::RetImm instr = frame->read_at<bytecode::RetImm>(pc);
-                    pc += sizeof(bytecode::RetImm);
-                    return Value(instr.imm);
+                case bytecode::Opcode::Ret: {
+                    bytecode::Ret instr = frame->read_at<bytecode::Ret>(pc);
+                    pc += sizeof(bytecode::Ret);
+                    return Nil;
                 }
                 default: {
                     break;

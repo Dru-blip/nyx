@@ -4,6 +4,7 @@
 
 namespace Nyx::bytecode {
     enum class OperandType {
+        Const,
         ConstInt,
         Register,
     };

@@ -9,13 +9,29 @@ namespace Nyx::bytecode {
         const uint8_t *pc = m_code.data();
         const uint8_t *end = pc + size;
         while (pc < end) {
-            Opcode op = static_cast<Opcode>(*pc);
+            Opcode op = static_cast<Opcode>(*pc++);
             switch (op) {
-                case Opcode::RetImm: {
-                    RetImm ret;
-                    std::memcpy(&ret, pc, sizeof(RetImm));
-                    std::println("[{}] RetImm ${}", pc - m_code.data(), ret.imm);
-                    pc += sizeof(RetImm);
+                case Opcode::Ret: {
+                    Ret ret;
+                    std::memcpy(&ret, pc, sizeof(Ret));
+                    std::println("[{}] Ret %{}", pc - m_code.data(), ret.reg);
+                    pc += sizeof(Ret);
+                    break;
+                }
+                case Opcode::LoadImmInt: {
+                    LoadImmInt load;
+                    std::memcpy(&load, pc, sizeof(LoadImmInt));
+                    std::println("[{}] LoadImmInt %{} = {}", pc - m_code.data(), load.reg,
+                                 load.imm);
+                    pc += sizeof(LoadImmInt);
+                    break;
+                }
+                case Opcode::Add: {
+                    Add add;
+                    std::memcpy(&add, pc, sizeof(Add));
+                    std::println("[{}] Add %{} = %{} + %{}", pc - m_code.data(), add.reg, add.lhs,
+                                 add.rhs);
+                    pc += sizeof(Add);
                     break;
                 }
                 default: {

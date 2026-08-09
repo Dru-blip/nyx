@@ -5,16 +5,25 @@
 
 namespace Nyx::bytecode {
     enum class Opcode : uint8_t {
-        LdaImmInt,
+        LoadImmInt,
         Ret,
-        RetImm,
         Add,
     };
 
 #pragma pack(push, 1)
-    struct RetImm {
-        Opcode opcode = Opcode::RetImm;
+    struct Ret {
+        uint8_t reg;
+    };
+
+    struct LoadImmInt {
+        uint8_t reg;
         int64_t imm;
+    };
+
+    struct Add {
+        uint8_t lhs;
+        uint8_t rhs;
+        uint8_t reg;
     };
 #pragma pack(pop)
 

@@ -12,7 +12,7 @@
 
 namespace Nyx::bytecode {
     Executable *Generator::build_executable() {
-        return m_heap->alloc<Executable>(m_emitter.code());
+        return m_heap->alloc<Executable>(m_emitter.code(), m_constants);
     }
 
     Executable *Generator::compile() {
@@ -37,18 +37,13 @@ namespace Nyx::bytecode {
 
         if (ret->value.has_value()) {
             const Node *expr = *ret->value;
-            Operand result = lowerExpr(expr);
-
-            if (result.isConstInt()) {
-                m_emitter.emit_ret_imm(result.as.imm);
-                return;
-            }
+            uint8_t result = lowerExpr(expr);
+            m_emitter.ret(result);
+            return;
         }
-
-        m_emitter.emit_ret();
     }
 
-    Operand Generator::lowerExpr(const Node *node) {
+    uint8_t Generator::lowerExpr(const Node *node) {
         switch (node->tag) {
             case NodeTag::Integer: {
                 return lowerInt(node);
@@ -62,30 +57,23 @@ namespace Nyx::bytecode {
         }
     }
 
-    Operand Generator::lowerAdd(const Node *node) {
+    uint8_t Generator::lowerAdd(const Node *node) {
         const Add *add = static_cast<const Add *>(node);
-        Operand left = lowerExpr(add->left);
-        Operand right = lowerExpr(add->right);
+        uint8_t left = lowerExpr(add->left);
+        uint8_t right = lowerExpr(add->right);
 
-        if (left.isConstInt() && right.isConstInt()) {
-            return {OperandType::ConstInt, {.imm = left.as.imm + right.as.imm}};
-        }
-
-        if (left.isConstInt() && right.isRegister()) {
-            std::swap(left, right);
-        }
-
-        uint8_t reg = m_emitter.emit_add(left, right);
-        return {OperandType::Register, {.reg = reg}};
+        uint8_t reg = m_emitter.add(left, right);
+        return reg;
     }
 
-    Operand Generator::lowerInt(const Node *node) {
+    uint8_t Generator::lowerInt(const Node *node) {
         const auto int_str = m_ast.getSource(node);
 
         int64_t value = 0;
         // handle error
         std::from_chars(int_str.data(), int_str.data() + int_str.size(), value);
 
-        return {OperandType::ConstInt, {.imm = value}};
+        uint8_t reg = m_emitter.load_imm_int(value);
+        return reg;
     }
 } // namespace Nyx::bytecode

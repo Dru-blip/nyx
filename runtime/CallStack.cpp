@@ -8,7 +8,7 @@ namespace Nyx {
         try_acquire_chunk();
         Frame *frame = m_head_chunk->new_frame();
         frame->m_executable = executable;
-        frame->prev = m_top;
+        frame->m_prev = m_top;
         m_top = frame;
         return frame;
     }
@@ -24,7 +24,7 @@ namespace Nyx {
     void CallStack::pop() {
         assert(m_top != nullptr);
 
-        m_top = m_top->prev;
+        m_top = m_top->m_prev;
         m_head_chunk->acquire_frame(m_top);
 
         // TODO: should delete the chunk if its empty or cache it.

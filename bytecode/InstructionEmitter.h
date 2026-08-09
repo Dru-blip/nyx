@@ -23,9 +23,9 @@ namespace Nyx::bytecode {
         }
 
         std::vector<uint8_t> &code() { return m_code; }
-        void emit_ret();
-        void emit_ret_imm(const int64_t imm);
-        uint8_t emit_add(const Operand &left, const Operand &right);
+        void ret(const uint8_t reg);
+        uint8_t load_imm_int(const int64_t imm);
+        uint8_t add(const uint8_t &left, const uint8_t &right);
 
     private:
         std::vector<uint8_t> m_code;
