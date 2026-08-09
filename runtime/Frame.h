@@ -1,9 +1,11 @@
 #pragma once
 
+#include <bit>
 #include <cstdint>
 #include "bytecode/Executable.h"
 #include "bytecode/Instruction.h"
 #include "heap/Cell.h"
+#include "runtime/Value.h"
 
 
 namespace Nyx {
@@ -20,8 +22,11 @@ namespace Nyx {
             return instr;
         }
 
+        Value *get_registers() { return static_cast<Value *>(m_registers); }
+
         Frame *m_prev = nullptr;
         bytecode::Executable *m_executable;
         uint8_t *m_pc = nullptr;
+        Value m_registers[];
     };
 } // namespace Nyx

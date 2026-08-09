@@ -5,8 +5,9 @@
 
 namespace Nyx {
     Frame *CallStack::push(bytecode::Executable *executable) {
-        try_acquire_chunk();
-        Frame *frame = m_head_chunk->new_frame();
+        const size_t frame_size = sizeof(Frame) + executable->register_count() * sizeof(Value);
+        try_acquire_chunk(frame_size);
+        Frame *frame = m_head_chunk->new_frame(frame_size);
         frame->m_executable = executable;
         frame->m_prev = m_top;
         m_top = frame;
@@ -33,8 +34,8 @@ namespace Nyx {
         // }
     }
 
-    void CallStack::try_acquire_chunk() {
-        if (m_head_chunk && m_head_chunk->has_free_frame()) {
+    void CallStack::try_acquire_chunk(size_t frame_size) {
+        if (m_head_chunk && m_head_chunk->has_free_space(frame_size)) {
             return;
         }
 

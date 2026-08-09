@@ -13,16 +13,17 @@ namespace Nyx {
         FrameChunk(void *mem);
         ~FrameChunk();
 
-        Frame *new_frame();
-        bool has_free_frame() const { return m_free_frame != nullptr; }
+        Frame *new_frame(size_t size);
         void set_previous(FrameChunk *previous) { m_prev = previous; }
         void acquire_frame(Frame *frame);
+        bool has_free_space(size_t size);
 
 
     private:
         uint8_t *m_data = nullptr;
-        Frame *m_free_frame = nullptr;
         FrameChunk *m_prev = nullptr;
+        size_t m_frame_count = 0;
+        size_t m_next_offset = 0;
 
         friend class CallStack;
     };

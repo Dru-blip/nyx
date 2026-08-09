@@ -19,7 +19,7 @@ namespace Nyx {
 
     private:
         void grow();
-        void try_acquire_chunk();
+        void try_acquire_chunk(size_t frame_size);
 
         FrameChunk *m_head_chunk = nullptr;
         Frame *m_top = nullptr;
