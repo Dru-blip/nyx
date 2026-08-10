@@ -34,6 +34,30 @@ namespace Nyx::bytecode {
                     pc += sizeof(Add);
                     break;
                 }
+                case Opcode::Sub: {
+                    Sub sub;
+                    std::memcpy(&sub, pc, sizeof(Sub));
+                    std::println("[{}] Sub %{} = %{} - %{}", pc - m_code.data(), sub.reg, sub.lhs,
+                                 sub.rhs);
+                    pc += sizeof(Sub);
+                    break;
+                }
+                case Opcode::Mul: {
+                    Mul mul;
+                    std::memcpy(&mul, pc, sizeof(Mul));
+                    std::println("[{}] Mul %{} = %{} * %{}", pc - m_code.data(), mul.reg, mul.lhs,
+                                 mul.rhs);
+                    pc += sizeof(Mul);
+                    break;
+                }
+                case Opcode::Div: {
+                    Div div;
+                    std::memcpy(&div, pc, sizeof(Div));
+                    std::println("[{}] Div %{} = %{} / %{}", pc - m_code.data(), div.reg, div.lhs,
+                                 div.rhs);
+                    pc += sizeof(Div);
+                    break;
+                }
                 default: {
                     std::println("Unknown opcode");
                     break;

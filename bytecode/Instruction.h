@@ -8,6 +8,9 @@ namespace Nyx::bytecode {
         LoadImmInt,
         Ret,
         Add,
+        Sub,
+        Mul,
+        Div,
     };
 
 #pragma pack(push, 1)
@@ -21,6 +24,24 @@ namespace Nyx::bytecode {
     };
 
     struct Add {
+        uint8_t lhs;
+        uint8_t rhs;
+        uint8_t reg;
+    };
+
+    struct Sub {
+        uint8_t lhs;
+        uint8_t rhs;
+        uint8_t reg;
+    };
+
+    struct Mul {
+        uint8_t lhs;
+        uint8_t rhs;
+        uint8_t reg;
+    };
+
+    struct Div {
         uint8_t lhs;
         uint8_t rhs;
         uint8_t reg;

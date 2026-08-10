@@ -26,6 +26,10 @@ namespace Nyx::bytecode {
         void ret(const uint8_t reg);
         uint8_t load_imm_int(const int64_t imm);
         uint8_t add(const uint8_t &left, const uint8_t &right);
+        uint8_t sub(const uint8_t &left, const uint8_t &right);
+        uint8_t mul(const uint8_t &left, const uint8_t &right);
+        uint8_t div(const uint8_t &left, const uint8_t &right);
+
 
     private:
         std::vector<uint8_t> m_code;

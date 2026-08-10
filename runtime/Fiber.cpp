@@ -1,9 +1,11 @@
 
 #include "runtime/Fiber.h"
 #include <cstdint>
+#include <cstdio>
 #include "bytecode/Instruction.h"
 #include "runtime/Frame.h"
 #include "runtime/Value.h"
+#include "runtime/handlers/binary.h"
 
 namespace Nyx {
     Value Fiber::run(bytecode::Executable *executable) {
@@ -22,12 +24,30 @@ namespace Nyx {
                     registers[instr.reg] = Value(instr.imm);
                     break;
                 }
-                // case bytecode::Opcode::Add: {
-                //     bytecode::Add instr = frame->read_at<bytecode::Add>(pc);
-                //     pc += sizeof(bytecode::Add);
-                //     registers[instr.reg] = registers[instr.lhs] + registers[instr.rhs];
-                //     break;
-                // }
+                case bytecode::Opcode::Add: {
+                    bytecode::Add instr = frame->read_at<bytecode::Add>(pc);
+                    registers[instr.reg] =
+                            Handlers::handle_add(registers[instr.lhs], registers[instr.rhs]);
+                    break;
+                }
+                case bytecode::Opcode::Sub: {
+                    bytecode::Sub instr = frame->read_at<bytecode::Sub>(pc);
+                    registers[instr.reg] =
+                            Handlers::handle_sub(registers[instr.lhs], registers[instr.rhs]);
+                    break;
+                }
+                case bytecode::Opcode::Mul: {
+                    bytecode::Mul instr = frame->read_at<bytecode::Mul>(pc);
+                    registers[instr.reg] =
+                            Handlers::handle_mul(registers[instr.lhs], registers[instr.rhs]);
+                    break;
+                }
+                case bytecode::Opcode::Div: {
+                    bytecode::Div instr = frame->read_at<bytecode::Div>(pc);
+                    registers[instr.reg] =
+                            Handlers::handle_div(registers[instr.lhs], registers[instr.rhs]);
+                    break;
+                }
                 case bytecode::Opcode::Ret: {
                     bytecode::Ret instr = frame->read_at<bytecode::Ret>(pc);
                     return registers[instr.reg];

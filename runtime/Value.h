@@ -1,6 +1,5 @@
 #pragma once
 #include <cstdint>
-#include <optional>
 
 
 namespace Nyx {
@@ -12,20 +11,25 @@ namespace Nyx {
         static constexpr uintptr_t ObjTag = 0ull;
         static constexpr uintptr_t NilTag = 2ull;
 
+        Value() = default;
+        explicit Value(int64_t value) { m_raw = static_cast<uintptr_t>(value) << 3 | IntTag; }
+        static Value from_raw(uintptr_t raw) {
+            Value value;
+            value.m_raw = raw;
+            return value;
+        }
+
 
         bool is_int() const { return (m_raw & Mask) == IntTag; }
         bool is_obj() const { return (m_raw & Mask) == ObjTag; }
         bool is_nil() const { return (m_raw & Mask) == NilTag; }
 
-        Value() = default;
-        Value(int64_t value) { m_raw = value << 3 | IntTag; }
-        Value(uintptr_t tag) { m_raw = tag; }
-
+        int64_t as_int() const { return static_cast<int64_t>(m_raw) >> 3; }
         uintptr_t raw() const { return m_raw; }
 
     private:
         uintptr_t m_raw{0};
     };
 
-    static Value Nil = Value(Value::NilTag);
+    static Value Nil = Value::from_raw(Value::NilTag);
 } // namespace Nyx

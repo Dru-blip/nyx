@@ -3,10 +3,8 @@
 #include <corecrt_terminate.h>
 #include <cstdint>
 #include <string_view>
-#include <utility>
 
 #include "bytecode/Executable.h"
-#include "bytecode/Operand.h"
 #include "parser/Ast.h"
 
 
@@ -51,6 +49,15 @@ namespace Nyx::bytecode {
             case NodeTag::Add: {
                 return lowerAdd(node);
             }
+            case NodeTag::Sub: {
+                return lowerSub(node);
+            }
+            case NodeTag::Mul: {
+                return lowerMul(node);
+            }
+            case NodeTag::Div: {
+                return lowerDiv(node);
+            }
             default: {
                 abort();
             }
@@ -63,6 +70,34 @@ namespace Nyx::bytecode {
         uint8_t right = lowerExpr(add->right);
 
         uint8_t reg = m_emitter.add(left, right);
+        return reg;
+    }
+
+    uint8_t Generator::lowerSub(const Node *node) {
+        const Sub *sub = static_cast<const Sub *>(node);
+        uint8_t left = lowerExpr(sub->left);
+        uint8_t right = lowerExpr(sub->right);
+
+        uint8_t reg = m_emitter.sub(left, right);
+        return reg;
+    }
+
+
+    uint8_t Generator::lowerMul(const Node *node) {
+        const Mul *mul = static_cast<const Mul *>(node);
+        uint8_t left = lowerExpr(mul->left);
+        uint8_t right = lowerExpr(mul->right);
+
+        uint8_t reg = m_emitter.mul(left, right);
+        return reg;
+    }
+
+    uint8_t Generator::lowerDiv(const Node *node) {
+        const Div *div = static_cast<const Div *>(node);
+        uint8_t left = lowerExpr(div->left);
+        uint8_t right = lowerExpr(div->right);
+
+        uint8_t reg = m_emitter.div(left, right);
         return reg;
     }
 

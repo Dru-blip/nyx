@@ -32,4 +32,46 @@ namespace Nyx::bytecode {
 
         return reg;
     }
+
+    uint8_t InstructionEmitter::sub(const uint8_t &left, const uint8_t &right) {
+        m_register_allocator.free(right);
+        m_register_allocator.free(left);
+
+        uint8_t reg = m_register_allocator.allocate();
+
+        push(static_cast<uint8_t>(Opcode::Sub));
+        Sub inst{left, right, reg};
+        emit(inst);
+
+        return reg;
+    }
+
+
+    uint8_t InstructionEmitter::mul(const uint8_t &left, const uint8_t &right) {
+        m_register_allocator.free(right);
+        m_register_allocator.free(left);
+
+        uint8_t reg = m_register_allocator.allocate();
+
+        push(static_cast<uint8_t>(Opcode::Mul));
+        Mul inst{left, right, reg};
+        emit(inst);
+
+        return reg;
+    }
+
+    uint8_t InstructionEmitter::div(const uint8_t &left, const uint8_t &right) {
+        m_register_allocator.free(right);
+        m_register_allocator.free(left);
+
+        uint8_t reg = m_register_allocator.allocate();
+
+        push(static_cast<uint8_t>(Opcode::Div));
+        Div inst{left, right, reg};
+        emit(inst);
+
+        return reg;
+    }
+
+
 } // namespace Nyx::bytecode
