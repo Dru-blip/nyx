@@ -9,7 +9,6 @@ namespace Nyx {
     class FrameChunk {
     public:
         static constexpr size_t Size = 4 * 1024;
-        static FrameChunk *create();
         FrameChunk(void *mem);
         ~FrameChunk();
 
@@ -17,7 +16,6 @@ namespace Nyx {
         void set_previous(FrameChunk *previous) { m_prev = previous; }
         void acquire_frame(Frame *frame);
         bool has_free_space(size_t size);
-
 
     private:
         uint8_t *m_data = nullptr;

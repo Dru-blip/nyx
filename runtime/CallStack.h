@@ -1,5 +1,6 @@
 #pragma once
 
+#include "mimalloc.h"
 #include "runtime/Frame.h"
 #include "runtime/FrameChunk.h"
 
@@ -7,6 +8,9 @@ namespace Nyx {
     class CallStack {
     public:
         static constexpr size_t ChunkCacheSize = 8;
+
+
+        CallStack();
         // release chunks memory using destructor.
         ~CallStack();
 
@@ -23,6 +27,8 @@ namespace Nyx {
 
         FrameChunk *m_head_chunk = nullptr;
         Frame *m_top = nullptr;
+
+        mi_heap_t *m_heap = nullptr;
 
         // unused fields
         FrameChunk *m_cached_chunk = nullptr;

@@ -19,7 +19,6 @@ namespace Nyx {
             switch (op) {
                 case bytecode::Opcode::LoadImmInt: {
                     bytecode::LoadImmInt instr = frame->read_at<bytecode::LoadImmInt>(pc);
-                    pc += sizeof(bytecode::LoadImmInt);
                     registers[instr.reg] = Value(instr.imm);
                     break;
                 }
@@ -31,7 +30,6 @@ namespace Nyx {
                 // }
                 case bytecode::Opcode::Ret: {
                     bytecode::Ret instr = frame->read_at<bytecode::Ret>(pc);
-                    pc += sizeof(bytecode::Ret);
                     return registers[instr.reg];
                 }
                 default: {

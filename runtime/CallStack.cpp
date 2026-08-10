@@ -1,5 +1,6 @@
 #include "CallStack.h"
 #include <cassert>
+#include <mimalloc.h>
 #include "runtime/FrameChunk.h"
 
 
@@ -14,13 +15,9 @@ namespace Nyx {
         return frame;
     }
 
-    CallStack::~CallStack() {
-        while (m_head_chunk) {
-            FrameChunk *next = m_head_chunk->m_prev;
-            delete m_head_chunk;
-            m_head_chunk = next;
-        }
-    }
+    CallStack::CallStack() { m_heap = mi_heap_new(); }
+
+    CallStack::~CallStack() { mi_heap_destroy(m_heap); }
 
     void CallStack::pop() {
         assert(m_top != nullptr);
@@ -43,7 +40,8 @@ namespace Nyx {
     }
 
     void CallStack::grow() {
-        FrameChunk *chunk = FrameChunk::create();
+        void* mem = mi_heap_malloc(m_heap, FrameChunk::Size);
+        FrameChunk *chunk = new (mem) FrameChunk(mem);
         chunk->set_previous(m_head_chunk);
         m_head_chunk = chunk;
     }

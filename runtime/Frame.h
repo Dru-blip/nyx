@@ -16,9 +16,10 @@ namespace Nyx {
         uint8_t *code_end() { return m_executable->data() + m_executable->size(); }
 
         template<typename Instr>
-        Instr read_at(uint8_t *pc) {
+        Instr read_at(uint8_t *&pc) {
             Instr instr;
             memcpy(&instr, pc, sizeof(Instr));
+            pc += sizeof(Instr);
             return instr;
         }
 

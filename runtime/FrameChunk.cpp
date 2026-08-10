@@ -5,12 +5,6 @@
 
 
 namespace Nyx {
-    FrameChunk *FrameChunk::create() {
-        void *mem = mi_malloc(FrameChunk::Size);
-        FrameChunk *newChunk = new (mem) FrameChunk(mem);
-        return newChunk;
-    }
-
     FrameChunk::FrameChunk(void *mem) {
         // point to the start of data area beyond the FrameChunk metadata.
         m_data = static_cast<uint8_t *>(mem) + sizeof(FrameChunk);
