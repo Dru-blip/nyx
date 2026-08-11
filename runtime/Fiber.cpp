@@ -24,6 +24,16 @@ namespace Nyx {
                     registers[instr.reg] = Value(instr.imm);
                     break;
                 }
+                case bytecode::Opcode::Neg: {
+                    bytecode::Neg instr = frame->read_at<bytecode::Neg>(pc);
+                    registers[instr.result] = Handlers::handle_neg(registers[instr.arg]);
+                    break;
+                }
+                case bytecode::Opcode::Not: {
+                    bytecode::Not instr = frame->read_at<bytecode::Not>(pc);
+                    registers[instr.result] = Handlers::handle_not(registers[instr.arg]);
+                    break;
+                }
                 case bytecode::Opcode::Add: {
                     bytecode::Add instr = frame->read_at<bytecode::Add>(pc);
                     registers[instr.reg] =

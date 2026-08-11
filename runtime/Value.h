@@ -7,12 +7,16 @@ namespace Nyx {
     public:
         static constexpr uintptr_t Mask = 0x7;
 
-        static constexpr uintptr_t IntTag = 1ull;
         static constexpr uintptr_t ObjTag = 0ull;
+        static constexpr uintptr_t IntTag = 1ull;
         static constexpr uintptr_t NilTag = 2ull;
+        static constexpr uintptr_t BoolTag = 3ull;
+
 
         Value() = default;
         explicit Value(int64_t value) { m_raw = static_cast<uintptr_t>(value) << 3 | IntTag; }
+        explicit Value(bool value) { m_raw = static_cast<uintptr_t>(value) << 3 | BoolTag; }
+
         static Value from_raw(uintptr_t raw) {
             Value value;
             value.m_raw = raw;
@@ -23,8 +27,11 @@ namespace Nyx {
         bool is_int() const { return (m_raw & Mask) == IntTag; }
         bool is_obj() const { return (m_raw & Mask) == ObjTag; }
         bool is_nil() const { return (m_raw & Mask) == NilTag; }
+        bool is_bool() const { return (m_raw & Mask) == BoolTag; }
+
 
         int64_t as_int() const { return static_cast<int64_t>(m_raw) >> 3; }
+        bool as_bool() const { return static_cast<bool>(m_raw) >> 3; }
         uintptr_t raw() const { return m_raw; }
 
     private:
@@ -32,4 +39,6 @@ namespace Nyx {
     };
 
     static Value Nil = Value::from_raw(Value::NilTag);
+    static Value True = Value(true);
+    static Value False = Value(false);
 } // namespace Nyx

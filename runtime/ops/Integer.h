@@ -25,4 +25,8 @@ namespace Nyx::Ops::Integer {
         // TODO: handle division by zero
         return Value(a.as_int() / b.as_int());
     }
+
+    static inline Value neg(const Value a) { return Value(-a.as_int()); }
+
+    static inline Value not_(const Value a) { return Value(!a.as_int()); }
 } // namespace Nyx::Ops::Integer
