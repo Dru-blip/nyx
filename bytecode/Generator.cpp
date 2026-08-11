@@ -87,7 +87,7 @@ namespace Nyx::bytecode {
     }
 
     uint8_t Generator::lowerAdd(const Node *node) {
-        const Add *add = static_cast<const Add *>(node);
+        const Binary *add = static_cast<const Binary *>(node);
         uint8_t left = lowerExpr(add->left);
         uint8_t right = lowerExpr(add->right);
 
@@ -96,7 +96,7 @@ namespace Nyx::bytecode {
     }
 
     uint8_t Generator::lowerSub(const Node *node) {
-        const Sub *sub = static_cast<const Sub *>(node);
+        const Binary *sub = static_cast<const Binary *>(node);
         uint8_t left = lowerExpr(sub->left);
         uint8_t right = lowerExpr(sub->right);
 
@@ -106,7 +106,7 @@ namespace Nyx::bytecode {
 
 
     uint8_t Generator::lowerMul(const Node *node) {
-        const Mul *mul = static_cast<const Mul *>(node);
+        const Binary *mul = static_cast<const Binary *>(node);
         uint8_t left = lowerExpr(mul->left);
         uint8_t right = lowerExpr(mul->right);
 
@@ -115,7 +115,7 @@ namespace Nyx::bytecode {
     }
 
     uint8_t Generator::lowerDiv(const Node *node) {
-        const Div *div = static_cast<const Div *>(node);
+        const Binary *div = static_cast<const Binary *>(node);
         uint8_t left = lowerExpr(div->left);
         uint8_t right = lowerExpr(div->right);
 

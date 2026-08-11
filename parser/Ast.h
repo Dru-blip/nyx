@@ -24,6 +24,13 @@ namespace Nyx {
         Mul,
         Div,
 
+        Lt,
+        Gt,
+        Gte,
+        Lte,
+        Eq,
+        Neq,
+
         Ret,
     };
 
@@ -55,21 +62,6 @@ namespace Nyx {
         Node *left, *right;
     };
 
-    struct Add : Binary {
-        Add(Span span, Node *left, Node *right) : Binary(NodeTag::Add, span, left, right) {}
-    };
-
-    struct Sub : Binary {
-        Sub(Span span, Node *left, Node *right) : Binary(NodeTag::Sub, span, left, right) {}
-    };
-
-    struct Mul : Binary {
-        Mul(Span span, Node *left, Node *right) : Binary(NodeTag::Mul, span, left, right) {}
-    };
-
-    struct Div : Binary {
-        Div(Span span, Node *left, Node *right) : Binary(NodeTag::Div, span, left, right) {}
-    };
 
     struct Return : public Node {
         Return(Span span, std::optional<Node *> value) : Node(NodeTag::Ret, span), value(value) {}
@@ -97,7 +89,6 @@ namespace Nyx {
             const size_t size = nodes.size() * sizeof(Node *);
             void *mem = mi_heap_malloc(m_heap, size);
             memcpy(mem, nodes.data(), size);
-
             return {static_cast<Node **>(mem), nodes.size()};
         }
 

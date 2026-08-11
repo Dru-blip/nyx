@@ -15,6 +15,15 @@ struct Operator {
 
 namespace Nyx {
     static std::unordered_map<TokenTag, Operator> operator_map{
+            {TokenTag::Equal, {NodeTag::Eq, 30, 31}},
+            {TokenTag::BangEqual, {NodeTag::Neq, 30, 31}},
+
+            {TokenTag::AngleBracketLeft, {NodeTag::Lt, 40, 41}},
+            {TokenTag::AngleBracketRight, {NodeTag::Gt, 40, 41}},
+            {TokenTag::AngleBracketLeftEqual, {NodeTag::Gte, 40, 41}},
+            {TokenTag::AngleBracketRightEqual, {NodeTag::Lte, 40, 41}},
+
+
             {TokenTag::Plus, {NodeTag::Add, 50, 51}},
             {TokenTag::Minus, {NodeTag::Sub, 50, 51}},
             {TokenTag::Asterisk, {NodeTag::Mul, 52, 53}},
@@ -107,7 +116,7 @@ namespace Nyx {
                 const auto rhs = parse_primary_expression();
                 return m_arena.allocate<Neg>(span.merge(rhs->span), rhs);
             }
-            case TokenTag::Exclamation: {
+            case TokenTag::Bang: {
                 const auto _ = consume_token();
                 const auto rhs = parse_primary_expression();
                 return m_arena.allocate<Not>(span.merge(rhs->span), rhs);

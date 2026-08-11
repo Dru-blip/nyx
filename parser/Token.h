@@ -12,8 +12,18 @@ namespace Nyx {
         Asterisk,
         Slash,
 
-        Exclamation,
+        Bang,
         Tilde,
+
+        Equal,
+        EqualEqual,
+
+        BangEqual,
+
+        AngleBracketLeft,
+        AngleBracketRight,
+        AngleBracketLeftEqual,
+        AngleBracketRightEqual,
 
         Return,
         Invalid,

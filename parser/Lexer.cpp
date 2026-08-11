@@ -11,6 +11,7 @@ namespace Nyx {
     }
 
     char Lexer::current_char() const { return is_end() ? '\0' : m_source[m_pos]; }
+    char Lexer::peek_char() const { return is_end() ? '\0' : m_source[m_pos + 1]; }
 
     void Lexer::eat_integer() {
         while (!is_end() && std::isdigit(m_source[m_pos])) {
@@ -45,7 +46,12 @@ namespace Nyx {
                 break;
             }
             case '!': {
-                tag = TokenTag::Exclamation;
+                if (peek_char() == '=') {
+                    tag = TokenTag::BangEqual;
+                    m_pos += 2;
+                    break;
+                }
+                tag = TokenTag::Bang;
                 m_pos++;
                 break;
             }
@@ -70,6 +76,36 @@ namespace Nyx {
                 tag = TokenTag::Slash;
                 m_pos++;
                 break;
+            case '<': {
+                if (peek_char() == '=') {
+                    tag = TokenTag::AngleBracketLeftEqual;
+                    m_pos += 2;
+                    break;
+                }
+                tag = TokenTag::AngleBracketLeft;
+                m_pos++;
+                break;
+            }
+            case '>': {
+                if (peek_char() == '=') {
+                    tag = TokenTag::AngleBracketRightEqual;
+                    m_pos += 2;
+                    break;
+                }
+                tag = TokenTag::AngleBracketRight;
+                m_pos++;
+                break;
+            }
+            case '=': {
+                if (peek_char() == '=') {
+                    tag = TokenTag::EqualEqual;
+                    m_pos += 2;
+                    break;
+                }
+                tag = TokenTag::Equal;
+                m_pos++;
+                break;
+            }
             default: {
                 if (std::isdigit(c)) {
                     tag = TokenTag::Integer;
