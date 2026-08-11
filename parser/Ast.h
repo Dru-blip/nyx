@@ -46,14 +46,9 @@ namespace Nyx {
         IntLiteral(Span span) : Node(NodeTag::Integer, span) {}
     };
 
-    struct Neg : Node {
-        Neg(Span span, Node *child) : Node(NodeTag::Neg, span), child(child) {}
-        Node *child;
-    };
-
-    struct Not : Node {
-        Not(Span span, Node *child) : Node(NodeTag::Not, span), child(child) {}
-        Node *child;
+    struct Unary : public Node {
+        Unary(NodeTag tag, Span span, Node *arg) : Node(tag, span), arg(arg) {}
+        Node *arg;
     };
 
     struct Binary : Node {

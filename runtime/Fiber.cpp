@@ -58,6 +58,42 @@ namespace Nyx {
                             Handlers::handle_div(registers[instr.lhs], registers[instr.rhs]);
                     break;
                 }
+                case bytecode::Opcode::Lt: {
+                    bytecode::Lt instr = frame->read_at<bytecode::Lt>(pc);
+                    registers[instr.reg] =
+                            Handlers::handle_lt(registers[instr.lhs], registers[instr.rhs]);
+                    break;
+                }
+                case bytecode::Opcode::Lte: {
+                    bytecode::Lte instr = frame->read_at<bytecode::Lte>(pc);
+                    registers[instr.reg] =
+                            Handlers::handle_lte(registers[instr.lhs], registers[instr.rhs]);
+                    break;
+                }
+                case bytecode::Opcode::Gt: {
+                    bytecode::Gt instr = frame->read_at<bytecode::Gt>(pc);
+                    registers[instr.reg] =
+                            Handlers::handle_gt(registers[instr.lhs], registers[instr.rhs]);
+                    break;
+                }
+                case bytecode::Opcode::Gte: {
+                    bytecode::Gte instr = frame->read_at<bytecode::Gte>(pc);
+                    registers[instr.reg] =
+                            Handlers::handle_gte(registers[instr.lhs], registers[instr.rhs]);
+                    break;
+                }
+                case bytecode::Opcode::Eq: {
+                    bytecode::Eq instr = frame->read_at<bytecode::Eq>(pc);
+                    registers[instr.reg] =
+                            Handlers::handle_eq(registers[instr.lhs], registers[instr.rhs]);
+                    break;
+                }
+                case bytecode::Opcode::Neq: {
+                    bytecode::Neq instr = frame->read_at<bytecode::Neq>(pc);
+                    registers[instr.reg] =
+                            Handlers::handle_neq(registers[instr.lhs], registers[instr.rhs]);
+                    break;
+                }
                 case bytecode::Opcode::Ret: {
                     bytecode::Ret instr = frame->read_at<bytecode::Ret>(pc);
                     return registers[instr.reg];

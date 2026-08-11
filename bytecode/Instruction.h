@@ -13,6 +13,13 @@ namespace Nyx::bytecode {
         Sub,
         Mul,
         Div,
+        Lt,
+        Lte,
+
+        Gt,
+        Gte,
+        Eq,
+        Neq,
     };
 
 #pragma pack(push, 1)
@@ -25,39 +32,32 @@ namespace Nyx::bytecode {
         int64_t imm;
     };
 
-    struct Not {
-        uint8_t arg;
-        uint8_t result;
+#define DefineUnaryInst(name)                                                                      \
+    struct name {                                                                                  \
+        uint8_t arg;                                                                               \
+        uint8_t result;                                                                            \
     };
 
-    struct Neg {
-        uint8_t arg;
-        uint8_t result;
+    DefineUnaryInst(Not);
+    DefineUnaryInst(Neg);
+
+#define DefineBinaryInst(name)                                                                     \
+    struct name {                                                                                  \
+        uint8_t lhs;                                                                               \
+        uint8_t rhs;                                                                               \
+        uint8_t reg;                                                                               \
     };
 
-    struct Add {
-        uint8_t lhs;
-        uint8_t rhs;
-        uint8_t reg;
-    };
+    DefineBinaryInst(Add);
+    DefineBinaryInst(Sub);
+    DefineBinaryInst(Mul);
+    DefineBinaryInst(Div);
 
-    struct Sub {
-        uint8_t lhs;
-        uint8_t rhs;
-        uint8_t reg;
-    };
-
-    struct Mul {
-        uint8_t lhs;
-        uint8_t rhs;
-        uint8_t reg;
-    };
-
-    struct Div {
-        uint8_t lhs;
-        uint8_t rhs;
-        uint8_t reg;
-    };
+    DefineBinaryInst(Lt);
+    DefineBinaryInst(Lte);
+    DefineBinaryInst(Gt);
+    DefineBinaryInst(Gte);
+    DefineBinaryInst(Eq);
+    DefineBinaryInst(Neq);
 #pragma pack(pop)
-
 } // namespace Nyx::bytecode

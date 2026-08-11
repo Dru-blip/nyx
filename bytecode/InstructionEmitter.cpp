@@ -20,74 +20,52 @@ namespace Nyx::bytecode {
     }
 
     uint8_t InstructionEmitter::neg(const uint8_t &arg) {
-        push(static_cast<uint8_t>(Opcode::Neg));
-        m_register_allocator.free(arg);
-        uint8_t result = m_register_allocator.allocate();
-        Neg inst{arg, result};
-        emit(inst);
-        return result;
+        return emit_unary<Neg>(Opcode::Neg, arg);
     }
 
     uint8_t InstructionEmitter::not_(const uint8_t &arg) {
-        push(static_cast<uint8_t>(Opcode::Not));
-        m_register_allocator.free(arg);
-        uint8_t result = m_register_allocator.allocate();
-        Not inst{arg, result};
-        emit(inst);
-        return result;
+        return emit_unary<Not>(Opcode::Not, arg);
     }
 
     uint8_t InstructionEmitter::add(const uint8_t &left, const uint8_t &right) {
-        m_register_allocator.free(right);
-        m_register_allocator.free(left);
-
-        uint8_t reg = m_register_allocator.allocate();
-
-        push(static_cast<uint8_t>(Opcode::Add));
-
-        Add inst{left, right, reg};
-        emit(inst);
-
-        return reg;
+        return emit_binary<Add>(Opcode::Add, left, right);
     }
 
     uint8_t InstructionEmitter::sub(const uint8_t &left, const uint8_t &right) {
-        m_register_allocator.free(right);
-        m_register_allocator.free(left);
-
-        uint8_t reg = m_register_allocator.allocate();
-
-        push(static_cast<uint8_t>(Opcode::Sub));
-        Sub inst{left, right, reg};
-        emit(inst);
-
-        return reg;
+        return emit_binary<Sub>(Opcode::Sub, left, right);
     }
 
 
     uint8_t InstructionEmitter::mul(const uint8_t &left, const uint8_t &right) {
-        m_register_allocator.free(right);
-        m_register_allocator.free(left);
-
-        uint8_t reg = m_register_allocator.allocate();
-
-        push(static_cast<uint8_t>(Opcode::Mul));
-        Mul inst{left, right, reg};
-        emit(inst);
-
-        return reg;
+        return emit_binary<Mul>(Opcode::Mul, left, right);
     }
 
     uint8_t InstructionEmitter::div(const uint8_t &left, const uint8_t &right) {
-        m_register_allocator.free(right);
-        m_register_allocator.free(left);
-
-        uint8_t reg = m_register_allocator.allocate();
-
-        push(static_cast<uint8_t>(Opcode::Div));
-        Div inst{left, right, reg};
-        emit(inst);
-
-        return reg;
+        return emit_binary<Div>(Opcode::Div, left, right);
     }
+
+    uint8_t InstructionEmitter::lt(const uint8_t &left, const uint8_t &right) {
+        return emit_binary<Lt>(Opcode::Lt, left, right);
+    }
+
+    uint8_t InstructionEmitter::lte(const uint8_t &left, const uint8_t &right) {
+        return emit_binary<Lte>(Opcode::Lte, left, right);
+    }
+
+    uint8_t InstructionEmitter::gt(const uint8_t &left, const uint8_t &right) {
+        return emit_binary<Gt>(Opcode::Gt, left, right);
+    }
+
+    uint8_t InstructionEmitter::gte(const uint8_t &left, const uint8_t &right) {
+        return emit_binary<Gte>(Opcode::Gte, left, right);
+    }
+
+    uint8_t InstructionEmitter::eq(const uint8_t &left, const uint8_t &right) {
+        return emit_binary<Eq>(Opcode::Eq, left, right);
+    }
+
+    uint8_t InstructionEmitter::neq(const uint8_t &left, const uint8_t &right) {
+        return emit_binary<Neq>(Opcode::Neq, left, right);
+    }
+
 } // namespace Nyx::bytecode

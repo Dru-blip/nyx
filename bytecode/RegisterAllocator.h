@@ -1,6 +1,7 @@
 #pragma once
 
 
+#include <bitset>
 #include <cstdint>
 
 namespace Nyx::bytecode {
@@ -15,5 +16,6 @@ namespace Nyx::bytecode {
         uint8_t m_next_register{};
         uint8_t m_max_registers{255};
         uint8_t m_max_used{};
+        std::bitset<255> m_registers;
     };
 } // namespace Nyx::bytecode

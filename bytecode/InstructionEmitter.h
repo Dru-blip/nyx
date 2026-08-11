@@ -3,6 +3,7 @@
 #include <cstdint>
 #include <cstring>
 #include <vector>
+#include "bytecode/Instruction.h"
 #include "bytecode/Operand.h"
 #include "bytecode/RegisterAllocator.h"
 
@@ -14,6 +15,33 @@ namespace Nyx::bytecode {
         void emit(const InstType &inst) {
             m_code.resize(m_code.size() + sizeof(InstType));
             std::memcpy(m_code.data() + m_code.size() - sizeof(InstType), &inst, sizeof(InstType));
+        }
+
+
+        template<typename Instr>
+        uint8_t emit_binary(Opcode opcode, const uint8_t &arg1, const uint8_t &arg2) {
+            m_register_allocator.free(arg1);
+            m_register_allocator.free(arg2);
+
+            uint8_t reg = m_register_allocator.allocate();
+
+            push(static_cast<uint8_t>(opcode));
+
+            Instr inst{arg1, arg2, reg};
+            emit<Instr>(inst);
+
+            return reg;
+        }
+
+
+        template<typename Instr>
+        uint8_t emit_unary(Opcode opcode, const uint8_t &arg) {
+            push(static_cast<uint8_t>(opcode));
+            m_register_allocator.free(arg);
+            uint8_t result = m_register_allocator.allocate();
+            Instr inst{arg, result};
+            emit<Instr>(inst);
+            return result;
         }
 
         void push(const uint8_t byte) { m_code.push_back(byte); }
@@ -28,6 +56,12 @@ namespace Nyx::bytecode {
         uint8_t mul(const uint8_t &left, const uint8_t &right);
         uint8_t div(const uint8_t &left, const uint8_t &right);
 
+        uint8_t lt(const uint8_t &left, const uint8_t &right);
+        uint8_t lte(const uint8_t &left, const uint8_t &right);
+        uint8_t gt(const uint8_t &left, const uint8_t &right);
+        uint8_t gte(const uint8_t &left, const uint8_t &right);
+        uint8_t eq(const uint8_t &left, const uint8_t &right);
+        uint8_t neq(const uint8_t &left, const uint8_t &right);
 
     private:
         std::vector<uint8_t> m_code;

@@ -64,6 +64,9 @@ namespace Nyx::bytecode {
             case NodeTag::Neg: {
                 return lowerNeg(node);
             }
+            case NodeTag::Lt: {
+                return lowerLt(node);
+            }
             default: {
                 abort();
             }
@@ -71,16 +74,16 @@ namespace Nyx::bytecode {
     }
 
     uint8_t Generator::lowerNeg(const Node *node) {
-        const Neg *neg = static_cast<const Neg *>(node);
-        uint8_t child = lowerExpr(neg->child);
+        const Unary *neg = static_cast<const Unary *>(node);
+        uint8_t child = lowerExpr(neg->arg);
 
         uint8_t reg = m_emitter.neg(child);
         return reg;
     }
 
     uint8_t Generator::lowerNot(const Node *node) {
-        const Not *notNode = static_cast<const Not *>(node);
-        uint8_t child = lowerExpr(notNode->child);
+        const Unary *notNode = static_cast<const Unary *>(node);
+        uint8_t child = lowerExpr(notNode->arg);
 
         uint8_t reg = m_emitter.not_(child);
         return reg;
@@ -120,6 +123,15 @@ namespace Nyx::bytecode {
         uint8_t right = lowerExpr(div->right);
 
         uint8_t reg = m_emitter.div(left, right);
+        return reg;
+    }
+
+    uint8_t Generator::lowerLt(const Node *node) {
+        const Binary *lt = static_cast<const Binary *>(node);
+        uint8_t left = lowerExpr(lt->left);
+        uint8_t right = lowerExpr(lt->right);
+
+        uint8_t reg = m_emitter.lt(left, right);
         return reg;
     }
 

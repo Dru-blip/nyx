@@ -114,12 +114,12 @@ namespace Nyx {
             case TokenTag::Minus: {
                 const auto _ = consume_token();
                 const auto rhs = parse_primary_expression();
-                return m_arena.allocate<Neg>(span.merge(rhs->span), rhs);
+                return m_arena.allocate<Unary>(NodeTag::Neg, span.merge(rhs->span), rhs);
             }
             case TokenTag::Bang: {
                 const auto _ = consume_token();
                 const auto rhs = parse_primary_expression();
-                return m_arena.allocate<Not>(span.merge(rhs->span), rhs);
+                return m_arena.allocate<Unary>(NodeTag::Not, span.merge(rhs->span), rhs);
             }
             default: {
                 std::abort();
