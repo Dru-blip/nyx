@@ -9,6 +9,7 @@ namespace Nyx {
     class FrameChunk {
     public:
         static constexpr size_t Size = 4 * 1024;
+        static FrameChunk *create();
         FrameChunk(void *mem);
         ~FrameChunk();
 

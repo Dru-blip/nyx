@@ -15,20 +15,32 @@ namespace Nyx {
         return frame;
     }
 
-    CallStack::CallStack() { m_heap = mi_heap_new(); }
 
-    CallStack::~CallStack() { mi_heap_destroy(m_heap); }
+    CallStack::~CallStack() {
+        free_cache_chunks();
+        while (m_head_chunk) {
+            FrameChunk *next = m_head_chunk->m_prev;
+            m_head_chunk->~FrameChunk();
+            m_head_chunk = next;
+        }
+    }
 
     void CallStack::pop() {
+        // TODO: should delete the chunk if its empty or cache it.
         assert(m_top != nullptr);
 
-        m_top = m_top->m_prev;
         m_head_chunk->acquire_frame(m_top);
+        m_top = m_top->m_prev;
 
-        // TODO: should delete the chunk if its empty or cache it.
-        // if (m_top == nullptr) {
 
-        // }
+        if (m_head_chunk->m_frame_count == 0) {
+            if (m_cached_chunk_count > CallStack::ChunkCacheSize) {
+                free_cache_chunks();
+            }
+            m_head_chunk->m_prev = m_cached_chunk;
+            m_cached_chunk = m_head_chunk;
+            m_cached_chunk_count++;
+        }
     }
 
     void CallStack::try_acquire_chunk(size_t frame_size) {
@@ -40,9 +52,18 @@ namespace Nyx {
     }
 
     void CallStack::grow() {
-        void* mem = mi_heap_malloc(m_heap, FrameChunk::Size);
-        FrameChunk *chunk = new (mem) FrameChunk(mem);
+        FrameChunk *chunk = FrameChunk::create();
         chunk->set_previous(m_head_chunk);
         m_head_chunk = chunk;
+    }
+
+
+    void CallStack::free_cache_chunks() {
+        while (m_cached_chunk) {
+            FrameChunk *next = m_cached_chunk->m_prev;
+            m_cached_chunk->~FrameChunk();
+            m_cached_chunk = next;
+            m_cached_chunk_count--;
+        }
     }
 } // namespace Nyx

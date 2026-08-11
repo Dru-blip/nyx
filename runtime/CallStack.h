@@ -9,8 +9,6 @@ namespace Nyx {
     public:
         static constexpr size_t ChunkCacheSize = 8;
 
-
-        CallStack();
         // release chunks memory using destructor.
         ~CallStack();
 
@@ -24,6 +22,8 @@ namespace Nyx {
     private:
         void grow();
         void try_acquire_chunk(size_t frame_size);
+
+        void free_cache_chunks();
 
         FrameChunk *m_head_chunk = nullptr;
         Frame *m_top = nullptr;
