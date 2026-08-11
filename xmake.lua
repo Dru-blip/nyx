@@ -1,8 +1,6 @@
-add_rules("mode.debug", "mode.release", "mode.profile")
+add_rules("mode.debug", "mode.release")
 
-set_defaultmode("profile")
-set_optimize("fastest")
-
+set_defaultmode("debug")
 
 add_requires("mimalloc 3.4.1")
 
@@ -11,12 +9,6 @@ target("nyx")
     set_toolchains("clang")
     set_languages("c++26")
     set_warnings("allextra")
-
-    if is_plat("windows") then
-            add_cxflags("-g", "-gcodeview")
-            add_ldflags("-Wl,-debug")
-    end
-
     add_includedirs(".")
     add_files("parser/*.cpp")
     add_files("bytecode/*.cpp")

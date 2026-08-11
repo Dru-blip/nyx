@@ -12,6 +12,9 @@ namespace Nyx {
         Asterisk,
         Slash,
 
+        Exclamation,
+        Tilde,
+
         Return,
         Invalid,
         Eof,

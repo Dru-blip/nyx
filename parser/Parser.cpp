@@ -102,6 +102,16 @@ namespace Nyx {
             case TokenTag::Integer: {
                 return parse_integer();
             }
+            case TokenTag::Minus: {
+                const auto _ = consume_token();
+                const auto rhs = parse_primary_expression();
+                return m_arena.allocate<Neg>(span.merge(rhs->span), rhs);
+            }
+            case TokenTag::Exclamation: {
+                const auto _ = consume_token();
+                const auto rhs = parse_primary_expression();
+                return m_arena.allocate<Not>(span.merge(rhs->span), rhs);
+            }
             default: {
                 std::abort();
             }

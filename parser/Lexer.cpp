@@ -44,6 +44,16 @@ namespace Nyx {
                 m_pos++;
                 break;
             }
+            case '!': {
+                tag = TokenTag::Exclamation;
+                m_pos++;
+                break;
+            }
+            case '~': {
+                tag = TokenTag::Tilde;
+                m_pos++;
+                break;
+            }
             case '+':
                 tag = TokenTag::Plus;
                 m_pos++;

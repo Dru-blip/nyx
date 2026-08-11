@@ -17,14 +17,12 @@ namespace Nyx::bytecode {
         }
 
         void push(const uint8_t byte) { m_code.push_back(byte); }
-        void push_bytes(const void *start, const size_t size) {
-            const uint8_t *ptr = static_cast<const uint8_t *>(start);
-            m_code.insert(m_code.end(), ptr, ptr + size);
-        }
 
         std::vector<uint8_t> &code() { return m_code; }
         void ret(const uint8_t reg);
         uint8_t load_imm_int(const int64_t imm);
+        uint8_t not_(const uint8_t &arg);
+        uint8_t neg(const uint8_t &arg);
         uint8_t add(const uint8_t &left, const uint8_t &right);
         uint8_t sub(const uint8_t &left, const uint8_t &right);
         uint8_t mul(const uint8_t &left, const uint8_t &right);

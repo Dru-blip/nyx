@@ -7,6 +7,8 @@ namespace Nyx::bytecode {
     enum class Opcode : uint8_t {
         LoadImmInt,
         Ret,
+        Not,
+        Neg,
         Add,
         Sub,
         Mul,
@@ -21,6 +23,16 @@ namespace Nyx::bytecode {
     struct LoadImmInt {
         uint8_t reg;
         int64_t imm;
+    };
+
+    struct Not {
+        uint8_t arg;
+        uint8_t result;
+    };
+
+    struct Neg {
+        uint8_t arg;
+        uint8_t result;
     };
 
     struct Add {

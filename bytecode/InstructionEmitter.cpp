@@ -19,6 +19,24 @@ namespace Nyx::bytecode {
         return reg;
     }
 
+    uint8_t InstructionEmitter::neg(const uint8_t &arg) {
+        push(static_cast<uint8_t>(Opcode::Neg));
+        m_register_allocator.free(arg);
+        uint8_t result = m_register_allocator.allocate();
+        Neg inst{arg, result};
+        emit(inst);
+        return result;
+    }
+
+    uint8_t InstructionEmitter::not_(const uint8_t &arg) {
+        push(static_cast<uint8_t>(Opcode::Not));
+        m_register_allocator.free(arg);
+        uint8_t result = m_register_allocator.allocate();
+        Not inst{arg, result};
+        emit(inst);
+        return result;
+    }
+
     uint8_t InstructionEmitter::add(const uint8_t &left, const uint8_t &right) {
         m_register_allocator.free(right);
         m_register_allocator.free(left);
@@ -72,6 +90,4 @@ namespace Nyx::bytecode {
 
         return reg;
     }
-
-
 } // namespace Nyx::bytecode

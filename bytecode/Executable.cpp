@@ -26,6 +26,20 @@ namespace Nyx::bytecode {
                     pc += sizeof(LoadImmInt);
                     break;
                 }
+                case Opcode::Neg: {
+                    Neg neg;
+                    std::memcpy(&neg, pc, sizeof(Neg));
+                    std::println("[{}] Neg %{} = -%{}", pc - m_code.data(), neg.result, neg.arg);
+                    pc += sizeof(Neg);
+                    break;
+                }
+                case Opcode::Not: {
+                    Not not_;
+                    std::memcpy(&not_, pc, sizeof(Not));
+                    std::println("[{}] Not %{} = !%{}", pc - m_code.data(), not_.result, not_.arg);
+                    pc += sizeof(Not);
+                    break;
+                }
                 case Opcode::Add: {
                     Add add;
                     std::memcpy(&add, pc, sizeof(Add));

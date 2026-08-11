@@ -16,6 +16,9 @@ namespace Nyx {
     enum class NodeTag {
         Integer,
 
+        Neg,
+        Not,
+
         Add,
         Sub,
         Mul,
@@ -34,6 +37,16 @@ namespace Nyx {
 
     struct IntLiteral : Node {
         IntLiteral(Span span) : Node(NodeTag::Integer, span) {}
+    };
+
+    struct Neg : Node {
+        Neg(Span span, Node *child) : Node(NodeTag::Neg, span), child(child) {}
+        Node *child;
+    };
+
+    struct Not : Node {
+        Not(Span span, Node *child) : Node(NodeTag::Not, span), child(child) {}
+        Node *child;
     };
 
     struct Binary : Node {
