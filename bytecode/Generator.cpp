@@ -48,6 +48,9 @@ namespace Nyx::bytecode {
             case NodeTag::Not: {
                 return lowerNot(node);
             }
+            case NodeTag::Grouped: {
+                return lowerGrouped(node);
+            }
             case NodeTag::Add: {
                 return lowerAdd(node);
             }
@@ -85,6 +88,12 @@ namespace Nyx::bytecode {
                 abort();
             }
         }
+    }
+
+    uint8_t Generator::lowerGrouped(const Node *node) {
+        const Unary *grouped = static_cast<const Unary *>(node);
+        uint8_t child = lowerExpr(grouped->arg);
+        return child;
     }
 
     uint8_t Generator::lowerNeg(const Node *node) {

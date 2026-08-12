@@ -111,6 +111,14 @@ namespace Nyx {
             case TokenTag::Integer: {
                 return parse_integer();
             }
+            case TokenTag::LeftParen: {
+                const auto _ = consume_token();
+                const auto expr = parse_expression(0);
+                // TODO: check right_paren is TokenTag::RightParen
+                const auto right_paren = consume_token();
+                return m_arena.allocate<Unary>(NodeTag::Grouped, span.merge(right_paren.span),
+                                               expr);
+            }
             case TokenTag::Minus: {
                 const auto _ = consume_token();
                 const auto rhs = parse_primary_expression();

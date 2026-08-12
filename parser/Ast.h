@@ -31,6 +31,8 @@ namespace Nyx {
         Eq,
         Neq,
 
+        Grouped,
+
         Ret,
     };
 
@@ -56,7 +58,6 @@ namespace Nyx {
             Node(tag, span), left(left), right(right) {}
         Node *left, *right;
     };
-
 
     struct Return : public Node {
         Return(Span span, std::optional<Node *> value) : Node(NodeTag::Ret, span), value(value) {}

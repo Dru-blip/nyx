@@ -21,6 +21,7 @@ namespace Nyx::bytecode {
         void lowerRoot(const Node *node);
         void lowerRet(const Node *node);
         uint8_t lowerExpr(const Node *node);
+        uint8_t lowerGrouped(const Node *node);
         uint8_t lowerAdd(const Node *node);
         uint8_t lowerSub(const Node *node);
         uint8_t lowerMul(const Node *node);

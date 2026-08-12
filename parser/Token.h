@@ -25,6 +25,11 @@ namespace Nyx {
         AngleBracketLeftEqual,
         AngleBracketRightEqual,
 
+
+        LeftParen,
+        RightParen,
+
+
         Return,
         Invalid,
         Eof,

@@ -45,6 +45,16 @@ namespace Nyx {
                 m_pos++;
                 break;
             }
+            case '(': {
+                tag = TokenTag::LeftParen;
+                m_pos++;
+                break;
+            }
+            case ')': {
+                tag = TokenTag::RightParen;
+                m_pos++;
+                break;
+            }
             case '!': {
                 if (peek_char() == '=') {
                     tag = TokenTag::BangEqual;
