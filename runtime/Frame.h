@@ -2,6 +2,7 @@
 
 #include <bit>
 #include <cstdint>
+#include <cstring>
 #include "bytecode/Executable.h"
 #include "bytecode/Instruction.h"
 #include "heap/Cell.h"
@@ -18,7 +19,7 @@ namespace Nyx {
         template<typename Instr>
         Instr read_at(uint8_t *&pc) {
             Instr instr;
-            memcpy(&instr, pc, sizeof(Instr));
+            std::memcpy(&instr, pc, sizeof(Instr));
             pc += sizeof(Instr);
             return instr;
         }

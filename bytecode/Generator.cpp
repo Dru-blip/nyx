@@ -1,6 +1,5 @@
 #include "bytecode/Generator.h"
 #include <charconv>
-#include <corecrt_terminate.h>
 #include <cstdint>
 #include <string_view>
 
@@ -66,6 +65,21 @@ namespace Nyx::bytecode {
             }
             case NodeTag::Lt: {
                 return lowerLt(node);
+            }
+            case NodeTag::Lte: {
+                return lowerLte(node);
+            }
+            case NodeTag::Gt: {
+                return lowerGt(node);
+            }
+            case NodeTag::Gte: {
+                return lowerGte(node);
+            }
+            case NodeTag::Eq: {
+                return lowerEq(node);
+            }
+            case NodeTag::Neq: {
+                return lowerNeq(node);
             }
             default: {
                 abort();
@@ -134,6 +148,53 @@ namespace Nyx::bytecode {
         uint8_t reg = m_emitter.lt(left, right);
         return reg;
     }
+
+
+    uint8_t Generator::lowerLte(const Node *node) {
+        const Binary *lte = static_cast<const Binary *>(node);
+        uint8_t left = lowerExpr(lte->left);
+        uint8_t right = lowerExpr(lte->right);
+
+        uint8_t reg = m_emitter.lte(left, right);
+        return reg;
+    }
+
+    uint8_t Generator::lowerGt(const Node *node) {
+        const Binary *gt = static_cast<const Binary *>(node);
+        uint8_t left = lowerExpr(gt->left);
+        uint8_t right = lowerExpr(gt->right);
+
+        uint8_t reg = m_emitter.gt(left, right);
+        return reg;
+    }
+
+    uint8_t Generator::lowerGte(const Node *node) {
+        const Binary *gte = static_cast<const Binary *>(node);
+        uint8_t left = lowerExpr(gte->left);
+        uint8_t right = lowerExpr(gte->right);
+
+        uint8_t reg = m_emitter.gte(left, right);
+        return reg;
+    }
+
+    uint8_t Generator::lowerEq(const Node *node) {
+        const Binary *eq = static_cast<const Binary *>(node);
+        uint8_t left = lowerExpr(eq->left);
+        uint8_t right = lowerExpr(eq->right);
+
+        uint8_t reg = m_emitter.eq(left, right);
+        return reg;
+    }
+
+    uint8_t Generator::lowerNeq(const Node *node) {
+        const Binary *neq = static_cast<const Binary *>(node);
+        uint8_t left = lowerExpr(neq->left);
+        uint8_t right = lowerExpr(neq->right);
+
+        uint8_t reg = m_emitter.neq(left, right);
+        return reg;
+    }
+
 
     uint8_t Generator::lowerInt(const Node *node) {
         const auto int_str = m_ast.getSource(node);

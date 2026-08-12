@@ -2,7 +2,6 @@
 #include "heap/Bin.h"
 #include "heap/RegionAllocator.h"
 
-
 namespace Nyx {
     Heap::Heap() : m_region_allocator(RegionAllocator()), m_block_allocator(m_region_allocator) {
         for (auto &bin: m_bins) {

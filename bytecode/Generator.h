@@ -26,6 +26,12 @@ namespace Nyx::bytecode {
         uint8_t lowerMul(const Node *node);
         uint8_t lowerDiv(const Node *node);
         uint8_t lowerLt(const Node *node);
+        uint8_t lowerLte(const Node *node);
+        uint8_t lowerGt(const Node *node);
+        uint8_t lowerGte(const Node *node);
+        uint8_t lowerEq(const Node *node);
+        uint8_t lowerNeq(const Node *node);
+
         uint8_t lowerNeg(const Node *node);
         uint8_t lowerNot(const Node *node);
         uint8_t lowerInt(const Node *node);

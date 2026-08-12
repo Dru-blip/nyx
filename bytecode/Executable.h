@@ -1,6 +1,9 @@
 #pragma once
 
 #include <cstdint>
+#include <cstring>
+#include <print>
+#include <string_view>
 #include <vector>
 #include "heap/Cell.h"
 #include "runtime/Value.h"
@@ -18,6 +21,25 @@ namespace Nyx::bytecode {
 
 
     private:
+        template<typename Instr>
+        void print_binary_instruction(std::string_view name, std::string_view op, uint8_t *&pc) {
+            Instr instr;
+            std::memcpy(&instr, pc, sizeof(Instr));
+            std::println("[{}] {} %{} = %{} {} %{}", pc - m_code.data(), name, instr.reg, instr.lhs,
+                         op, instr.rhs);
+            pc += sizeof(Instr);
+        }
+
+        template<typename Instr>
+        void print_unary_instruction(std::string_view name, std::string_view op, uint8_t *&pc) {
+            Instr instr;
+            std::memcpy(&instr, pc, sizeof(Instr));
+            std::println("[{}] {} %{} = {}%{}", pc - m_code.data(), name, instr.arg, op,
+                         instr.result);
+            pc += sizeof(Instr);
+        }
+
+
         std::vector<uint8_t> m_code;
         std::vector<Value> m_constants;
         uint8_t m_register_count{0};

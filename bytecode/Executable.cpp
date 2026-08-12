@@ -1,12 +1,13 @@
 #include "bytecode/Executable.h"
 #include <cstdint>
+#include <cstring>
 #include <print>
 #include "bytecode/Instruction.h"
 
 namespace Nyx::bytecode {
     void Executable::print_code() {
-        const size_t size = m_code.size();
-        const uint8_t *pc = m_code.data();
+        const std::size_t size = m_code.size();
+        uint8_t *pc = m_code.data();
         const uint8_t *end = pc + size;
         while (pc < end) {
             Opcode op = static_cast<Opcode>(*pc++);
@@ -27,49 +28,51 @@ namespace Nyx::bytecode {
                     break;
                 }
                 case Opcode::Neg: {
-                    Neg neg;
-                    std::memcpy(&neg, pc, sizeof(Neg));
-                    std::println("[{}] Neg %{} = -%{}", pc - m_code.data(), neg.result, neg.arg);
-                    pc += sizeof(Neg);
+                    print_unary_instruction<Neg>("Neg", "-", pc);
                     break;
                 }
                 case Opcode::Not: {
-                    Not not_;
-                    std::memcpy(&not_, pc, sizeof(Not));
-                    std::println("[{}] Not %{} = !%{}", pc - m_code.data(), not_.result, not_.arg);
-                    pc += sizeof(Not);
+                    print_unary_instruction<Not>("Not", "!", pc);
                     break;
                 }
                 case Opcode::Add: {
-                    Add add;
-                    std::memcpy(&add, pc, sizeof(Add));
-                    std::println("[{}] Add %{} = %{} + %{}", pc - m_code.data(), add.reg, add.lhs,
-                                 add.rhs);
-                    pc += sizeof(Add);
+                    print_binary_instruction<Add>("Add", "+", pc);
                     break;
                 }
                 case Opcode::Sub: {
-                    Sub sub;
-                    std::memcpy(&sub, pc, sizeof(Sub));
-                    std::println("[{}] Sub %{} = %{} - %{}", pc - m_code.data(), sub.reg, sub.lhs,
-                                 sub.rhs);
-                    pc += sizeof(Sub);
+                    print_binary_instruction<Sub>("Sub", "-", pc);
                     break;
                 }
                 case Opcode::Mul: {
-                    Mul mul;
-                    std::memcpy(&mul, pc, sizeof(Mul));
-                    std::println("[{}] Mul %{} = %{} * %{}", pc - m_code.data(), mul.reg, mul.lhs,
-                                 mul.rhs);
-                    pc += sizeof(Mul);
+                    print_binary_instruction<Mul>("Mul", "*", pc);
                     break;
                 }
                 case Opcode::Div: {
-                    Div div;
-                    std::memcpy(&div, pc, sizeof(Div));
-                    std::println("[{}] Div %{} = %{} / %{}", pc - m_code.data(), div.reg, div.lhs,
-                                 div.rhs);
-                    pc += sizeof(Div);
+                    print_binary_instruction<Div>("Div", "/", pc);
+                    break;
+                }
+                case Opcode::Lt: {
+                    print_binary_instruction<Lt>("Lt", "<", pc);
+                    break;
+                }
+                case Opcode::Gt: {
+                    print_binary_instruction<Gt>("Gt", ">", pc);
+                    break;
+                }
+                case Opcode::Lte: {
+                    print_binary_instruction<Lte>("Lte", "<=", pc);
+                    break;
+                }
+                case Opcode::Gte: {
+                    print_binary_instruction<Gte>("Gte", ">=", pc);
+                    break;
+                }
+                case Opcode::Eq: {
+                    print_binary_instruction<Eq>("Eq", "==", pc);
+                    break;
+                }
+                case Opcode::Neq: {
+                    print_binary_instruction<Neq>("Neq", "!=", pc);
                     break;
                 }
                 default: {
