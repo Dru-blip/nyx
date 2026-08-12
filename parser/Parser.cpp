@@ -15,13 +15,13 @@ struct Operator {
 
 namespace Nyx {
     static std::unordered_map<TokenTag, Operator> operator_map{
-            {TokenTag::Equal, {NodeTag::Eq, 30, 31}},
+            {TokenTag::EqualEqual, {NodeTag::Eq, 30, 31}},
             {TokenTag::BangEqual, {NodeTag::Neq, 30, 31}},
 
             {TokenTag::AngleBracketLeft, {NodeTag::Lt, 40, 41}},
             {TokenTag::AngleBracketRight, {NodeTag::Gt, 40, 41}},
-            {TokenTag::AngleBracketLeftEqual, {NodeTag::Gte, 40, 41}},
-            {TokenTag::AngleBracketRightEqual, {NodeTag::Lte, 40, 41}},
+            {TokenTag::AngleBracketRightEqual, {NodeTag::Gte, 40, 41}},
+            {TokenTag::AngleBracketLeftEqual, {NodeTag::Lte, 40, 41}},
 
 
             {TokenTag::Plus, {NodeTag::Add, 50, 51}},

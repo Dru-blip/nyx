@@ -8,7 +8,7 @@
 #include "runtime/Fiber.h"
 
 int main() {
-    Nyx::Ast ast = Nyx::Ast::parse("return 2 + 3 * 5 - 8 / 3;");
+    Nyx::Ast ast = Nyx::Ast::parse("return 2 + 3 * 5 - 8 / 3 > 10 - 4 * 2 + 12 / 4 == 5 * 6 - 20 / 2 <= 16 / 4 + 3 * 2");
     std::shared_ptr<Nyx::Heap> heap = std::make_shared<Nyx::Heap>();
 
     Nyx::bytecode::Generator generator(ast, heap);

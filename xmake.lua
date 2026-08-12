@@ -1,7 +1,5 @@
 add_rules("mode.debug", "mode.release")
 
-set_defaultmode("debug")
-
 add_requires("mimalloc 3.4.1")
 
 target("nyx")
@@ -9,8 +7,6 @@ target("nyx")
     set_toolchains("clang")
     set_languages("c++23")
     set_warnings("allextra")
-    add_cxflags("-g")
-    set_symbols("debug")
     add_includedirs(".")
     add_files("parser/*.cpp")
     add_files("bytecode/*.cpp")
@@ -18,7 +14,6 @@ target("nyx")
     add_files("runtime/*.cpp")
     add_files("main.cpp")
     add_packages("mimalloc")
-
 
 --
 -- If you want to known more usage about xmake, please see https://xmake.io
