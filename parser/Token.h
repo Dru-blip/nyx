@@ -31,6 +31,9 @@ namespace Nyx {
 
 
         Return,
+        And,
+        Or,
+        Not,
         Invalid,
         Eof,
     };

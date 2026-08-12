@@ -9,7 +9,7 @@
 #include "runtime/Fiber.h"
 
 int main() {
-    Nyx::Ast ast = Nyx::Ast::parse("return (((3 + 5) * (10 - 4)) + ((24 / 3) * (9 - 4))) / (((5 * 5) - (4 + 2)) + ((12 + 6) / (11 - 5)))");
+    Nyx::Ast ast = Nyx::Ast::parse("return 4");
     std::shared_ptr<Nyx::Heap> heap = std::make_shared<Nyx::Heap>();
 
     Nyx::bytecode::Generator generator(ast, heap);
@@ -20,7 +20,7 @@ int main() {
     Nyx::Fiber fiber;
     Nyx::Value result = fiber.run(executable);
 
-    std::println("{}", result.as_int());
+    std::println("{}", result.as_bool());
 
     return 0;
 }

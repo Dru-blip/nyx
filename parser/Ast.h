@@ -31,6 +31,9 @@ namespace Nyx {
         Eq,
         Neq,
 
+        And,
+        Or,
+
         Grouped,
 
         Ret,
