@@ -16,6 +16,23 @@ namespace Nyx::ir {
 
     void Builder::switch_block(BasicBlock *block) { m_curr_block = block; }
 
+    Register Builder::create_not(const Register &value) {
+        m_register_allocator.free(value);
+        Register dst = m_register_allocator.allocate();
+
+        assert(m_curr_block != nullptr);
+        m_curr_block->push<Not>(value, dst);
+        return dst;
+    }
+
+    Register Builder::create_neg(const Register &value) {
+        m_register_allocator.free(value);
+        Register dst = m_register_allocator.allocate();
+
+        assert(m_curr_block != nullptr);
+        m_curr_block->push<Neg>(value, dst);
+        return dst;
+    }
 
     Register Builder::create_add(const Register &lhs, const Register &rhs) {
         m_register_allocator.free(rhs);
@@ -119,5 +136,10 @@ namespace Nyx::ir {
         assert(m_curr_block != nullptr);
         m_curr_block->push<LoadImmInt>(value, dst);
         return dst;
+    }
+
+    void Builder::create_ret(const Register &value) {
+        assert(m_curr_block != nullptr);
+        m_curr_block->push<Ret>(value);
     }
 } // namespace Nyx::ir

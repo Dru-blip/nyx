@@ -12,6 +12,9 @@ namespace Nyx::ir {
         void switch_block(BasicBlock *block);
         Register create_load_imm_int(const int64_t &value);
 
+        Register create_not(const Register &value);
+        Register create_neg(const Register &value);
+
         Register create_add(const Register &lhs, const Register &rhs);
         Register create_sub(const Register &lhs, const Register &rhs);
         Register create_mul(const Register &lhs, const Register &rhs);
@@ -25,7 +28,7 @@ namespace Nyx::ir {
         Register create_eq(const Register &lhs, const Register &rhs);
         Register create_neq(const Register &lhs, const Register &rhs);
 
-
+        void create_ret(const Register &value);
 
     private:
         BasicBlock *allocate_block();

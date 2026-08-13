@@ -14,7 +14,7 @@ set(PARSER_SRCS parser/Ast.cpp
         parser/Parser.cpp)
 
 
-set(IR_SRCS )
+set(IR_SRCS ir/Builder.cpp ir/RegisterAllocator.cpp)
 
 set(BYTECODE_SRCS bytecode/Executable.cpp
         bytecode/Generator.cpp

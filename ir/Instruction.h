@@ -19,6 +19,27 @@ namespace Nyx::ir {
         Register m_reg;
     };
 
+    class Unary : public Instruction {
+    public:
+        Unary(Register value, Register dst) : m_value(value), m_dst(dst) {}
+        // void lower(bytecode::InstructionEmitter &emitter) override;
+
+    private:
+        Register m_value, m_dst;
+    };
+
+    class Not : public Unary {
+    public:
+        Not(Register value, Register dst) : Unary(value, dst) {}
+        // void lower(bytecode::InstructionEmitter &emitter) override;
+    };
+
+    class Neg : public Unary {
+    public:
+        Neg(Register value, Register dst) : Unary(value, dst) {}
+        // void lower(bytecode::InstructionEmitter &emitter) override;
+    };
+
     class Binary : public Instruction {
     public:
         Binary(Register lhs, Register rhs, Register dst) : m_lhs(lhs), m_rhs(rhs), m_dst(dst) {}
@@ -87,6 +108,14 @@ namespace Nyx::ir {
     public:
         Neq(Register lhs, Register rhs, Register dst) : Binary(lhs, rhs, dst) {}
         // void lower(bytecode::InstructionEmitter &emitter) override;
+    };
+
+    class Ret : public Instruction {
+    public:
+        Ret(Register value) : m_value(value) {}
+
+    private:
+        Register m_value;
     };
 
 
