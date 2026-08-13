@@ -56,7 +56,7 @@ namespace Nyx::bytecode {
         void ret(const uint8_t reg);
         uint8_t load_imm_int(const int64_t imm);
 
-        uint8_t move(const uint8_t& src, const uint8_t &dst);
+        uint8_t move(const uint8_t &src, const uint8_t &dst);
 
         uint8_t not_(const uint8_t &arg);
         uint8_t neg(const uint8_t &arg);
@@ -72,8 +72,6 @@ namespace Nyx::bytecode {
         uint8_t eq(const uint8_t &left, const uint8_t &right);
         uint8_t neq(const uint8_t &left, const uint8_t &right);
 
-        JmpPatch emit_jmpif_false_patch(const uint8_t &cond);
-        JmpPatch emit_jmpif_false_move_patch(const uint8_t &cond);
 
     private:
         std::vector<uint8_t> m_code;

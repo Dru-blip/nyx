@@ -4,11 +4,13 @@
 #include <memory>
 #include <vector>
 #include "bytecode/Executable.h"
-#include "bytecode/InstructionEmitter.h"
 #include "heap/Heap.h"
+#include "ir/Builder.h"
+#include "ir/Register.h"
 #include "parser/Ast.h"
 
 namespace Nyx::bytecode {
+    using Register = ir::Register;
     class Generator {
     public:
         Generator(Ast &ast, std::shared_ptr<Heap> heap) : m_ast(std::move(ast)), m_heap(heap) {};
@@ -20,27 +22,27 @@ namespace Nyx::bytecode {
 
         void lowerRoot(const Node *node);
         void lowerRet(const Node *node);
-        uint8_t lowerExpr(const Node *node);
-        uint8_t lowerGrouped(const Node *node);
-        uint8_t lowerAdd(const Node *node);
-        uint8_t lowerSub(const Node *node);
-        uint8_t lowerMul(const Node *node);
-        uint8_t lowerDiv(const Node *node);
-        uint8_t lowerLt(const Node *node);
-        uint8_t lowerLte(const Node *node);
-        uint8_t lowerGt(const Node *node);
-        uint8_t lowerGte(const Node *node);
-        uint8_t lowerEq(const Node *node);
-        uint8_t lowerNeq(const Node *node);
+        Register lowerExpr(const Node *node);
+        Register lowerGrouped(const Node *node);
+        Register lowerAdd(const Node *node);
+        Register lowerSub(const Node *node);
+        Register lowerMul(const Node *node);
+        Register lowerDiv(const Node *node);
+        Register lowerLt(const Node *node);
+        Register lowerLte(const Node *node);
+        Register lowerGt(const Node *node);
+        Register lowerGte(const Node *node);
+        Register lowerEq(const Node *node);
+        Register lowerNeq(const Node *node);
 
-        uint8_t lowerAnd(const Node *node);
+        Register lowerAnd(const Node *node);
 
-        uint8_t lowerNeg(const Node *node);
-        uint8_t lowerNot(const Node *node);
-        uint8_t lowerInt(const Node *node);
+        Register lowerNeg(const Node *node);
+        Register lowerNot(const Node *node);
+        Register lowerInt(const Node *node);
 
         Ast m_ast;
-        InstructionEmitter m_emitter;
+        ir::Builder m_builder;
         std::shared_ptr<Heap> m_heap;
         std::vector<Value> m_constants;
     };

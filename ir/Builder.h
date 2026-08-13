@@ -2,6 +2,7 @@
 
 #include <mimalloc.h>
 #include "ir/BasicBlock.h"
+#include "ir/Register.h"
 #include "ir/RegisterAllocator.h"
 
 

@@ -3,12 +3,12 @@
 #include <cstdint>
 #include <string_view>
 #include "bytecode/Instruction.h"
-#include "bytecode/JmpPatch.h"
 
 
 namespace Nyx::bytecode {
     Executable *Generator::build_executable() {
-        return m_heap->alloc<Executable>(m_emitter.code(), m_constants);
+        // return m_heap->alloc<Executable>(m_emitter.code(), m_constants);
+        return nullptr;
     }
 
     Executable *Generator::compile() {
@@ -34,13 +34,13 @@ namespace Nyx::bytecode {
 
         if (ret->value.has_value()) {
             const Node *expr = *ret->value;
-            uint8_t result = lowerExpr(expr);
-            m_emitter.ret(result);
+            Register result = lowerExpr(expr);
+            m_builder.create_ret(result);
             return;
         }
     }
 
-    uint8_t Generator::lowerExpr(const Node *node) {
+    Register Generator::lowerExpr(const Node *node) {
         switch (node->tag) {
             case NodeTag::Integer: {
                 return lowerInt(node);
@@ -93,138 +93,135 @@ namespace Nyx::bytecode {
         }
     }
 
-    uint8_t Generator::lowerGrouped(const Node *node) {
+    Register Generator::lowerGrouped(const Node *node) {
         const Unary *grouped = static_cast<const Unary *>(node);
-        uint8_t child = lowerExpr(grouped->arg);
+        Register child = lowerExpr(grouped->arg);
         return child;
     }
 
-    uint8_t Generator::lowerNeg(const Node *node) {
+    Register Generator::lowerNeg(const Node *node) {
         const Unary *neg = static_cast<const Unary *>(node);
-        uint8_t child = lowerExpr(neg->arg);
+        Register child = lowerExpr(neg->arg);
 
-        uint8_t reg = m_emitter.neg(child);
+        Register reg = m_builder.create_neg(child);
         return reg;
     }
 
-    uint8_t Generator::lowerNot(const Node *node) {
+    Register Generator::lowerNot(const Node *node) {
         const Unary *notNode = static_cast<const Unary *>(node);
-        uint8_t child = lowerExpr(notNode->arg);
+        Register child = lowerExpr(notNode->arg);
 
-        uint8_t reg = m_emitter.not_(child);
+        Register reg = m_builder.create_not(child);
         return reg;
     }
 
-    uint8_t Generator::lowerAdd(const Node *node) {
+    Register Generator::lowerAdd(const Node *node) {
         const Binary *add = static_cast<const Binary *>(node);
-        uint8_t left = lowerExpr(add->left);
-        uint8_t right = lowerExpr(add->right);
+        Register left = lowerExpr(add->left);
+        Register right = lowerExpr(add->right);
 
-        uint8_t reg = m_emitter.add(left, right);
+        Register reg = m_builder.create_add(left, right);
         return reg;
     }
 
-    uint8_t Generator::lowerSub(const Node *node) {
+    Register Generator::lowerSub(const Node *node) {
         const Binary *sub = static_cast<const Binary *>(node);
-        uint8_t left = lowerExpr(sub->left);
-        uint8_t right = lowerExpr(sub->right);
+        Register left = lowerExpr(sub->left);
+        Register right = lowerExpr(sub->right);
 
-        uint8_t reg = m_emitter.sub(left, right);
+        Register reg = m_builder.create_sub(left, right);
         return reg;
     }
 
 
-    uint8_t Generator::lowerMul(const Node *node) {
+    Register Generator::lowerMul(const Node *node) {
         const Binary *mul = static_cast<const Binary *>(node);
-        uint8_t left = lowerExpr(mul->left);
-        uint8_t right = lowerExpr(mul->right);
+        Register left = lowerExpr(mul->left);
+        Register right = lowerExpr(mul->right);
 
-        uint8_t reg = m_emitter.mul(left, right);
+        Register reg = m_builder.create_mul(left, right);
         return reg;
     }
 
-    uint8_t Generator::lowerDiv(const Node *node) {
+    Register Generator::lowerDiv(const Node *node) {
         const Binary *div = static_cast<const Binary *>(node);
-        uint8_t left = lowerExpr(div->left);
-        uint8_t right = lowerExpr(div->right);
+        Register left = lowerExpr(div->left);
+        Register right = lowerExpr(div->right);
 
-        uint8_t reg = m_emitter.div(left, right);
+        Register reg = m_builder.create_div(left, right);
         return reg;
     }
 
-    uint8_t Generator::lowerLt(const Node *node) {
+    Register Generator::lowerLt(const Node *node) {
         const Binary *lt = static_cast<const Binary *>(node);
-        uint8_t left = lowerExpr(lt->left);
-        uint8_t right = lowerExpr(lt->right);
+        Register left = lowerExpr(lt->left);
+        Register right = lowerExpr(lt->right);
 
-        uint8_t reg = m_emitter.lt(left, right);
+        Register reg = m_builder.create_lt(left, right);
         return reg;
     }
 
 
-    uint8_t Generator::lowerLte(const Node *node) {
+    Register Generator::lowerLte(const Node *node) {
         const Binary *lte = static_cast<const Binary *>(node);
-        uint8_t left = lowerExpr(lte->left);
-        uint8_t right = lowerExpr(lte->right);
+        Register left = lowerExpr(lte->left);
+        Register right = lowerExpr(lte->right);
 
-        uint8_t reg = m_emitter.lte(left, right);
+        Register reg = m_builder.create_lte(left, right);
         return reg;
     }
 
-    uint8_t Generator::lowerGt(const Node *node) {
+    Register Generator::lowerGt(const Node *node) {
         const Binary *gt = static_cast<const Binary *>(node);
-        uint8_t left = lowerExpr(gt->left);
-        uint8_t right = lowerExpr(gt->right);
+        Register left = lowerExpr(gt->left);
+        Register right = lowerExpr(gt->right);
 
-        uint8_t reg = m_emitter.gt(left, right);
+        Register reg = m_builder.create_gt(left, right);
         return reg;
     }
 
-    uint8_t Generator::lowerGte(const Node *node) {
+    Register Generator::lowerGte(const Node *node) {
         const Binary *gte = static_cast<const Binary *>(node);
-        uint8_t left = lowerExpr(gte->left);
-        uint8_t right = lowerExpr(gte->right);
+        Register left = lowerExpr(gte->left);
+        Register right = lowerExpr(gte->right);
 
-        uint8_t reg = m_emitter.gte(left, right);
+        Register reg = m_builder.create_gte(left, right);
         return reg;
     }
 
-    uint8_t Generator::lowerEq(const Node *node) {
+    Register Generator::lowerEq(const Node *node) {
         const Binary *eq = static_cast<const Binary *>(node);
-        uint8_t left = lowerExpr(eq->left);
-        uint8_t right = lowerExpr(eq->right);
+        Register left = lowerExpr(eq->left);
+        Register right = lowerExpr(eq->right);
 
-        uint8_t reg = m_emitter.eq(left, right);
+        Register reg = m_builder.create_eq(left, right);
         return reg;
     }
 
-    uint8_t Generator::lowerNeq(const Node *node) {
+    Register Generator::lowerNeq(const Node *node) {
         const Binary *neq = static_cast<const Binary *>(node);
-        uint8_t left = lowerExpr(neq->left);
-        uint8_t right = lowerExpr(neq->right);
+        Register left = lowerExpr(neq->left);
+        Register right = lowerExpr(neq->right);
 
-        uint8_t reg = m_emitter.neq(left, right);
+        Register reg = m_builder.create_neq(left, right);
         return reg;
     }
 
-    uint8_t Generator::lowerAnd(const Node *node) {
+    Register Generator::lowerAnd(const Node *node) {
         const Binary *and_node = static_cast<const Binary *>(node);
-        uint8_t left = lowerExpr(and_node->left);
-        JmpPatch patch = m_emitter.emit_jmpif_false_move_patch(left);
-        uint8_t right = lowerExpr(and_node->right);
-        uint8_t reg = m_emitter.move(right, patch.result);
-        m_emitter.patch<JmpIfFalseMove>(patch);
-        return patch.result;
+        Register left = lowerExpr(and_node->left);
+
+        return Register(0);
     }
 
-    uint8_t Generator::lowerInt(const Node *node) {
+    Register Generator::lowerInt(const Node *node) {
         const auto int_str = m_ast.getSource(node);
 
         int64_t value = 0;
         // handle error
         std::from_chars(int_str.data(), int_str.data() + int_str.size(), value);
 
-        uint8_t reg = m_emitter.load_imm_int(value);
+        Register reg = m_builder.create_load_imm_int(value);
         return reg;
     }
 } // namespace Nyx::bytecode
