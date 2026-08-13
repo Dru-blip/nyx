@@ -6,6 +6,8 @@
 namespace Nyx::bytecode {
     enum class Opcode : uint8_t {
         LoadImmInt,
+        Move,
+
         Ret,
         Not,
         Neg,
@@ -20,6 +22,9 @@ namespace Nyx::bytecode {
         Gte,
         Eq,
         Neq,
+
+        JmpIfFalse,
+        JmpIfFalseMove,
     };
 
 #pragma pack(push, 1)
@@ -30,6 +35,11 @@ namespace Nyx::bytecode {
     struct LoadImmInt {
         uint8_t reg;
         int64_t imm;
+    };
+
+    struct Move {
+        uint8_t src;
+        uint8_t dst;
     };
 
 #define DefineUnaryInst(name)                                                                      \
@@ -59,5 +69,18 @@ namespace Nyx::bytecode {
     DefineBinaryInst(Gte);
     DefineBinaryInst(Eq);
     DefineBinaryInst(Neq);
+
+
+    struct JmpIfFalse {
+        uint8_t arg;
+        uint16_t offset;
+    };
+
+    struct JmpIfFalseMove {
+        uint8_t arg;
+        uint8_t result;
+        uint16_t offset;
+    };
+
 #pragma pack(pop)
 } // namespace Nyx::bytecode

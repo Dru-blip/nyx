@@ -4,7 +4,7 @@
 #include <cstring>
 #include <vector>
 #include "bytecode/Instruction.h"
-#include "bytecode/Operand.h"
+#include "bytecode/JmpPatch.h"
 #include "bytecode/RegisterAllocator.h"
 
 
@@ -44,11 +44,20 @@ namespace Nyx::bytecode {
             return result;
         }
 
+
+        template<typename Instr>
+        void patch(JmpPatch &patch) {
+            patch.patch<Instr>(m_code, m_code.size());
+        }
+
         void push(const uint8_t byte) { m_code.push_back(byte); }
 
         std::vector<uint8_t> &code() { return m_code; }
         void ret(const uint8_t reg);
         uint8_t load_imm_int(const int64_t imm);
+
+        uint8_t move(const uint8_t& src, const uint8_t &dst);
+
         uint8_t not_(const uint8_t &arg);
         uint8_t neg(const uint8_t &arg);
         uint8_t add(const uint8_t &left, const uint8_t &right);
@@ -62,6 +71,9 @@ namespace Nyx::bytecode {
         uint8_t gte(const uint8_t &left, const uint8_t &right);
         uint8_t eq(const uint8_t &left, const uint8_t &right);
         uint8_t neq(const uint8_t &left, const uint8_t &right);
+
+        JmpPatch emit_jmpif_false_patch(const uint8_t &cond);
+        JmpPatch emit_jmpif_false_move_patch(const uint8_t &cond);
 
     private:
         std::vector<uint8_t> m_code;

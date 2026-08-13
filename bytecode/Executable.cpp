@@ -27,6 +27,13 @@ namespace Nyx::bytecode {
                     pc += sizeof(LoadImmInt);
                     break;
                 }
+                case Opcode::Move: {
+                    Move move;
+                    std::memcpy(&move, pc, sizeof(Move));
+                    std::println("[{}] Move %{} = %{}", pc - m_code.data(), move.dst, move.src);
+                    pc += sizeof(Move);
+                    break;
+                }
                 case Opcode::Neg: {
                     print_unary_instruction<Neg>("Neg", "-", pc);
                     break;
@@ -73,6 +80,23 @@ namespace Nyx::bytecode {
                 }
                 case Opcode::Neq: {
                     print_binary_instruction<Neq>("Neq", "!=", pc);
+                    break;
+                }
+
+                case Opcode::JmpIfFalse: {
+                    JmpIfFalse inst;
+                    std::memcpy(&inst, pc, sizeof(JmpIfFalse));
+                    std::println("[{}] JmpIfFalse %{} {}", pc - m_code.data(), inst.arg,
+                                 inst.offset);
+                    pc += sizeof(JmpIfFalse);
+                    break;
+                }
+                case Opcode::JmpIfFalseMove: {
+                    JmpIfFalseMove inst;
+                    std::memcpy(&inst, pc, sizeof(JmpIfFalseMove));
+                    std::println("[{}] JmpIfFalseMove %{} = %{} {}", pc - m_code.data(), inst.arg,
+                                 inst.result, inst.offset);
+                    pc += sizeof(JmpIfFalseMove);
                     break;
                 }
                 default: {

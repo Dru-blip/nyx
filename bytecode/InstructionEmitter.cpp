@@ -19,6 +19,42 @@ namespace Nyx::bytecode {
         return reg;
     }
 
+    uint8_t InstructionEmitter::move(const uint8_t &src, const uint8_t &dst) {
+        m_register_allocator.free(src);
+        Move inst{src, dst};
+        push(static_cast<uint8_t>(Opcode::Move));
+        emit(inst);
+        return dst;
+    }
+
+    JmpPatch InstructionEmitter::emit_jmpif_false_patch(const uint8_t &cond) {
+        JmpPatch patch;
+
+        patch.offset = static_cast<uint16_t>(m_code.size());
+
+        JmpIfFalse inst{cond};
+        push(static_cast<uint8_t>(Opcode::JmpIfFalse));
+        emit(inst);
+
+        return patch;
+    }
+
+    JmpPatch InstructionEmitter::emit_jmpif_false_move_patch(const uint8_t &cond) {
+        JmpPatch patch;
+
+        m_register_allocator.free(cond);
+        uint8_t result = m_register_allocator.allocate();
+        patch.result = result;
+        patch.offset = static_cast<uint16_t>(m_code.size());
+
+        JmpIfFalseMove inst{cond, result};
+        push(static_cast<uint8_t>(Opcode::JmpIfFalseMove));
+        emit(inst);
+
+        return patch;
+    }
+
+
     uint8_t InstructionEmitter::neg(const uint8_t &arg) {
         return emit_unary<Neg>(Opcode::Neg, arg);
     }

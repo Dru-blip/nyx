@@ -2,9 +2,8 @@
 #include <charconv>
 #include <cstdint>
 #include <string_view>
-
-#include "bytecode/Executable.h"
-#include "parser/Ast.h"
+#include "bytecode/Instruction.h"
+#include "bytecode/JmpPatch.h"
 
 
 namespace Nyx::bytecode {
@@ -18,6 +17,7 @@ namespace Nyx::bytecode {
         }
         return build_executable();
     }
+
 
     void Generator::lowerRoot(const Node *node) {
         switch (node->tag) {
@@ -83,6 +83,9 @@ namespace Nyx::bytecode {
             }
             case NodeTag::Neq: {
                 return lowerNeq(node);
+            }
+            case NodeTag::And: {
+                return lowerAnd(node);
             }
             default: {
                 abort();
@@ -204,6 +207,15 @@ namespace Nyx::bytecode {
         return reg;
     }
 
+    uint8_t Generator::lowerAnd(const Node *node) {
+        const Binary *and_node = static_cast<const Binary *>(node);
+        uint8_t left = lowerExpr(and_node->left);
+        JmpPatch patch = m_emitter.emit_jmpif_false_move_patch(left);
+        uint8_t right = lowerExpr(and_node->right);
+        uint8_t reg = m_emitter.move(right, patch.result);
+        m_emitter.patch<JmpIfFalseMove>(patch);
+        return patch.result;
+    }
 
     uint8_t Generator::lowerInt(const Node *node) {
         const auto int_str = m_ast.getSource(node);

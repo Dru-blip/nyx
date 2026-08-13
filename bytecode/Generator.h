@@ -5,8 +5,6 @@
 #include <vector>
 #include "bytecode/Executable.h"
 #include "bytecode/InstructionEmitter.h"
-#include "bytecode/Operand.h"
-#include "bytecode/RegisterAllocator.h"
 #include "heap/Heap.h"
 #include "parser/Ast.h"
 
@@ -15,9 +13,11 @@ namespace Nyx::bytecode {
     public:
         Generator(Ast &ast, std::shared_ptr<Heap> heap) : m_ast(std::move(ast)), m_heap(heap) {};
         Executable *compile();
-        Executable *build_executable();
 
     private:
+        Executable *build_executable();
+        std::size_t make_block();
+
         void lowerRoot(const Node *node);
         void lowerRet(const Node *node);
         uint8_t lowerExpr(const Node *node);
@@ -32,6 +32,8 @@ namespace Nyx::bytecode {
         uint8_t lowerGte(const Node *node);
         uint8_t lowerEq(const Node *node);
         uint8_t lowerNeq(const Node *node);
+
+        uint8_t lowerAnd(const Node *node);
 
         uint8_t lowerNeg(const Node *node);
         uint8_t lowerNot(const Node *node);
