@@ -13,6 +13,9 @@ set(PARSER_SRCS parser/Ast.cpp
         parser/Lexer.cpp
         parser/Parser.cpp)
 
+
+set(IR_SRCS )
+
 set(BYTECODE_SRCS bytecode/Executable.cpp
         bytecode/Generator.cpp
         bytecode/InstructionEmitter.cpp
