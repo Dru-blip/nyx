@@ -2,106 +2,67 @@
 #include "InstructionEmitter.h"
 #include <cstdint>
 #include "bytecode/Instruction.h"
+#include "ir/Register.h"
 
 
 namespace Nyx::bytecode {
-    void InstructionEmitter::ret(const uint8_t reg) {
-        Ret inst{reg};
-        push(static_cast<uint8_t>(Opcode::Ret));
-        emit(inst);
+    void InstructionEmitter::ret(const Register &reg) { emit<Ret>(Opcode::Ret, reg.slot()); }
+
+    void InstructionEmitter::load_imm_int(const Register &reg, const int64_t &imm) {
+        emit<LoadImmInt>(Opcode::LoadImmInt, reg.slot(), imm);
     }
 
-    uint8_t InstructionEmitter::load_imm_int(const int64_t imm) {
-        push(static_cast<uint8_t>(Opcode::LoadImmInt));
-        uint8_t reg = m_register_allocator.allocate();
-        LoadImmInt inst{reg, imm};
-        emit(inst);
-        return reg;
+    void InstructionEmitter::move(const Register &src, const Register &dst) {
+        emit<Move>(Opcode::Move, src.slot(), dst.slot());
     }
 
-    uint8_t InstructionEmitter::move(const uint8_t &src, const uint8_t &dst) {
-        m_register_allocator.free(src);
-        Move inst{src, dst};
-        push(static_cast<uint8_t>(Opcode::Move));
-        emit(inst);
-        return dst;
+    void InstructionEmitter::neg(const Register &arg, const Register &dst) {
+        emit<Neg>(Opcode::Neg, arg.slot(), dst.slot());
     }
 
-    JmpPatch InstructionEmitter::emit_jmpif_false_patch(const uint8_t &cond) {
-        JmpPatch patch;
-
-        patch.offset = static_cast<uint16_t>(m_code.size());
-
-        JmpIfFalse inst{cond};
-        push(static_cast<uint8_t>(Opcode::JmpIfFalse));
-        emit(inst);
-
-        return patch;
+    void InstructionEmitter::not_(const Register &arg, const Register &dst) {
+        emit<Not>(Opcode::Not, arg.slot(), dst.slot());
     }
 
-    JmpPatch InstructionEmitter::emit_jmpif_false_move_patch(const uint8_t &cond) {
-        JmpPatch patch;
+    void InstructionEmitter::add(const Register &left, const Register &right, const Register &dst) {
+        emit<Add>(Opcode::Add, left.slot(), right.slot(), dst.slot());
+    }
 
-        m_register_allocator.free(cond);
-        uint8_t result = m_register_allocator.allocate();
-        patch.result = result;
-        patch.offset = static_cast<uint16_t>(m_code.size());
-
-        JmpIfFalseMove inst{cond, result};
-        push(static_cast<uint8_t>(Opcode::JmpIfFalseMove));
-        emit(inst);
-
-        return patch;
+    void InstructionEmitter::sub(const Register &left, const Register &right, const Register &dst) {
+        emit<Sub>(Opcode::Sub, left.slot(), right.slot(), dst.slot());
     }
 
 
-    uint8_t InstructionEmitter::neg(const uint8_t &arg) {
-        return emit_unary<Neg>(Opcode::Neg, arg);
+    void InstructionEmitter::mul(const Register &left, const Register &right, const Register &dst) {
+        emit<Mul>(Opcode::Mul, left.slot(), right.slot(), dst.slot());
     }
 
-    uint8_t InstructionEmitter::not_(const uint8_t &arg) {
-        return emit_unary<Not>(Opcode::Not, arg);
+    void InstructionEmitter::div(const Register &left, const Register &right, const Register &dst) {
+        emit<Div>(Opcode::Div, left.slot(), right.slot(), dst.slot());
     }
 
-    uint8_t InstructionEmitter::add(const uint8_t &left, const uint8_t &right) {
-        return emit_binary<Add>(Opcode::Add, left, right);
+    void InstructionEmitter::lt(const Register &left, const Register &right, const Register &dst) {
+        emit<Lt>(Opcode::Lt, left.slot(), right.slot(), dst.slot());
     }
 
-    uint8_t InstructionEmitter::sub(const uint8_t &left, const uint8_t &right) {
-        return emit_binary<Sub>(Opcode::Sub, left, right);
+    void InstructionEmitter::lte(const Register &left, const Register &right, const Register &dst) {
+        emit<Lte>(Opcode::Lte, left.slot(), right.slot(), dst.slot());
     }
 
-
-    uint8_t InstructionEmitter::mul(const uint8_t &left, const uint8_t &right) {
-        return emit_binary<Mul>(Opcode::Mul, left, right);
+    void InstructionEmitter::gt(const Register &left, const Register &right, const Register &dst) {
+        emit<Gt>(Opcode::Gt, left.slot(), right.slot(), dst.slot());
     }
 
-    uint8_t InstructionEmitter::div(const uint8_t &left, const uint8_t &right) {
-        return emit_binary<Div>(Opcode::Div, left, right);
+    void InstructionEmitter::gte(const Register &left, const Register &right, const Register &dst) {
+        emit<Gte>(Opcode::Gte, left.slot(), right.slot(), dst.slot());
     }
 
-    uint8_t InstructionEmitter::lt(const uint8_t &left, const uint8_t &right) {
-        return emit_binary<Lt>(Opcode::Lt, left, right);
+    void InstructionEmitter::eq(const Register &left, const Register &right, const Register &dst) {
+        emit<Eq>(Opcode::Eq, left.slot(), right.slot(), dst.slot());
     }
 
-    uint8_t InstructionEmitter::lte(const uint8_t &left, const uint8_t &right) {
-        return emit_binary<Lte>(Opcode::Lte, left, right);
-    }
-
-    uint8_t InstructionEmitter::gt(const uint8_t &left, const uint8_t &right) {
-        return emit_binary<Gt>(Opcode::Gt, left, right);
-    }
-
-    uint8_t InstructionEmitter::gte(const uint8_t &left, const uint8_t &right) {
-        return emit_binary<Gte>(Opcode::Gte, left, right);
-    }
-
-    uint8_t InstructionEmitter::eq(const uint8_t &left, const uint8_t &right) {
-        return emit_binary<Eq>(Opcode::Eq, left, right);
-    }
-
-    uint8_t InstructionEmitter::neq(const uint8_t &left, const uint8_t &right) {
-        return emit_binary<Neq>(Opcode::Neq, left, right);
+    void InstructionEmitter::neq(const Register &left, const Register &right, const Register &dst) {
+        emit<Neq>(Opcode::Neq, left.slot(), right.slot(), dst.slot());
     }
 
 } // namespace Nyx::bytecode

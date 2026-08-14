@@ -3,78 +3,53 @@
 #include <cstdint>
 #include <cstring>
 #include <vector>
-#include "bytecode/Instruction.h"
-#include "bytecode/JmpPatch.h"
-#include "bytecode/RegisterAllocator.h"
 
+#include "ir/Register.h"
 
 namespace Nyx::bytecode {
+    enum class Opcode : uint8_t;
+
+
+    using Register = ir::Register;
     class InstructionEmitter {
+
     public:
+        void push(const uint8_t byte) { m_code.push_back(byte); }
+
         template<typename InstType>
         void emit(const InstType &inst) {
             m_code.resize(m_code.size() + sizeof(InstType));
             std::memcpy(m_code.data() + m_code.size() - sizeof(InstType), &inst, sizeof(InstType));
         }
 
-
-        template<typename Instr>
-        uint8_t emit_binary(Opcode opcode, const uint8_t &arg1, const uint8_t &arg2) {
-            m_register_allocator.free(arg1);
-            m_register_allocator.free(arg2);
-
-            uint8_t reg = m_register_allocator.allocate();
-
+        template<typename InstType, typename... Args>
+        void emit(Opcode opcode, Args... args) {
             push(static_cast<uint8_t>(opcode));
-
-            Instr inst{arg1, arg2, reg};
-            emit<Instr>(inst);
-
-            return reg;
+            InstType inst(args...);
+            emit(inst);
         }
 
-
-        template<typename Instr>
-        uint8_t emit_unary(Opcode opcode, const uint8_t &arg) {
-            push(static_cast<uint8_t>(opcode));
-            m_register_allocator.free(arg);
-            uint8_t result = m_register_allocator.allocate();
-            Instr inst{arg, result};
-            emit<Instr>(inst);
-            return result;
-        }
-
-
-        template<typename Instr>
-        void patch(JmpPatch &patch) {
-            patch.patch<Instr>(m_code, m_code.size());
-        }
-
-        void push(const uint8_t byte) { m_code.push_back(byte); }
 
         std::vector<uint8_t> &code() { return m_code; }
-        void ret(const uint8_t reg);
-        uint8_t load_imm_int(const int64_t imm);
 
-        uint8_t move(const uint8_t &src, const uint8_t &dst);
+        void ret(const Register &reg);
+        void load_imm_int(const Register &reg, const int64_t &imm);
+        void move(const Register &src, const Register &dst);
 
-        uint8_t not_(const uint8_t &arg);
-        uint8_t neg(const uint8_t &arg);
-        uint8_t add(const uint8_t &left, const uint8_t &right);
-        uint8_t sub(const uint8_t &left, const uint8_t &right);
-        uint8_t mul(const uint8_t &left, const uint8_t &right);
-        uint8_t div(const uint8_t &left, const uint8_t &right);
+        void not_(const Register &arg, const Register &dst);
+        void neg(const Register &arg, const Register &dst);
 
-        uint8_t lt(const uint8_t &left, const uint8_t &right);
-        uint8_t lte(const uint8_t &left, const uint8_t &right);
-        uint8_t gt(const uint8_t &left, const uint8_t &right);
-        uint8_t gte(const uint8_t &left, const uint8_t &right);
-        uint8_t eq(const uint8_t &left, const uint8_t &right);
-        uint8_t neq(const uint8_t &left, const uint8_t &right);
-
-
+        void add(const Register &left, const Register &right, const Register &dst);
+        void sub(const Register &left, const Register &right, const Register &dst);
+        void mul(const Register &left, const Register &right, const Register &dst);
+        void div(const Register &left, const Register &right, const Register &dst);
+        void lt(const Register &left, const Register &right, const Register &dst);
+        void lte(const Register &left, const Register &right, const Register &dst);
+        void gt(const Register &left, const Register &right, const Register &dst);
+        void gte(const Register &left, const Register &right, const Register &dst);
+        void eq(const Register &left, const Register &right, const Register &dst);
+        void neq(const Register &left, const Register &right, const Register &dst);
     private:
         std::vector<uint8_t> m_code;
-        RegisterAllocator m_register_allocator;
     };
 } // namespace Nyx::bytecode

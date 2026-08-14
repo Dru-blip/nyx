@@ -10,7 +10,7 @@
 #include "parser/Ast.h"
 
 namespace Nyx::bytecode {
-    using Register = ir::Register;
+
     using BasicBlock = ir::BasicBlock;
 
     class Generator {
@@ -24,26 +24,26 @@ namespace Nyx::bytecode {
 
         void lowerRoot(const Node *node);
         void lowerRet(const Node *node);
-        Register lowerExpr(const Node *node);
-        Register lowerGrouped(const Node *node);
-        Register lowerAdd(const Node *node);
-        Register lowerSub(const Node *node);
-        Register lowerMul(const Node *node);
-        Register lowerDiv(const Node *node);
-        Register lowerLt(const Node *node);
-        Register lowerLte(const Node *node);
-        Register lowerGt(const Node *node);
-        Register lowerGte(const Node *node);
-        Register lowerEq(const Node *node);
-        Register lowerNeq(const Node *node);
+        ir::Register lowerExpr(const Node *node);
+        ir::Register lowerGrouped(const Node *node);
+        ir::Register lowerAdd(const Node *node);
+        ir::Register lowerSub(const Node *node);
+        ir::Register lowerMul(const Node *node);
+        ir::Register lowerDiv(const Node *node);
+        ir::Register lowerLt(const Node *node);
+        ir::Register lowerLte(const Node *node);
+        ir::Register lowerGt(const Node *node);
+        ir::Register lowerGte(const Node *node);
+        ir::Register lowerEq(const Node *node);
+        ir::Register lowerNeq(const Node *node);
 
-        Register lowerAnd(const Node *node);
-        Register lowerOr(const Node *node);
+        ir::Register lowerAnd(const Node *node);
+        ir::Register lowerOr(const Node *node);
 
 
-        Register lowerNeg(const Node *node);
-        Register lowerNot(const Node *node);
-        Register lowerInt(const Node *node);
+        ir::Register lowerNeg(const Node *node);
+        ir::Register lowerNot(const Node *node);
+        ir::Register lowerInt(const Node *node);
 
         Ast m_ast;
         ir::Builder m_builder;

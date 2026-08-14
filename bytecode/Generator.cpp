@@ -2,8 +2,6 @@
 #include <charconv>
 #include <cstdint>
 #include <string_view>
-#include "bytecode/Instruction.h"
-#include "ir/BasicBlock.h"
 
 
 namespace Nyx::bytecode {
@@ -38,13 +36,13 @@ namespace Nyx::bytecode {
 
         if (ret->value.has_value()) {
             const Node *expr = *ret->value;
-            Register result = lowerExpr(expr);
+            ir::Register result = lowerExpr(expr);
             m_builder.create_ret(result);
             return;
         }
     }
 
-    Register Generator::lowerExpr(const Node *node) {
+    ir::Register Generator::lowerExpr(const Node *node) {
         switch (node->tag) {
             case NodeTag::Integer: {
                 return lowerInt(node);
@@ -97,135 +95,135 @@ namespace Nyx::bytecode {
         }
     }
 
-    Register Generator::lowerGrouped(const Node *node) {
+    ir::Register Generator::lowerGrouped(const Node *node) {
         const Unary *grouped = static_cast<const Unary *>(node);
-        Register child = lowerExpr(grouped->arg);
+        ir::Register child = lowerExpr(grouped->arg);
         return child;
     }
 
-    Register Generator::lowerNeg(const Node *node) {
+    ir::Register Generator::lowerNeg(const Node *node) {
         const Unary *neg = static_cast<const Unary *>(node);
-        Register child = lowerExpr(neg->arg);
+        ir::Register child = lowerExpr(neg->arg);
 
-        Register reg = m_builder.create_neg(child);
+        ir::Register reg = m_builder.create_neg(child);
         return reg;
     }
 
-    Register Generator::lowerNot(const Node *node) {
+    ir::Register Generator::lowerNot(const Node *node) {
         const Unary *notNode = static_cast<const Unary *>(node);
-        Register child = lowerExpr(notNode->arg);
+        ir::Register child = lowerExpr(notNode->arg);
 
-        Register reg = m_builder.create_not(child);
+        ir::Register reg = m_builder.create_not(child);
         return reg;
     }
 
-    Register Generator::lowerAdd(const Node *node) {
+    ir::Register Generator::lowerAdd(const Node *node) {
         const Binary *add = static_cast<const Binary *>(node);
-        Register left = lowerExpr(add->left);
-        Register right = lowerExpr(add->right);
+        ir::Register left = lowerExpr(add->left);
+        ir::Register right = lowerExpr(add->right);
 
-        Register reg = m_builder.create_add(left, right);
+        ir::Register reg = m_builder.create_add(left, right);
         return reg;
     }
 
-    Register Generator::lowerSub(const Node *node) {
+    ir::Register Generator::lowerSub(const Node *node) {
         const Binary *sub = static_cast<const Binary *>(node);
-        Register left = lowerExpr(sub->left);
-        Register right = lowerExpr(sub->right);
+        ir::Register left = lowerExpr(sub->left);
+        ir::Register right = lowerExpr(sub->right);
 
-        Register reg = m_builder.create_sub(left, right);
+        ir::Register reg = m_builder.create_sub(left, right);
         return reg;
     }
 
 
-    Register Generator::lowerMul(const Node *node) {
+    ir::Register Generator::lowerMul(const Node *node) {
         const Binary *mul = static_cast<const Binary *>(node);
-        Register left = lowerExpr(mul->left);
-        Register right = lowerExpr(mul->right);
+        ir::Register left = lowerExpr(mul->left);
+        ir::Register right = lowerExpr(mul->right);
 
-        Register reg = m_builder.create_mul(left, right);
+        ir::Register reg = m_builder.create_mul(left, right);
         return reg;
     }
 
-    Register Generator::lowerDiv(const Node *node) {
+    ir::Register Generator::lowerDiv(const Node *node) {
         const Binary *div = static_cast<const Binary *>(node);
-        Register left = lowerExpr(div->left);
-        Register right = lowerExpr(div->right);
+        ir::Register left = lowerExpr(div->left);
+        ir::Register right = lowerExpr(div->right);
 
-        Register reg = m_builder.create_div(left, right);
+        ir::Register reg = m_builder.create_div(left, right);
         return reg;
     }
 
-    Register Generator::lowerLt(const Node *node) {
+    ir::Register Generator::lowerLt(const Node *node) {
         const Binary *lt = static_cast<const Binary *>(node);
-        Register left = lowerExpr(lt->left);
-        Register right = lowerExpr(lt->right);
+        ir::Register left = lowerExpr(lt->left);
+        ir::Register right = lowerExpr(lt->right);
 
-        Register reg = m_builder.create_lt(left, right);
+        ir::Register reg = m_builder.create_lt(left, right);
         return reg;
     }
 
 
-    Register Generator::lowerLte(const Node *node) {
+    ir::Register Generator::lowerLte(const Node *node) {
         const Binary *lte = static_cast<const Binary *>(node);
-        Register left = lowerExpr(lte->left);
-        Register right = lowerExpr(lte->right);
+        ir::Register left = lowerExpr(lte->left);
+        ir::Register right = lowerExpr(lte->right);
 
-        Register reg = m_builder.create_lte(left, right);
+        ir::Register reg = m_builder.create_lte(left, right);
         return reg;
     }
 
-    Register Generator::lowerGt(const Node *node) {
+    ir::Register Generator::lowerGt(const Node *node) {
         const Binary *gt = static_cast<const Binary *>(node);
-        Register left = lowerExpr(gt->left);
-        Register right = lowerExpr(gt->right);
+        ir::Register left = lowerExpr(gt->left);
+        ir::Register right = lowerExpr(gt->right);
 
-        Register reg = m_builder.create_gt(left, right);
+        ir::Register reg = m_builder.create_gt(left, right);
         return reg;
     }
 
-    Register Generator::lowerGte(const Node *node) {
+    ir::Register Generator::lowerGte(const Node *node) {
         const Binary *gte = static_cast<const Binary *>(node);
-        Register left = lowerExpr(gte->left);
-        Register right = lowerExpr(gte->right);
+        ir::Register left = lowerExpr(gte->left);
+        ir::Register right = lowerExpr(gte->right);
 
-        Register reg = m_builder.create_gte(left, right);
+        ir::Register reg = m_builder.create_gte(left, right);
         return reg;
     }
 
-    Register Generator::lowerEq(const Node *node) {
+    ir::Register Generator::lowerEq(const Node *node) {
         const Binary *eq = static_cast<const Binary *>(node);
-        Register left = lowerExpr(eq->left);
-        Register right = lowerExpr(eq->right);
+        ir::Register left = lowerExpr(eq->left);
+        ir::Register right = lowerExpr(eq->right);
 
-        Register reg = m_builder.create_eq(left, right);
+        ir::Register reg = m_builder.create_eq(left, right);
         return reg;
     }
 
-    Register Generator::lowerNeq(const Node *node) {
+    ir::Register Generator::lowerNeq(const Node *node) {
         const Binary *neq = static_cast<const Binary *>(node);
-        Register left = lowerExpr(neq->left);
-        Register right = lowerExpr(neq->right);
+        ir::Register left = lowerExpr(neq->left);
+        ir::Register right = lowerExpr(neq->right);
 
-        Register reg = m_builder.create_neq(left, right);
+        ir::Register reg = m_builder.create_neq(left, right);
         return reg;
     }
 
-    Register Generator::lowerAnd(const Node *node) {
+    ir::Register Generator::lowerAnd(const Node *node) {
         const Binary *and_node = static_cast<const Binary *>(node);
 
-        Register left = lowerExpr(and_node->left);
+        ir::Register left = lowerExpr(and_node->left);
 
         BasicBlock *true_block = m_builder.create_block();
         BasicBlock *end_block = m_builder.create_block();
 
-        Register dst = m_builder.allocate_register();
+        ir::Register dst = m_builder.allocate_register();
 
         m_builder.create_move(left, dst);
         m_builder.create_jmpif_false(dst, end_block);
 
         m_builder.set_insert_point(true_block);
-        Register right = lowerExpr(and_node->right);
+        ir::Register right = lowerExpr(and_node->right);
         m_builder.create_move(right, dst);
 
         m_builder.set_insert_point(end_block);
@@ -233,22 +231,22 @@ namespace Nyx::bytecode {
         return dst;
     }
 
-    Register Generator::lowerOr(const Node *node) {
+    ir::Register Generator::lowerOr(const Node *node) {
         const Binary *or_node = static_cast<const Binary *>(node);
 
-        Register left = lowerExpr(or_node->left);
+        ir::Register left = lowerExpr(or_node->left);
 
         BasicBlock *false_block = m_builder.create_block();
         BasicBlock *end_block = m_builder.create_block();
 
-        Register dst = m_builder.allocate_register();
+        ir::Register dst = m_builder.allocate_register();
 
         // TODO: should combine both move and jump into a single instruction.
         m_builder.create_move(left, dst);
         m_builder.create_jmpif_true(dst, end_block);
 
         m_builder.set_insert_point(false_block);
-        Register right = lowerExpr(or_node->right);
+        ir::Register right = lowerExpr(or_node->right);
         m_builder.create_move(right, dst);
 
         m_builder.set_insert_point(end_block);
@@ -256,14 +254,14 @@ namespace Nyx::bytecode {
         return dst;
     }
 
-    Register Generator::lowerInt(const Node *node) {
+    ir::Register Generator::lowerInt(const Node *node) {
         const auto int_str = m_ast.getSource(node);
 
         int64_t value = 0;
         // handle error
         std::from_chars(int_str.data(), int_str.data() + int_str.size(), value);
 
-        Register reg = m_builder.create_load_imm_int(value);
+        ir::Register reg = m_builder.create_load_imm_int(value);
         return reg;
     }
 } // namespace Nyx::bytecode
