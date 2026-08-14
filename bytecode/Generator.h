@@ -11,6 +11,8 @@
 
 namespace Nyx::bytecode {
     using Register = ir::Register;
+    using BasicBlock = ir::BasicBlock;
+
     class Generator {
     public:
         Generator(Ast &ast, std::shared_ptr<Heap> heap) : m_ast(std::move(ast)), m_heap(heap) {};
@@ -36,6 +38,8 @@ namespace Nyx::bytecode {
         Register lowerNeq(const Node *node);
 
         Register lowerAnd(const Node *node);
+        Register lowerOr(const Node *node);
+
 
         Register lowerNeg(const Node *node);
         Register lowerNot(const Node *node);

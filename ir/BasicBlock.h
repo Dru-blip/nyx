@@ -12,6 +12,7 @@ namespace Nyx::ir {
 
         template<std::derived_from<Instruction> Instr, typename... Args>
         void push(Args... args) {
+            //TODO: throw error if block is already finalized.
             m_instructions.push_back(Instr(args...));
         }
 

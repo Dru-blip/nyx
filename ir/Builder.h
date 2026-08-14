@@ -10,8 +10,11 @@ namespace Nyx::ir {
     class Builder {
     public:
         ~Builder();
-        void switch_block(BasicBlock *block);
+
+        void set_insert_point(BasicBlock *block);
+
         Register create_load_imm_int(const int64_t &value);
+        Register create_move(const Register &src, const Register &dst);
 
         Register create_not(const Register &value);
         Register create_neg(const Register &value);
@@ -29,11 +32,16 @@ namespace Nyx::ir {
         Register create_eq(const Register &lhs, const Register &rhs);
         Register create_neq(const Register &lhs, const Register &rhs);
 
+        void create_jmpif_true(const Register &condition, BasicBlock *target);
+        void create_jmpif_false(const Register &condition, BasicBlock *target);
+
         void create_ret(const Register &value);
 
-    private:
-        BasicBlock *allocate_block();
+        BasicBlock *create_block();
 
+        Register allocate_register() { return m_register_allocator.allocate(); }
+
+    private:
         std::vector<BasicBlock *> m_blocks;
         BasicBlock *m_curr_block;
         RegisterAllocator m_register_allocator;

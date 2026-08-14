@@ -7,14 +7,14 @@
 namespace Nyx::ir {
     Builder::~Builder() { mi_heap_destroy(m_heap); }
 
-    BasicBlock *Builder::allocate_block() {
+    BasicBlock *Builder::create_block() {
         void *mem = mi_heap_malloc(m_heap, sizeof(BasicBlock));
         BasicBlock *block = new (mem) BasicBlock(m_blocks.size());
         m_blocks.push_back(block);
         return block;
     }
 
-    void Builder::switch_block(BasicBlock *block) { m_curr_block = block; }
+    void Builder::set_insert_point(BasicBlock *block) { m_curr_block = block; }
 
     Register Builder::create_not(const Register &value) {
         m_register_allocator.free(value);
@@ -136,6 +136,18 @@ namespace Nyx::ir {
         assert(m_curr_block != nullptr);
         m_curr_block->push<LoadImmInt>(value, dst);
         return dst;
+    }
+
+    Register Builder::create_move(const Register &src, const Register &dst) {
+        assert(m_curr_block != nullptr);
+        m_register_allocator.free(src);
+        m_curr_block->push<Move>(src, dst);
+        return dst;
+    }
+
+    void Builder::create_jmpif_true(const Register &condition, BasicBlock *target) {
+        assert(m_curr_block != nullptr);
+        m_curr_block->push<JmpIfTrue>(condition, target);
     }
 
     void Builder::create_ret(const Register &value) {

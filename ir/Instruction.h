@@ -3,9 +3,12 @@
 // #include "bytecode/InstructionEmitter.h"
 
 namespace Nyx::ir {
+    class BasicBlock;
+
     class Instruction {
     public:
         virtual ~Instruction() = default;
+        virtual bool is_terminator() const { return false; }
         // virtual void lower(bytecode::InstructionEmitter &emitter) = 0;
     };
 
@@ -13,10 +16,18 @@ namespace Nyx::ir {
     public:
         LoadImmInt(int64_t value, Register reg) : m_value(value), m_reg(reg) {}
         // void lower(bytecode::InstructionEmitter &emitter) override;
-
     private:
         int64_t m_value;
         Register m_reg;
+    };
+
+    class Move : public Instruction {
+    public:
+        Move(Register src, Register dst) : m_src(src), m_dst(dst) {}
+        // void lower(bytecode::InstructionEmitter &emitter) override;
+
+    private:
+        Register m_src, m_dst;
     };
 
     class Unary : public Instruction {
@@ -110,9 +121,31 @@ namespace Nyx::ir {
         // void lower(bytecode::InstructionEmitter &emitter) override;
     };
 
+    class JmpIfFalse : public Instruction {
+    public:
+        JmpIfFalse(Register condition, BasicBlock *target) : condition(condition), target(target) {}
+        bool is_terminator() const override { return true; }
+
+    private:
+        Register condition;
+        BasicBlock *target;
+    };
+
+    class JmpIfTrue : public Instruction {
+    public:
+        JmpIfTrue(Register condition, BasicBlock *target) : condition(condition), target(target) {}
+        bool is_terminator() const override { return true; }
+
+    private:
+        Register condition;
+        BasicBlock *target;
+    };
+
+
     class Ret : public Instruction {
     public:
         Ret(Register value) : m_value(value) {}
+        bool is_terminator() const override { return true; }
 
     private:
         Register m_value;

@@ -3,6 +3,7 @@
 #include <cstdint>
 #include <string_view>
 #include "bytecode/Instruction.h"
+#include "ir/BasicBlock.h"
 
 
 namespace Nyx::bytecode {
@@ -12,6 +13,9 @@ namespace Nyx::bytecode {
     }
 
     Executable *Generator::compile() {
+        BasicBlock *entry = m_builder.create_block();
+        m_builder.set_insert_point(entry);
+
         for (const Node *root: m_ast.roots()) {
             lowerRoot(root);
         }
@@ -209,9 +213,47 @@ namespace Nyx::bytecode {
 
     Register Generator::lowerAnd(const Node *node) {
         const Binary *and_node = static_cast<const Binary *>(node);
+
         Register left = lowerExpr(and_node->left);
 
-        return Register(0);
+        BasicBlock *true_block = m_builder.create_block();
+        BasicBlock *end_block = m_builder.create_block();
+
+        Register dst = m_builder.allocate_register();
+
+        m_builder.create_move(left, dst);
+        m_builder.create_jmpif_false(dst, end_block);
+
+        m_builder.set_insert_point(true_block);
+        Register right = lowerExpr(and_node->right);
+        m_builder.create_move(right, dst);
+
+        m_builder.set_insert_point(end_block);
+
+        return dst;
+    }
+
+    Register Generator::lowerOr(const Node *node) {
+        const Binary *or_node = static_cast<const Binary *>(node);
+
+        Register left = lowerExpr(or_node->left);
+
+        BasicBlock *false_block = m_builder.create_block();
+        BasicBlock *end_block = m_builder.create_block();
+
+        Register dst = m_builder.allocate_register();
+
+        // TODO: should combine both move and jump into a single instruction.
+        m_builder.create_move(left, dst);
+        m_builder.create_jmpif_true(dst, end_block);
+
+        m_builder.set_insert_point(false_block);
+        Register right = lowerExpr(or_node->right);
+        m_builder.create_move(right, dst);
+
+        m_builder.set_insert_point(end_block);
+
+        return dst;
     }
 
     Register Generator::lowerInt(const Node *node) {
