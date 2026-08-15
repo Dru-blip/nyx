@@ -28,7 +28,7 @@ namespace Nyx {
 
         LeftParen,
         RightParen,
-
+        Semicolon,
 
         Return,
         And,

@@ -50,6 +50,11 @@ namespace Nyx {
                 m_pos++;
                 break;
             }
+            case ';': {
+                tag = TokenTag::Semicolon;
+                m_pos++;
+                break;
+            }
             case ')': {
                 tag = TokenTag::RightParen;
                 m_pos++;

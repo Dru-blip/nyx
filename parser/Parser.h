@@ -16,10 +16,13 @@ namespace Nyx {
         bool is_at_end() const;
 
         Token consume_token();
+        Token expect_token(TokenTag tag);
 
 
         Node *parse_stmt();
         Node *parse_return_stmt();
+        Node *parse_expr_stmt();
+
         Node *parse_expression(int8_t prec);
         Node *parse_primary_expression();
         Node *parse_integer();

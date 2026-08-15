@@ -1,6 +1,7 @@
 #include "bytecode/Generator.h"
 #include <charconv>
 #include <cstdint>
+#include <cstdlib>
 #include <string_view>
 
 
@@ -25,10 +26,21 @@ namespace Nyx::bytecode {
         switch (node->tag) {
             case NodeTag::Ret: {
                 lowerRet(node);
+                break;
+            }
+            case NodeTag::ExprStmt: {
+                lowerExprStmt(node);
+                break;
             }
             default: {
+                abort();
             }
         }
+    }
+
+    void Generator::lowerExprStmt(const Node *node) {
+        const ExprStmt *exprStmt = static_cast<const ExprStmt *>(node);
+        lowerExpr(exprStmt->expr);
     }
 
     void Generator::lowerRet(const Node *node) {

@@ -36,6 +36,7 @@ namespace Nyx {
 
         Grouped,
 
+        ExprStmt,
         Ret,
     };
 
@@ -60,6 +61,11 @@ namespace Nyx {
         Binary(NodeTag tag, Span span, Node *left, Node *right) :
             Node(tag, span), left(left), right(right) {}
         Node *left, *right;
+    };
+
+    struct ExprStmt : Node {
+        ExprStmt(Span span, Node *expr) : Node(NodeTag::ExprStmt, span), expr(expr) {}
+        Node *expr;
     };
 
     struct Return : public Node {

@@ -24,6 +24,7 @@ namespace Nyx::bytecode {
 
         void lowerRoot(const Node *node);
         void lowerRet(const Node *node);
+        void lowerExprStmt(const Node *node);
         ir::Register lowerExpr(const Node *node);
         ir::Register lowerGrouped(const Node *node);
         ir::Register lowerAdd(const Node *node);

@@ -4,6 +4,7 @@
 #include <iostream>
 #include <optional>
 #include <print>
+#include <stdexcept>
 #include "parser/Ast.h"
 #include "parser/Token.h"
 
@@ -51,6 +52,16 @@ namespace Nyx {
         return tok;
     }
 
+    Token Parser::expect_token(TokenTag tag) {
+        if (m_cur.tag != tag) {
+            std::println("token {} expected, got {}", static_cast<int>(tag),
+                         static_cast<int>(m_cur.tag));
+            // TODO: raise an error if token mismatch.
+            abort();
+        }
+        return consume_token();
+    }
+
     Ast Parser::into_ast() { return {m_source, m_arena, m_roots}; }
 
     void Parser::parse() {
@@ -70,7 +81,7 @@ namespace Nyx {
                 return parse_return_stmt();
             }
             default: {
-                std::abort();
+                return parse_expr_stmt();
             }
         }
     }
@@ -78,9 +89,17 @@ namespace Nyx {
     Node *Parser::parse_return_stmt() {
         const auto ret_token = consume_token();
         Node *value = parse_expression(0);
-        const Span ret_span = ret_token.span.merge(value->span);
+        const auto semi_token = expect_token(TokenTag::Semicolon);
+        const Span ret_span = ret_token.span.merge(semi_token.span);
         Node *ret = m_arena.allocate<Return>(ret_span, std::make_optional(value));
         return ret;
+    }
+
+    Node *Parser::parse_expr_stmt() {
+        Node *expr = parse_expression(0);
+        const auto semi_token = expect_token(TokenTag::Semicolon);
+        const Span span = expr->span.merge(semi_token.span);
+        return m_arena.allocate<ExprStmt>(span, expr);
     }
 
     Node *Parser::parse_expression(int8_t prec) {
