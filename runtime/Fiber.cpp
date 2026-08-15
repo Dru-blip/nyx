@@ -15,7 +15,7 @@ namespace Nyx {
         uint8_t *pc = frame->get_code();
         frame->m_pc = pc;
 
-        Value *registers = frame->get_registers();
+        Value *registers = frame->registers();
 
         while (true) {
             bytecode::Opcode op = static_cast<bytecode::Opcode>(*pc++);

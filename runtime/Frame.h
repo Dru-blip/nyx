@@ -24,11 +24,10 @@ namespace Nyx {
             return instr;
         }
 
-        Value *get_registers() { return static_cast<Value *>(m_registers); }
+        Value *registers() { return reinterpret_cast<Value *>(this + 1); }
 
         Frame *m_prev = nullptr;
         bytecode::Executable *m_executable;
         uint8_t *m_pc = nullptr;
-        Value m_registers[];
     };
 } // namespace Nyx
