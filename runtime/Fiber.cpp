@@ -2,6 +2,7 @@
 #include "runtime/Fiber.h"
 #include <cstdint>
 #include <cstdio>
+#include <print>
 #include "bytecode/Instruction.h"
 #include "runtime/Frame.h"
 #include "runtime/Value.h"
@@ -13,15 +14,20 @@ namespace Nyx {
 
         uint8_t *pc = frame->get_code();
         frame->m_pc = pc;
-        const uint8_t *code_end = frame->code_end();
+
         Value *registers = frame->get_registers();
 
-        while (pc < code_end) {
+        while (true) {
             bytecode::Opcode op = static_cast<bytecode::Opcode>(*pc++);
             switch (op) {
                 case bytecode::Opcode::LoadImmInt: {
                     bytecode::LoadImmInt instr = frame->read_at<bytecode::LoadImmInt>(pc);
                     registers[instr.reg] = Value(instr.imm);
+                    break;
+                }
+                case bytecode::Opcode::Move: {
+                    bytecode::Move instr = frame->read_at<bytecode::Move>(pc);
+                    registers[instr.dst] = registers[instr.src];
                     break;
                 }
                 case bytecode::Opcode::Neg: {
@@ -92,6 +98,29 @@ namespace Nyx {
                     bytecode::Neq instr = frame->read_at<bytecode::Neq>(pc);
                     registers[instr.reg] =
                             Handlers::handle_neq(registers[instr.lhs], registers[instr.rhs]);
+                    break;
+                }
+                case bytecode::Opcode::Jmp: {
+                    bytecode::Jmp instr = frame->read_at<bytecode::Jmp>(pc);
+                    pc = frame->get_code() + instr.offset;
+                    break;
+                }
+                case bytecode::Opcode::JmpIfFalse: {
+                    bytecode::JmpIfFalse instr = frame->read_at<bytecode::JmpIfFalse>(pc);
+
+                    if (!registers[instr.arg].is_truthy()) {
+                        pc = frame->get_code() + instr.offset;
+                    }
+
+                    break;
+                }
+                case bytecode::Opcode::JmpIfTrue: {
+                    bytecode::JmpIfTrue instr = frame->read_at<bytecode::JmpIfTrue>(pc);
+
+                    if (registers[instr.arg].is_truthy()) {
+                        pc = frame->get_code() + instr.offset;
+                    }
+
                     break;
                 }
                 case bytecode::Opcode::Ret: {

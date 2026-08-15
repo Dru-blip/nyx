@@ -1,5 +1,6 @@
 
 #include "ir/BytecodeEmitter.h"
+#include <print>
 #include "ir/BasicBlock.h"
 
 
@@ -18,7 +19,7 @@ namespace Nyx::ir {
         }
     }
 
-    std::vector<uint8_t>& BytecodeEmitter::emit() {
+    std::vector<uint8_t> &BytecodeEmitter::emit() {
         calculate_block_offsets();
 
         for (auto &block: m_blocks) {

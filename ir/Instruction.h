@@ -15,7 +15,7 @@ namespace Nyx::ir {
         virtual ~Instruction() = default;
         virtual void lower(InstructionEmitter &emitter) = 0;
         virtual bool is_terminator() const { return false; }
-        virtual constexpr std::size_t length() const { return 0; }
+        virtual constexpr std::size_t length() const = 0;
     };
 
     class BlockTerminator : public Instruction {
@@ -27,7 +27,7 @@ namespace Nyx::ir {
     class LoadImmInt : public Instruction {
     public:
         LoadImmInt(int64_t value, Register reg) : m_value(value), m_reg(reg) {}
-        constexpr std::size_t length() const override { return sizeof(bytecode::LoadImmInt); }
+        constexpr std::size_t length() const override { return sizeof(bytecode::LoadImmInt) + sizeof(bytecode::Opcode); }
         void lower(InstructionEmitter &emitter) override;
 
     private:
@@ -39,7 +39,7 @@ namespace Nyx::ir {
     public:
         Move(Register src, Register dst) : m_src(src), m_dst(dst) {}
         void lower(InstructionEmitter &emitter) override;
-        constexpr std::size_t length() const override { return sizeof(bytecode::Move); }
+        constexpr std::size_t length() const override { return sizeof(bytecode::Move) + sizeof(bytecode::Opcode); }
 
     private:
         Register m_src, m_dst;
@@ -48,7 +48,7 @@ namespace Nyx::ir {
     class Unary : public Instruction {
     public:
         Unary(Register value, Register dst) : m_value(value), m_dst(dst) {}
-        constexpr std::size_t length() const override { return sizeof(bytecode::Not); }
+        constexpr std::size_t length() const override { return sizeof(bytecode::Not) + sizeof(bytecode::Opcode); }
 
     protected:
         Register m_value, m_dst;
@@ -58,14 +58,14 @@ namespace Nyx::ir {
     public:
         Not(Register value, Register dst) : Unary(value, dst) {}
         void lower(InstructionEmitter &emitter) override;
-        constexpr std::size_t length() const override { return sizeof(bytecode::Not); }
+        constexpr std::size_t length() const override { return sizeof(bytecode::Not) + sizeof(bytecode::Opcode); }
     };
 
     class Neg : public Unary {
     public:
         Neg(Register value, Register dst) : Unary(value, dst) {}
         void lower(InstructionEmitter &emitter) override;
-        constexpr std::size_t length() const override { return sizeof(bytecode::Neg); }
+        constexpr std::size_t length() const override { return sizeof(bytecode::Neg) + sizeof(bytecode::Opcode); }
     };
 
     class Binary : public Instruction {
@@ -81,70 +81,80 @@ namespace Nyx::ir {
     public:
         Add(Register lhs, Register rhs, Register dst) : Binary(lhs, rhs, dst) {}
         void lower(InstructionEmitter &emitter) override;
-        constexpr std::size_t length() const override { return sizeof(bytecode::Add); }
+        constexpr std::size_t length() const override { return sizeof(bytecode::Add) + sizeof(bytecode::Opcode) ; }
     };
 
     class Sub : public Binary {
     public:
         Sub(Register lhs, Register rhs, Register dst) : Binary(lhs, rhs, dst) {}
         void lower(bytecode::InstructionEmitter &emitter) override;
-        constexpr std::size_t length() const override { return sizeof(bytecode::Sub); }
+        constexpr std::size_t length() const override { return sizeof(bytecode::Sub) + sizeof(bytecode::Opcode); }
     };
 
     class Mul : public Binary {
     public:
         Mul(Register lhs, Register rhs, Register dst) : Binary(lhs, rhs, dst) {}
         void lower(bytecode::InstructionEmitter &emitter) override;
-        constexpr std::size_t length() const override { return sizeof(bytecode::Mul); }
+        constexpr std::size_t length() const override { return sizeof(bytecode::Mul) + sizeof(bytecode::Opcode); }
     };
 
     class Div : public Binary {
     public:
         Div(Register lhs, Register rhs, Register dst) : Binary(lhs, rhs, dst) {}
         void lower(bytecode::InstructionEmitter &emitter) override;
-        constexpr std::size_t length() const override { return sizeof(bytecode::Div); }
+        constexpr std::size_t length() const override { return sizeof(bytecode::Div) + sizeof(bytecode::Opcode); }
     };
 
     class Lt : public Binary {
     public:
         Lt(Register lhs, Register rhs, Register dst) : Binary(lhs, rhs, dst) {}
         void lower(bytecode::InstructionEmitter &emitter) override;
-        constexpr std::size_t length() const override { return sizeof(bytecode::Lt); }
+        constexpr std::size_t length() const override { return sizeof(bytecode::Lt) + sizeof(bytecode::Opcode); }
     };
 
     class Lte : public Binary {
     public:
         Lte(Register lhs, Register rhs, Register dst) : Binary(lhs, rhs, dst) {}
         void lower(bytecode::InstructionEmitter &emitter) override;
-        constexpr std::size_t length() const override { return sizeof(bytecode::Lte); }
+        constexpr std::size_t length() const override { return sizeof(bytecode::Lte) + sizeof(bytecode::Opcode); }
     };
 
     class Gt : public Binary {
     public:
         Gt(Register lhs, Register rhs, Register dst) : Binary(lhs, rhs, dst) {}
         void lower(bytecode::InstructionEmitter &emitter) override;
-        constexpr std::size_t length() const override { return sizeof(bytecode::Gt); }
+        constexpr std::size_t length() const override { return sizeof(bytecode::Gt) + sizeof(bytecode::Opcode); }
     };
 
     class Gte : public Binary {
     public:
         Gte(Register lhs, Register rhs, Register dst) : Binary(lhs, rhs, dst) {}
         void lower(bytecode::InstructionEmitter &emitter) override;
-        constexpr std::size_t length() const override { return sizeof(bytecode::Gte); }
+        constexpr std::size_t length() const override { return sizeof(bytecode::Gte) + sizeof(bytecode::Opcode); }
     };
 
     class Eq : public Binary {
     public:
         Eq(Register lhs, Register rhs, Register dst) : Binary(lhs, rhs, dst) {}
         void lower(bytecode::InstructionEmitter &emitter) override;
-        constexpr std::size_t length() const override { return sizeof(bytecode::Eq); }
+        constexpr std::size_t length() const override { return sizeof(bytecode::Eq) + sizeof(bytecode::Opcode); }
     };
 
     class Neq : public Binary {
     public:
         Neq(Register lhs, Register rhs, Register dst) : Binary(lhs, rhs, dst) {}
         void lower(bytecode::InstructionEmitter &emitter) override;
-        constexpr std::size_t length() const override { return sizeof(bytecode::Neq); }
+        constexpr std::size_t length() const override { return sizeof(bytecode::Neq) + sizeof(bytecode::Opcode); }
+    };
+
+    class Jmp : public BlockTerminator {
+    public:
+        Jmp(BasicBlock *target) : m_target(target) {}
+        void lower(bytecode::InstructionEmitter &emitter) override;
+        constexpr std::size_t length() const override { return sizeof(bytecode::Jmp) + sizeof(bytecode::Opcode); }
+
+    private:
+        BasicBlock *m_target;
     };
 
     class JmpIfFalse : public BlockTerminator {
@@ -153,7 +163,7 @@ namespace Nyx::ir {
             m_condition(condition), m_target(target) {}
         void lower(bytecode::InstructionEmitter &emitter) override;
 
-        constexpr std::size_t length() const override { return sizeof(bytecode::JmpIfFalse); }
+        constexpr std::size_t length() const override { return sizeof(bytecode::JmpIfFalse) + sizeof(bytecode::Opcode); }
 
     private:
         Register m_condition;
@@ -165,7 +175,7 @@ namespace Nyx::ir {
         JmpIfTrue(Register condition, BasicBlock *target) :
             m_condition(condition), m_target(target) {}
         void lower(bytecode::InstructionEmitter &emitter) override;
-        constexpr std::size_t length() const override { return sizeof(bytecode::JmpIfTrue); }
+        constexpr std::size_t length() const override { return sizeof(bytecode::JmpIfTrue) + sizeof(bytecode::Opcode); }
 
     private:
         Register m_condition;
@@ -177,11 +187,9 @@ namespace Nyx::ir {
     public:
         Ret(Register value) : m_value(value) {}
         void lower(bytecode::InstructionEmitter &emitter) override;
-        constexpr std::size_t length() const override { return sizeof(bytecode::Ret); }
+        constexpr std::size_t length() const override { return sizeof(bytecode::Ret) + sizeof(bytecode::Opcode); }
 
     private:
         Register m_value;
     };
-
-
 } // namespace Nyx::ir

@@ -12,7 +12,7 @@ namespace Nyx::ir {
         BasicBlock(mi_heap_t *heap, std::size_t id) : m_heap(heap), m_id(id) {}
 
         template<std::derived_from<Instruction> Instr, typename... Args>
-        inline void push(Args &&...args) {
+        void push(Args &&...args) {
             // TODO: throw error if block is already finalized.
             void *mem = mi_heap_malloc(m_heap, sizeof(Instr));
             Instruction *instr = new (mem) Instr(std::forward<Args>(args)...);
@@ -24,6 +24,8 @@ namespace Nyx::ir {
         inline size_t code_offset() const { return m_code_offset; }
 
         inline size_t code_size() const { return m_code_size; }
+        inline std::size_t id() const { return m_id; }
+
         inline Instruction *end() { return m_instructions.back(); }
 
         void lower(InstructionEmitter &emitter);

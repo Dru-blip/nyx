@@ -11,6 +11,8 @@ namespace Nyx::ir {
 
         RegisterAllocator() {}
 
+        uint8_t max_used() const { return m_max_used; }
+
         Register allocate();
         void free(Register reg);
 

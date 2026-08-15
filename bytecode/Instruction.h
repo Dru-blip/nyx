@@ -23,6 +23,7 @@ namespace Nyx::bytecode {
         Eq,
         Neq,
 
+        Jmp,
         JmpIfFalse,
         JmpIfTrue,
     };
@@ -80,6 +81,11 @@ namespace Nyx::bytecode {
     DefineBinaryInst(Eq);
     DefineBinaryInst(Neq);
 
+    struct Jmp {
+        uint16_t offset;
+        Jmp() = default;
+        Jmp(uint16_t offset) : offset(offset) {}
+    };
 
     struct JmpIfFalse {
         uint8_t arg;

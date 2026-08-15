@@ -33,10 +33,17 @@ namespace Nyx::ir {
     void Ret::lower(InstructionEmitter &emitter) { emitter.ret(m_value); }
 
     void JmpIfFalse::lower(InstructionEmitter &emitter) {
+        // TODO: should convert from absolute offset to relative offset.
         emitter.jmp_if_false(m_condition, m_target->code_offset());
     }
 
     void JmpIfTrue::lower(InstructionEmitter &emitter) {
+        // TODO: should convert from absolute offset to relative offset.
         emitter.jmp_if_true(m_condition, m_target->code_offset());
+    }
+
+    void Jmp::lower(InstructionEmitter &emitter) {
+        // TODO: should convert from absolute offset to relative offset.
+        emitter.jmp(m_target->code_offset());
     }
 } // namespace Nyx::ir

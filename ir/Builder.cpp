@@ -152,6 +152,11 @@ namespace Nyx::ir {
         return dst;
     }
 
+    void Builder::create_jmp(BasicBlock *target) {
+        assert(m_curr_block != nullptr);
+        m_curr_block->push<Jmp>(target);
+    }
+
     void Builder::create_jmpif_true(const Register &condition, BasicBlock *target) {
         assert(m_curr_block != nullptr);
         m_curr_block->push<JmpIfTrue>(condition, target);

@@ -7,7 +7,7 @@
 namespace Nyx::bytecode {
     Executable *Generator::build_executable() {
         auto code = m_builder.finalize();
-        return m_heap->alloc<Executable>(code);
+        return m_heap->alloc<Executable>(code, m_builder.register_count());
     }
 
     Executable *Generator::compile() {
@@ -88,6 +88,9 @@ namespace Nyx::bytecode {
             }
             case NodeTag::And: {
                 return lowerAnd(node);
+            }
+            case NodeTag::Or: {
+                return lowerOr(node);
             }
             default: {
                 abort();
@@ -226,6 +229,8 @@ namespace Nyx::bytecode {
         ir::Register right = lowerExpr(and_node->right);
         m_builder.create_move(right, dst);
 
+        m_builder.create_jmp(end_block);
+
         m_builder.set_insert_point(end_block);
 
         return dst;
@@ -248,6 +253,8 @@ namespace Nyx::bytecode {
         m_builder.set_insert_point(false_block);
         ir::Register right = lowerExpr(or_node->right);
         m_builder.create_move(right, dst);
+
+        m_builder.create_jmp(end_block);
 
         m_builder.set_insert_point(end_block);
 
