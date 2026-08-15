@@ -127,6 +127,9 @@ namespace Nyx {
                     bytecode::Ret instr = frame->read_at<bytecode::Ret>(pc);
                     return registers[instr.reg];
                 }
+                case bytecode::Opcode::RetNil: {
+                    return Nil;
+                }
                 default: {
                     break;
                 }

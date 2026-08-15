@@ -46,4 +46,6 @@ namespace Nyx::ir {
         // TODO: should convert from absolute offset to relative offset.
         emitter.jmp(m_target->code_offset());
     }
+
+    void RetNil::lower(InstructionEmitter &emitter) { emitter.ret_nil(); }
 } // namespace Nyx::ir

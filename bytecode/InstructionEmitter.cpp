@@ -76,4 +76,10 @@ namespace Nyx::bytecode {
     void InstructionEmitter::jmp_if_true(const Register &arg, const uint32_t &offset) {
         emit<JmpIfTrue>(Opcode::JmpIfTrue, arg.slot(), offset);
     }
+
+    void InstructionEmitter::ret_nil() {
+        push(static_cast<uint8_t>(Opcode::RetNil));
+    }
+
+
 } // namespace Nyx::bytecode

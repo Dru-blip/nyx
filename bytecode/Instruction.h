@@ -8,7 +8,6 @@ namespace Nyx::bytecode {
         LoadImmInt,
         Move,
 
-        Ret,
         Not,
         Neg,
         Add,
@@ -26,6 +25,8 @@ namespace Nyx::bytecode {
         Jmp,
         JmpIfFalse,
         JmpIfTrue,
+        Ret,
+        RetNil,
     };
 
 #pragma pack(push, 1)

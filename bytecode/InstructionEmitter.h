@@ -32,6 +32,8 @@ namespace Nyx::bytecode {
         std::vector<uint8_t> &code() { return m_code; }
 
         void ret(const Register &reg);
+        void ret_nil();
+
         void load_imm_int(const Register &reg, const int64_t &imm);
         void move(const Register &src, const Register &dst);
 

@@ -174,6 +174,10 @@ namespace Nyx::ir {
         m_curr_block->push<Ret>(value);
     }
 
+    void Builder::create_ret_nil() {
+        assert(m_curr_block != nullptr);
+        m_curr_block->push<RetNil>();
+    }
 
     std::vector<uint8_t> Builder::finalize() {
         BytecodeEmitter bytecode_emitter(m_blocks, patch_buffer);

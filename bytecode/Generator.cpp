@@ -19,6 +19,7 @@ namespace Nyx::bytecode {
             lowerRoot(root);
         }
 
+        m_builder.create_ret_nil();
         return build_executable();
     }
 

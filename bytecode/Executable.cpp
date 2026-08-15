@@ -19,6 +19,10 @@ namespace Nyx::bytecode {
                     pc += sizeof(Ret);
                     break;
                 }
+                case Opcode::RetNil: {
+                    std::println("[{}] RetNil", pc - m_code.data());
+                    break;
+                }
                 case Opcode::LoadImmInt: {
                     LoadImmInt load;
                     std::memcpy(&load, pc, sizeof(LoadImmInt));
@@ -86,8 +90,7 @@ namespace Nyx::bytecode {
                 case Opcode::Jmp: {
                     Jmp inst;
                     std::memcpy(&inst, pc, sizeof(Jmp));
-                    std::println("[{}] Jmp {}", pc - m_code.data(),
-                                 inst.offset);
+                    std::println("[{}] Jmp {}", pc - m_code.data(), inst.offset);
                     pc += sizeof(Jmp);
                     break;
                 }

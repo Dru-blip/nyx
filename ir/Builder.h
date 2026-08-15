@@ -38,6 +38,7 @@ namespace Nyx::ir {
         void create_jmpif_false(const Register &condition, BasicBlock *target);
 
         void create_ret(const Register &value);
+        void create_ret_nil();
 
         BasicBlock *create_block();
 
