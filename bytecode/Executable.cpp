@@ -86,17 +86,17 @@ namespace Nyx::bytecode {
                 case Opcode::JmpIfFalse: {
                     JmpIfFalse inst;
                     std::memcpy(&inst, pc, sizeof(JmpIfFalse));
-                    std::println("[{}] JmpIfFalse %{} {}", pc - m_code.data(), inst.arg,
+                    std::println("[{}] JmpIfFalse %{} {}", pc - m_code.data()-1, inst.arg,
                                  inst.offset);
                     pc += sizeof(JmpIfFalse);
                     break;
                 }
-                case Opcode::JmpIfFalseMove: {
-                    JmpIfFalseMove inst;
-                    std::memcpy(&inst, pc, sizeof(JmpIfFalseMove));
-                    std::println("[{}] JmpIfFalseMove %{} = %{} {}", pc - m_code.data(), inst.arg,
-                                 inst.result, inst.offset);
-                    pc += sizeof(JmpIfFalseMove);
+                case Opcode::JmpIfTrue: {
+                    JmpIfTrue inst;
+                    std::memcpy(&inst, pc, sizeof(JmpIfTrue));
+                    std::println("[{}] JmpIfTrue %{} {}", pc - m_code.data()-1, inst.arg,
+                                 inst.offset);
+                    pc += sizeof(JmpIfTrue);
                     break;
                 }
                 default: {

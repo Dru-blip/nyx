@@ -1,4 +1,5 @@
 #include "ir/Instruction.h"
+#include "ir/BasicBlock.h"
 
 namespace Nyx::ir {
     void LoadImmInt::lower(InstructionEmitter &emitter) { emitter.load_imm_int(m_reg, m_value); }
@@ -30,4 +31,12 @@ namespace Nyx::ir {
     void Neq::lower(InstructionEmitter &emitter) { emitter.neq(m_lhs, m_rhs, m_dst); }
 
     void Ret::lower(InstructionEmitter &emitter) { emitter.ret(m_value); }
+
+    void JmpIfFalse::lower(InstructionEmitter &emitter) {
+        emitter.jmp_if_false(m_condition, m_target->code_offset());
+    }
+
+    void JmpIfTrue::lower(InstructionEmitter &emitter) {
+        emitter.jmp_if_true(m_condition, m_target->code_offset());
+    }
 } // namespace Nyx::ir

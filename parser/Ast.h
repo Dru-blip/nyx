@@ -78,7 +78,7 @@ namespace Nyx {
         }
 
         template<std::derived_from<Node> T, typename... Args>
-        T *allocate(Args... args) {
+        T *allocate(Args &&...args) {
             void *slot = mi_heap_malloc(m_heap, sizeof(T));
             T *node = new (slot) T(std::forward<Args>(args)...);
             return node;
@@ -87,7 +87,7 @@ namespace Nyx {
         std::span<Node *> nodes_span(std::vector<Node *> &nodes) {
             const size_t size = nodes.size() * sizeof(Node *);
             void *mem = mi_heap_malloc(m_heap, size);
-            memcpy(mem, nodes.data(), size);
+            std::memcpy(mem, nodes.data(), size);
             return {static_cast<Node **>(mem), nodes.size()};
         }
 
@@ -97,8 +97,8 @@ namespace Nyx {
 
     class Ast {
     public:
-        Ast(std::string_view source, NodeArena &arena, std::span<Node *> &roots) :
-            m_arena(std::move(arena)), m_roots(std::move(roots)), m_source(source) {};
+        Ast(std::string_view source, NodeArena &arena, std::span<Node *> roots) :
+            m_arena(std::move(arena)), m_roots(roots), m_source(source) {};
 
         static Ast parse(std::string_view source);
 

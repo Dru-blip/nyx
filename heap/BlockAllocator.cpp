@@ -24,5 +24,4 @@ namespace Nyx {
             m_free_list.push(&block);
         }
     }
-
 } // namespace Nyx

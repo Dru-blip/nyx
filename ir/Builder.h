@@ -9,6 +9,7 @@
 namespace Nyx::ir {
     class Builder {
     public:
+        Builder() { m_heap = mi_heap_new(); };
         ~Builder();
 
         void set_insert_point(BasicBlock *block);
@@ -41,10 +42,13 @@ namespace Nyx::ir {
 
         Register allocate_register() { return m_register_allocator.allocate(); }
 
+        std::vector<uint8_t> finalize();
+
     private:
         std::vector<BasicBlock *> m_blocks;
         BasicBlock *m_curr_block;
         RegisterAllocator m_register_allocator;
         mi_heap_t *m_heap;
+        std::vector<BlockTerminator *> patch_buffer;
     };
 } // namespace Nyx::ir

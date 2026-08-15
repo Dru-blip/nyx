@@ -6,8 +6,8 @@
 
 namespace Nyx::bytecode {
     Executable *Generator::build_executable() {
-        // return m_heap->alloc<Executable>(m_emitter.code(), m_constants);
-        return nullptr;
+        auto code = m_builder.finalize();
+        return m_heap->alloc<Executable>(code);
     }
 
     Executable *Generator::compile() {

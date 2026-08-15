@@ -20,7 +20,7 @@ int main() {
     // Nyx::Fiber fiber;
     // Nyx::Value result = fiber.run(executable);
 
-    // std::println("{}", result.as_bool());
+    // std::println("{}", result.as_int());
 
     return 0;
 }

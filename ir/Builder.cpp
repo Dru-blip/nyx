@@ -1,15 +1,22 @@
-#include "Builder.h"
+#include "ir/Builder.h"
+#include <algorithm>
 #include <cassert>
 #include <mimalloc.h>
 #include "ir/BasicBlock.h"
+#include "ir/BytecodeEmitter.h"
 #include "ir/Register.h"
 
 namespace Nyx::ir {
-    Builder::~Builder() { mi_heap_destroy(m_heap); }
+    Builder::~Builder() {
+        for (auto block: m_blocks) {
+            block->~BasicBlock();
+        }
+        mi_heap_destroy(m_heap);
+    }
 
     BasicBlock *Builder::create_block() {
         void *mem = mi_heap_malloc(m_heap, sizeof(BasicBlock));
-        BasicBlock *block = new (mem) BasicBlock(m_blocks.size());
+        BasicBlock *block = new (mem) BasicBlock(m_heap, m_blocks.size());
         m_blocks.push_back(block);
         return block;
     }
@@ -148,10 +155,23 @@ namespace Nyx::ir {
     void Builder::create_jmpif_true(const Register &condition, BasicBlock *target) {
         assert(m_curr_block != nullptr);
         m_curr_block->push<JmpIfTrue>(condition, target);
+        patch_buffer.push_back(static_cast<BlockTerminator *>(m_curr_block->end()));
+    }
+
+    void Builder::create_jmpif_false(const Register &condition, BasicBlock *target) {
+        assert(m_curr_block != nullptr);
+        m_curr_block->push<JmpIfFalse>(condition, target);
+        patch_buffer.push_back(static_cast<BlockTerminator *>(m_curr_block->end()));
     }
 
     void Builder::create_ret(const Register &value) {
         assert(m_curr_block != nullptr);
         m_curr_block->push<Ret>(value);
+    }
+
+
+    std::vector<uint8_t> Builder::finalize() {
+        BytecodeEmitter bytecode_emitter(m_blocks, patch_buffer);
+        return std::move(bytecode_emitter.emit());
     }
 } // namespace Nyx::ir

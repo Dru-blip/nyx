@@ -9,10 +9,9 @@
 namespace Nyx::bytecode {
     enum class Opcode : uint8_t;
 
-
     using Register = ir::Register;
-    class InstructionEmitter {
 
+    class InstructionEmitter {
     public:
         void push(const uint8_t byte) { m_code.push_back(byte); }
 
@@ -49,6 +48,11 @@ namespace Nyx::bytecode {
         void gte(const Register &left, const Register &right, const Register &dst);
         void eq(const Register &left, const Register &right, const Register &dst);
         void neq(const Register &left, const Register &right, const Register &dst);
+
+
+        void jmp_if_false(const Register &arg, const uint32_t &offset);
+        void jmp_if_true(const Register &arg, const uint32_t &offset);
+
     private:
         std::vector<uint8_t> m_code;
     };

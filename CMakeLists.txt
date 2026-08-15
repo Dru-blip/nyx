@@ -13,13 +13,11 @@ set(PARSER_SRCS parser/Ast.cpp
         parser/Lexer.cpp
         parser/Parser.cpp)
 
-
-set(IR_SRCS ir/Builder.cpp ir/RegisterAllocator.cpp)
+set(IR_SRCS ir/Builder.cpp ir/RegisterAllocator.cpp ir/BytecodeEmitter.cpp ir/Instruction.cpp)
 
 set(BYTECODE_SRCS bytecode/Executable.cpp
         bytecode/Generator.cpp
-        bytecode/InstructionEmitter.cpp
-        bytecode/RegisterAllocator.cpp)
+        bytecode/InstructionEmitter.cpp)
 
 set(HEAP_SRCS heap/Bin.cpp
         heap/Block.cpp
@@ -30,7 +28,7 @@ set(HEAP_SRCS heap/Bin.cpp
 
 set(RUNTIME_SRCS runtime/CallStack.cpp runtime/Fiber.cpp runtime/FrameChunk.cpp)
 
-set(SOURCES main.cpp ${PARSER_SRCS} ${BYTECODE_SRCS} ${HEAP_SRCS} ${RUNTIME_SRCS})
+set(SOURCES main.cpp ${PARSER_SRCS} ${BYTECODE_SRCS} ${IR_SRCS} ${HEAP_SRCS} ${RUNTIME_SRCS} )
 
 add_executable(nyx ${SOURCES})
 

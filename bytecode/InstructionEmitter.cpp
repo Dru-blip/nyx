@@ -65,4 +65,11 @@ namespace Nyx::bytecode {
         emit<Neq>(Opcode::Neq, left.slot(), right.slot(), dst.slot());
     }
 
+    void InstructionEmitter::jmp_if_false(const Register &arg, const uint32_t &offset) {
+        emit<JmpIfFalse>(Opcode::JmpIfFalse, arg.slot(), offset);
+    }
+
+    void InstructionEmitter::jmp_if_true(const Register &arg, const uint32_t &offset) {
+        emit<JmpIfTrue>(Opcode::JmpIfTrue, arg.slot(), offset);
+    }
 } // namespace Nyx::bytecode
