@@ -38,6 +38,7 @@ namespace Nyx {
 
         ExprStmt,
         Ret,
+        BlockStmt,
     };
 
     struct Node {
@@ -68,9 +69,14 @@ namespace Nyx {
         Node *expr;
     };
 
-    struct Return : public Node {
+    struct Return : Node {
         Return(Span span, std::optional<Node *> value) : Node(NodeTag::Ret, span), value(value) {}
         std::optional<Node *> value;
+    };
+
+    struct BlockStmt : Node {
+        BlockStmt(Span span, std::span<Node *> stmts) : Node(NodeTag::BlockStmt, span), stmts(stmts) {}
+        std::span<Node *> stmts;
     };
 
     class NodeArena {

@@ -60,6 +60,16 @@ namespace Nyx {
                 m_pos++;
                 break;
             }
+            case '{': {
+                tag = TokenTag::LeftBrace;
+                m_pos++;
+                break;
+            }
+            case '}': {
+                tag = TokenTag::RightBrace;
+                m_pos++;
+                break;
+            }
             case '!': {
                 if (peek_char() == '=') {
                     tag = TokenTag::BangEqual;

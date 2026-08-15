@@ -20,6 +20,8 @@ namespace Nyx {
 
 
         Node *parse_stmt();
+        Node *parse_block_stmt();
+
         Node *parse_return_stmt();
         Node *parse_expr_stmt();
 

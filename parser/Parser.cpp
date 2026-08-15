@@ -4,6 +4,7 @@
 #include <iostream>
 #include <optional>
 #include <print>
+#include <span>
 #include <stdexcept>
 #include "parser/Ast.h"
 #include "parser/Token.h"
@@ -77,6 +78,9 @@ namespace Nyx {
     Node *Parser::parse_stmt() {
         const auto [tag, span] = m_cur;
         switch (tag) {
+            case TokenTag::LeftBrace: {
+                return parse_block_stmt();
+            }
             case TokenTag::Return: {
                 return parse_return_stmt();
             }
@@ -84,6 +88,20 @@ namespace Nyx {
                 return parse_expr_stmt();
             }
         }
+    }
+
+    Node *Parser::parse_block_stmt() {
+        const auto left_brace_token = consume_token();
+        std::vector<Node *> stmts;
+
+        while (m_cur.tag != TokenTag::RightBrace) {
+            stmts.push_back(parse_stmt());
+        }
+
+        const auto right_brace_token = expect_token(TokenTag::RightBrace);
+        const Span block_span = left_brace_token.span.merge(right_brace_token.span);
+        std::span<Node *> stmts_span = m_arena.nodes_span(stmts);
+        return m_arena.allocate<BlockStmt>(block_span, stmts_span);
     }
 
     Node *Parser::parse_return_stmt() {

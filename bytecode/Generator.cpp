@@ -18,23 +18,33 @@ namespace Nyx::bytecode {
         for (const Node *root: m_ast.roots()) {
             lowerRoot(root);
         }
+
         return build_executable();
     }
 
 
     void Generator::lowerRoot(const Node *node) {
         switch (node->tag) {
+            case NodeTag::BlockStmt: {
+                return lowerBlockStmt(node);
+            }
             case NodeTag::Ret: {
-                lowerRet(node);
-                break;
+                return lowerRet(node);
             }
             case NodeTag::ExprStmt: {
-                lowerExprStmt(node);
-                break;
+                return lowerExprStmt(node);
             }
             default: {
                 abort();
             }
+        }
+    }
+
+    void Generator::lowerBlockStmt(const Node *node) {
+        const BlockStmt *blockStmt = static_cast<const BlockStmt *>(node);
+
+        for (const Node *stmt: blockStmt->stmts) {
+            lowerRoot(stmt);
         }
     }
 

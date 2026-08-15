@@ -10,7 +10,7 @@
 #include "runtime/Value.h"
 
 int main() {
-    Nyx::Ast ast = Nyx::Ast::parse("1+2;");
+    Nyx::Ast ast = Nyx::Ast::parse("{1+2;}");
     std::shared_ptr<Nyx::Heap> heap = std::make_shared<Nyx::Heap>();
 
     Nyx::bytecode::Generator generator(ast, heap);

@@ -28,6 +28,8 @@ namespace Nyx {
 
         LeftParen,
         RightParen,
+        LeftBrace,
+        RightBrace,
         Semicolon,
 
         Return,

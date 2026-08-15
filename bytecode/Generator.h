@@ -10,7 +10,6 @@
 #include "parser/Ast.h"
 
 namespace Nyx::bytecode {
-
     using BasicBlock = ir::BasicBlock;
 
     class Generator {
@@ -23,6 +22,7 @@ namespace Nyx::bytecode {
         std::size_t make_block();
 
         void lowerRoot(const Node *node);
+        void lowerBlockStmt(const Node *node);
         void lowerRet(const Node *node);
         void lowerExprStmt(const Node *node);
         ir::Register lowerExpr(const Node *node);
