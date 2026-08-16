@@ -29,7 +29,7 @@ namespace Nyx {
         if (const auto it = keyword_map.find(str); it != keyword_map.end()) {
             return it->second;
         }
-        return TokenTag::Invalid;
+        return TokenTag::Identifier;
     }
 
     Token Lexer::next_token() {

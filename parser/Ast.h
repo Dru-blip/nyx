@@ -3,9 +3,7 @@
 #include <cstring>
 #include <optional>
 #include <span>
-#include <string>
 #include <string_view>
-#include <variant>
 #include <vector>
 
 #include "Token.h"
@@ -39,6 +37,8 @@ namespace Nyx {
         ExprStmt,
         Ret,
         BlockStmt,
+
+        VarDecl,
     };
 
     struct Node {
@@ -75,8 +75,16 @@ namespace Nyx {
     };
 
     struct BlockStmt : Node {
-        BlockStmt(Span span, std::span<Node *> stmts) : Node(NodeTag::BlockStmt, span), stmts(stmts) {}
+        BlockStmt(Span span, std::span<Node *> stmts) :
+            Node(NodeTag::BlockStmt, span), stmts(stmts) {}
         std::span<Node *> stmts;
+    };
+
+    struct VarDecl : Node {
+        VarDecl(Span span, Span name, Node *value) :
+            Node(NodeTag::VarDecl, span), name(name), initializer(value) {}
+        Span name;
+        Node *initializer;
     };
 
     class NodeArena {

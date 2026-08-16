@@ -78,6 +78,9 @@ namespace Nyx {
     Node *Parser::parse_stmt() {
         const auto [tag, span] = m_cur;
         switch (tag) {
+            case TokenTag::Var: {
+                return parse_var_decl();
+            }
             case TokenTag::LeftBrace: {
                 return parse_block_stmt();
             }
@@ -88,6 +91,17 @@ namespace Nyx {
                 return parse_expr_stmt();
             }
         }
+    }
+
+    Node *Parser::parse_var_decl() {
+        const auto var_token = consume_token();
+
+        const auto name = expect_token(TokenTag::Identifier);
+        const auto initializer = parse_expression(0);
+        const auto semi_token = expect_token(TokenTag::Semicolon);
+
+        return m_arena.allocate<VarDecl>(var_token.span.merge(semi_token.span), name.span,
+                                         initializer);
     }
 
     Node *Parser::parse_block_stmt() {
