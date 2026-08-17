@@ -166,6 +166,10 @@ namespace Nyx {
             case TokenTag::Integer: {
                 return parse_integer();
             }
+            case TokenTag::Identifier: {
+                const auto _ = consume_token();
+                return m_arena.allocate<Identifier>(span);
+            }
             case TokenTag::LeftParen: {
                 const auto _ = consume_token();
                 const auto expr = parse_expression(0);

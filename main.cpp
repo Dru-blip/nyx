@@ -8,7 +8,7 @@
 #include "runtime/Value.h"
 
 int main() {
-    Nyx::Ast ast = Nyx::Ast::parse("var a=5;var b=6+6;");
+    Nyx::Ast ast = Nyx::Ast::parse("var a=5;var b=a+6; return b;");
     std::shared_ptr<Nyx::Heap> heap = std::make_shared<Nyx::Heap>();
 
     Nyx::bytecode::Generator generator(ast, heap);

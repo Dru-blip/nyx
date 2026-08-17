@@ -88,6 +88,9 @@ namespace Nyx::bytecode {
             case NodeTag::Integer: {
                 return lowerInt(node);
             }
+            case NodeTag::Identifier: {
+                return lowerIdentifier(node);
+            }
             case NodeTag::Not: {
                 return lowerNot(node);
             }
@@ -300,6 +303,13 @@ namespace Nyx::bytecode {
         m_builder.set_insert_point(end_block);
 
         return dst;
+    }
+
+    ir::Register Generator::lowerIdentifier(const Node *node) {
+        const auto name = m_ast.getSource(node);
+        uint8_t slot = m_scope.resolve(name);
+        // TODO: throw error if not found.
+        return ir::Register(slot);
     }
 
     ir::Register Generator::lowerInt(const Node *node) {

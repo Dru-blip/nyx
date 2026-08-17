@@ -27,6 +27,7 @@ namespace Nyx::bytecode {
         void lowerBlockStmt(const Node *node);
         void lowerRet(const Node *node);
         void lowerExprStmt(const Node *node);
+
         ir::Register lowerExpr(const Node *node);
         ir::Register lowerGrouped(const Node *node);
         ir::Register lowerAdd(const Node *node);
@@ -46,6 +47,7 @@ namespace Nyx::bytecode {
 
         ir::Register lowerNeg(const Node *node);
         ir::Register lowerNot(const Node *node);
+        ir::Register lowerIdentifier(const Node *node);
         ir::Register lowerInt(const Node *node);
 
         Ast m_ast;

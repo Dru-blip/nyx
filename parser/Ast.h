@@ -14,6 +14,7 @@
 namespace Nyx {
     enum class NodeTag {
         Integer,
+        Identifier,
 
         Neg,
         Not,
@@ -47,11 +48,14 @@ namespace Nyx {
         Span span{};
 
         Node(NodeTag tag, Span span) : tag(tag), span(span) {}
-        virtual ~Node() = default;
     };
 
     struct IntLiteral : Node {
         IntLiteral(Span span) : Node(NodeTag::Integer, span) {}
+    };
+
+    struct Identifier : Node {
+        Identifier(Span span) : Node(NodeTag::Identifier, span) {}
     };
 
     struct Unary : public Node {
