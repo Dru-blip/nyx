@@ -33,7 +33,7 @@ namespace Nyx::ir {
     private:
         mi_heap_t *m_heap;
         std::size_t m_id;
-        std::size_t m_code_size{0}; // storage size of the serialized code.
+        std::size_t m_code_size{0};
         std::size_t m_code_offset{0};
         // TODO: fix leaking memory from vector buffers.
         std::vector<Instruction *> m_instructions;

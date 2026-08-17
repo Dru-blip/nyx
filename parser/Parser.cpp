@@ -97,6 +97,7 @@ namespace Nyx {
         const auto var_token = consume_token();
 
         const auto name = expect_token(TokenTag::Identifier);
+        const auto _ = expect_token(TokenTag::Equal);
         const auto initializer = parse_expression(0);
         const auto semi_token = expect_token(TokenTag::Semicolon);
 

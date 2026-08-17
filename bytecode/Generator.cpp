@@ -26,6 +26,9 @@ namespace Nyx::bytecode {
 
     void Generator::lowerRoot(const Node *node) {
         switch (node->tag) {
+            case NodeTag::VarDecl: {
+                return lowerVarDecl(node);
+            }
             case NodeTag::BlockStmt: {
                 return lowerBlockStmt(node);
             }
@@ -39,6 +42,21 @@ namespace Nyx::bytecode {
                 abort();
             }
         }
+    }
+
+    void Generator::lowerVarDecl(const Node *node) {
+        const VarDecl *varDecl = static_cast<const VarDecl *>(node);
+        const Node *value = varDecl->initializer;
+
+        ir::Register slot = m_builder.allocate_register();
+
+        if (value != nullptr) {
+            const auto result = lowerExpr(value);
+            m_builder.create_move(result, slot);
+        }
+
+        const std::string_view name = m_ast.getSource(varDecl->name);
+        m_scope.add_local(name, slot.slot());
     }
 
     void Generator::lowerBlockStmt(const Node *node) {

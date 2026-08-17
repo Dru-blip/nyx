@@ -1,5 +1,3 @@
-#include <cassert>
-#include <cstdio>
 #include <memory>
 #include <print>
 #include "bytecode/Executable.h"
@@ -10,7 +8,7 @@
 #include "runtime/Value.h"
 
 int main() {
-    Nyx::Ast ast = Nyx::Ast::parse("var a=0;");
+    Nyx::Ast ast = Nyx::Ast::parse("var a=5;var b=6+6;");
     std::shared_ptr<Nyx::Heap> heap = std::make_shared<Nyx::Heap>();
 
     Nyx::bytecode::Generator generator(ast, heap);
@@ -18,10 +16,9 @@ int main() {
 
     executable->print_code();
 
-    Nyx::Fiber fiber;
-    Nyx::Value result = fiber.run(executable);
+    // Nyx::Fiber fiber;
+    // Nyx::Value result = fiber.run(executable);
 
-    std::println("{}", result.as_int());
-
+    // std::println("{}", result.as_int());
     return 0;
 }

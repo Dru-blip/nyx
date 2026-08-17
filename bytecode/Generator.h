@@ -4,6 +4,7 @@
 #include <memory>
 #include <vector>
 #include "bytecode/Executable.h"
+#include "bytecode/Scope.h"
 #include "heap/Heap.h"
 #include "ir/Builder.h"
 #include "ir/Register.h"
@@ -22,6 +23,7 @@ namespace Nyx::bytecode {
         std::size_t make_block();
 
         void lowerRoot(const Node *node);
+        void lowerVarDecl(const Node *node);
         void lowerBlockStmt(const Node *node);
         void lowerRet(const Node *node);
         void lowerExprStmt(const Node *node);
@@ -50,5 +52,6 @@ namespace Nyx::bytecode {
         ir::Builder m_builder;
         std::shared_ptr<Heap> m_heap;
         std::vector<Value> m_constants;
+        Scope m_scope;
     };
 } // namespace Nyx::bytecode

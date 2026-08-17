@@ -1,4 +1,5 @@
 #pragma once
+
 #include <concepts>
 #include <cstring>
 #include <optional>
@@ -127,6 +128,10 @@ namespace Nyx {
 
         std::string_view getSource(const Node *node) const {
             return m_source.substr(node->span.start, node->span.end - node->span.start);
+        }
+
+        std::string_view getSource(const Span &span) const {
+            return m_source.substr(span.start, span.end - span.start);
         }
 
     private:
