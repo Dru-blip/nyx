@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include <memory>
 #include <vector>
 #include "bytecode/Executable.h"
@@ -44,6 +43,7 @@ namespace Nyx::bytecode {
         ir::Register lowerAnd(const Node *node);
         ir::Register lowerOr(const Node *node);
 
+        ir::Register lowerAssignment(const Node *node);
 
         ir::Register lowerNeg(const Node *node);
         ir::Register lowerNot(const Node *node);

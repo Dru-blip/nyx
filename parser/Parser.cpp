@@ -17,6 +17,8 @@ struct Operator {
 
 namespace Nyx {
     static std::unordered_map<TokenTag, Operator> operator_map{
+            {TokenTag::Equal, {NodeTag::Assignment, 1, 1}},
+
             {TokenTag::Or, {NodeTag::Or, 16, 17}},
             {TokenTag::And, {NodeTag::And, 17, 18}},
 

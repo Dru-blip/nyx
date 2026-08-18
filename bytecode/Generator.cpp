@@ -1,8 +1,8 @@
 #include "bytecode/Generator.h"
 #include <charconv>
 #include <cstdint>
-#include <cstdlib>
 #include <string_view>
+#include "ir/Register.h"
 
 
 namespace Nyx::bytecode {
@@ -135,6 +135,9 @@ namespace Nyx::bytecode {
             }
             case NodeTag::Or: {
                 return lowerOr(node);
+            }
+            case NodeTag::Assignment: {
+                return lowerAssignment(node);
             }
             default: {
                 abort();
@@ -302,6 +305,14 @@ namespace Nyx::bytecode {
 
         m_builder.set_insert_point(end_block);
 
+        return dst;
+    }
+
+    ir::Register Generator::lowerAssignment(const Node *node) {
+        const Binary *assign_node = static_cast<const Binary *>(node);
+        ir::Register dst = lowerExpr(assign_node->left);
+        ir::Register src = lowerExpr(assign_node->right);
+        m_builder.create_move(src, dst);
         return dst;
     }
 

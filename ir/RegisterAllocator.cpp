@@ -18,5 +18,9 @@ namespace Nyx::ir {
         return Register(m_max_used++);
     }
 
-    void RegisterAllocator::free(Register reg) { m_used_registers[reg.slot()] = false; }
+    void RegisterAllocator::free(Register reg) {
+        if (reg.isVar())
+            return;
+        m_used_registers[reg.slot()] = false;
+    }
 } // namespace Nyx::ir

@@ -26,6 +26,7 @@ int main(int argc, char **argv) {
     }
 
     std::string source = read_file(std::filesystem::path(argv[1]));
+
     Nyx::Ast ast = Nyx::Ast::parse(source);
     std::shared_ptr<Nyx::Heap> heap = std::make_shared<Nyx::Heap>();
 
@@ -34,9 +35,9 @@ int main(int argc, char **argv) {
 
     executable->print_code();
 
-    // Nyx::Fiber fiber;
-    // Nyx::Value result = fiber.run(executable);
+    Nyx::Fiber fiber;
+    Nyx::Value result = fiber.run(executable);
 
-    // std::println("{}", result.as_int());
+    std::println("{}", result.as_int());
     return 0;
 }

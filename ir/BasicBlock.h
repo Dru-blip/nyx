@@ -13,7 +13,7 @@ namespace Nyx::ir {
 
         template<std::derived_from<Instruction> Instr, typename... Args>
         void push(Args &&...args) {
-            // TODO: throw error if block is already finalized.
+            // TODO: throw error if block is already terminated.
             void *mem = mi_heap_malloc(m_heap, sizeof(Instr));
             Instruction *instr = new (mem) Instr(std::forward<Args>(args)...);
             m_instructions.push_back(instr);
