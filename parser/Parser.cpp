@@ -83,6 +83,9 @@ namespace Nyx {
             case TokenTag::Var: {
                 return parse_var_decl();
             }
+            case TokenTag::If: {
+                return parse_if_stmt();
+            }
             case TokenTag::LeftBrace: {
                 return parse_block_stmt();
             }
@@ -105,6 +108,20 @@ namespace Nyx {
 
         return m_arena.allocate<VarDecl>(var_token.span.merge(semi_token.span), name.span,
                                          initializer);
+    }
+
+    Node *Parser::parse_if_stmt() {
+        const auto if_token = consume_token();
+        const auto test = parse_expression(0);
+        const auto consequent = parse_stmt();
+        Node *alternate{nullptr};
+        if (m_cur.tag == TokenTag::Else) {
+            consume_token();
+            alternate = parse_stmt();
+        }
+        const Span span = alternate != nullptr ? if_token.span.merge(alternate->span)
+                                               : if_token.span.merge(consequent->span);
+        return m_arena.allocate<If>(span, test, consequent, alternate);
     }
 
     Node *Parser::parse_block_stmt() {

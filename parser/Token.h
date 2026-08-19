@@ -34,6 +34,8 @@ namespace Nyx {
         Semicolon,
 
         Return,
+        If,
+        Else,
         Var,
         And,
         Or,

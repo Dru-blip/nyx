@@ -27,10 +27,8 @@ namespace Nyx {
 
         // TODO: what happens if you remove inline.
         inline static const std::unordered_map<std::string_view, TokenTag> keyword_map{
-                {"return", TokenTag::Return},
-                {"var", TokenTag::Var},
-                {"and", TokenTag::And},
-                {"or", TokenTag::Or},
+                {"return", TokenTag::Return}, {"if", TokenTag::If},   {"else", TokenTag::Else},
+                {"var", TokenTag::Var},       {"and", TokenTag::And}, {"or", TokenTag::Or},
                 {"not", TokenTag::Not},
         };
     };

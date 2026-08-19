@@ -40,6 +40,7 @@ namespace Nyx {
         ExprStmt,
         Ret,
         BlockStmt,
+        If,
 
         VarDecl,
     };
@@ -84,6 +85,12 @@ namespace Nyx {
         BlockStmt(Span span, std::span<Node *> stmts) :
             Node(NodeTag::BlockStmt, span), stmts(stmts) {}
         std::span<Node *> stmts;
+    };
+
+    struct If : Node {
+        If(Span span, Node *test, Node *consequent, Node *alternate) :
+            Node(NodeTag::If, span), test(test), consequent(consequent), alternate(alternate) {}
+        Node *test, *consequent, *alternate;
     };
 
     struct VarDecl : Node {
