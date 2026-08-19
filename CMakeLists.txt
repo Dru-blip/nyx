@@ -18,7 +18,8 @@ set(PARSER_SRCS parser/Ast.cpp
 set(IR_SRCS ir/Builder.cpp
         ir/RegisterAllocator.cpp
         ir/BytecodeEmitter.cpp
-        ir/Instruction.cpp)
+        ir/Instruction.cpp
+        ir/BasicBlockTracer.cpp)
 
 set(BYTECODE_SRCS bytecode/Executable.cpp
         bytecode/Generator.cpp

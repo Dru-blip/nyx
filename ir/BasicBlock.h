@@ -26,6 +26,16 @@ namespace Nyx::ir {
         inline size_t code_size() const { return m_code_size; }
         inline std::size_t id() const { return m_id; }
 
+        void add_successor(BasicBlock *block) {
+            m_successors.push_back(block);
+            block->add_predecessor(this);
+        }
+
+        void add_predecessor(BasicBlock *block) { m_predecessors.push_back(block); }
+
+        inline std::vector<BasicBlock *> &successors() { return m_successors; }
+        inline std::vector<BasicBlock *> &predecessors() { return m_predecessors; }
+
         inline Instruction *end() { return m_instructions.back(); }
 
         void lower(InstructionEmitter &emitter);

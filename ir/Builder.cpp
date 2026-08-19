@@ -1,8 +1,8 @@
 #include "ir/Builder.h"
-#include <algorithm>
 #include <cassert>
 #include <mimalloc.h>
 #include "ir/BasicBlock.h"
+#include "ir/BasicBlockTracer.h"
 #include "ir/BytecodeEmitter.h"
 #include "ir/Register.h"
 
@@ -154,18 +154,21 @@ namespace Nyx::ir {
 
     void Builder::create_jmp(BasicBlock *target) {
         assert(m_curr_block != nullptr);
+        m_curr_block->add_successor(target);
         m_curr_block->push<Jmp>(target);
     }
 
     void Builder::create_jmpif_true(const Register &condition, BasicBlock *target) {
         assert(m_curr_block != nullptr);
         m_curr_block->push<JmpIfTrue>(condition, target);
+        m_curr_block->add_successor(target);
         patch_buffer.push_back(static_cast<BlockTerminator *>(m_curr_block->end()));
     }
 
     void Builder::create_jmpif_false(const Register &condition, BasicBlock *target) {
         assert(m_curr_block != nullptr);
         m_curr_block->push<JmpIfFalse>(condition, target);
+        m_curr_block->add_successor(target);
         patch_buffer.push_back(static_cast<BlockTerminator *>(m_curr_block->end()));
     }
 
@@ -180,7 +183,9 @@ namespace Nyx::ir {
     }
 
     std::vector<uint8_t> Builder::finalize() {
-        BytecodeEmitter bytecode_emitter(m_blocks, patch_buffer);
+        BasicBlockTracer tracer(m_blocks);
+        auto blocks = tracer.trace();
+        BytecodeEmitter bytecode_emitter(blocks, patch_buffer);
         return std::move(bytecode_emitter.emit());
     }
 } // namespace Nyx::ir

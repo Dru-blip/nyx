@@ -3,6 +3,7 @@
 #include <cstdint>
 #include <string_view>
 #include "ir/Register.h"
+#include "parser/Ast.h"
 
 
 namespace Nyx::bytecode {
@@ -28,6 +29,9 @@ namespace Nyx::bytecode {
         switch (node->tag) {
             case NodeTag::VarDecl: {
                 return lowerVarDecl(node);
+            }
+            case NodeTag::If: {
+                return lowerIf(node);
             }
             case NodeTag::BlockStmt: {
                 return lowerBlockStmt(node);
@@ -57,6 +61,36 @@ namespace Nyx::bytecode {
 
         const std::string_view name = m_ast.getSource(varDecl->name);
         m_scope.add_local(name, slot.slot());
+    }
+
+    void Generator::lowerIf(const Node *node) {
+        Node *current = const_cast<Node *>(node);
+        BasicBlock *end_block = m_builder.create_block();
+        while (current != nullptr) {
+            if (current->tag != NodeTag::If)
+                break;
+            const If *ifNode = static_cast<const If *>(current);
+            const auto test = lowerExpr(ifNode->test);
+            BasicBlock *true_block = m_builder.create_block();
+            BasicBlock *false_block = m_builder.create_block();
+            m_builder.create_jmpif_false(test, false_block);
+
+            m_builder.set_insert_point(true_block);
+            lowerRoot(ifNode->consequent);
+            m_builder.create_jmp(end_block);
+
+            m_builder.set_insert_point(false_block);
+            current = ifNode->alternate;
+        }
+
+        if (current) {
+            lowerRoot(current);
+            m_builder.create_jmp(end_block);
+        } else {
+            m_builder.create_jmp(end_block);
+        }
+
+        m_builder.set_insert_point(end_block);
     }
 
     void Generator::lowerBlockStmt(const Node *node) {
