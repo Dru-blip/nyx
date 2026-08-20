@@ -191,9 +191,9 @@ namespace Nyx::ir {
     }
 
     std::vector<uint8_t> Builder::finalize() {
-        BasicBlockTracer tracer(m_blocks);
-        auto blocks = tracer.trace();
-        BytecodeEmitter bytecode_emitter(blocks);
+        // BasicBlockTracer tracer(m_blocks);
+        // auto blocks = tracer.trace();
+        BytecodeEmitter bytecode_emitter(m_blocks);
         return std::move(bytecode_emitter.emit());
     }
 } // namespace Nyx::ir
