@@ -2,6 +2,7 @@
 #include <charconv>
 #include <cstdint>
 #include <string_view>
+#include "ir/BasicBlock.h"
 #include "ir/Register.h"
 #include "parser/Ast.h"
 
@@ -73,11 +74,12 @@ namespace Nyx::bytecode {
             const auto test = lowerExpr(ifNode->test);
             BasicBlock *true_block = m_builder.create_block();
             BasicBlock *false_block = m_builder.create_block();
-            m_builder.create_jmpif_false(test, false_block);
+            // TODO: create a new conditional branch instruction , so that tracing works correctly.
+            m_builder.create_branch(test, true_block, false_block);
 
             m_builder.set_insert_point(true_block);
             lowerRoot(ifNode->consequent);
-            m_builder.create_jmp(end_block);
+            m_builder.create_jmp(end_block, ir::Edge::CondJumpWeight + 4);
 
             m_builder.set_insert_point(false_block);
             current = ifNode->alternate;
@@ -85,9 +87,9 @@ namespace Nyx::bytecode {
 
         if (current) {
             lowerRoot(current);
-            m_builder.create_jmp(end_block);
+            m_builder.create_jmp(end_block, ir::Edge::CondJumpWeight);
         } else {
-            m_builder.create_jmp(end_block);
+            m_builder.create_jmp(end_block, ir::Edge::CondJumpWeight);
         }
 
         m_builder.set_insert_point(end_block);
@@ -304,13 +306,13 @@ namespace Nyx::bytecode {
         ir::Register dst = m_builder.allocate_register();
 
         m_builder.create_move(left, dst);
-        m_builder.create_jmpif_false(dst, end_block);
+        m_builder.create_jmpif_false(dst, end_block, ir::Edge::CondJumpWeight);
 
         m_builder.set_insert_point(true_block);
         ir::Register right = lowerExpr(and_node->right);
         m_builder.create_move(right, dst);
 
-        m_builder.create_jmp(end_block);
+        m_builder.create_jmp(end_block, ir::Edge::CondJumpWeight + 20);
 
         m_builder.set_insert_point(end_block);
 
@@ -329,13 +331,13 @@ namespace Nyx::bytecode {
 
         // TODO: should combine both move and jump into a single instruction.
         m_builder.create_move(left, dst);
-        m_builder.create_jmpif_true(dst, end_block);
+        m_builder.create_jmpif_true(dst, end_block, ir::Edge::CondJumpWeight);
 
         m_builder.set_insert_point(false_block);
         ir::Register right = lowerExpr(or_node->right);
         m_builder.create_move(right, dst);
 
-        m_builder.create_jmp(end_block);
+        m_builder.create_jmp(end_block, ir::Edge::CondJumpWeight + 20);
 
         m_builder.set_insert_point(end_block);
 

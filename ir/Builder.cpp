@@ -152,24 +152,32 @@ namespace Nyx::ir {
         return dst;
     }
 
-    void Builder::create_jmp(BasicBlock *target) {
+    void Builder::create_jmp(BasicBlock *target, const size_t weight) {
         assert(m_curr_block != nullptr);
-        m_curr_block->add_successor(target);
+        m_curr_block->add_successor({weight, target});
         m_curr_block->push<Jmp>(target);
     }
 
-    void Builder::create_jmpif_true(const Register &condition, BasicBlock *target) {
+    void Builder::create_jmpif_true(const Register &condition, BasicBlock *target,
+                                    const size_t weight) {
         assert(m_curr_block != nullptr);
         m_curr_block->push<JmpIfTrue>(condition, target);
-        m_curr_block->add_successor(target);
-        patch_buffer.push_back(static_cast<BlockTerminator *>(m_curr_block->end()));
+        m_curr_block->add_successor({weight, target});
     }
 
-    void Builder::create_jmpif_false(const Register &condition, BasicBlock *target) {
+    void Builder::create_jmpif_false(const Register &condition, BasicBlock *target,
+                                     const size_t weight) {
         assert(m_curr_block != nullptr);
         m_curr_block->push<JmpIfFalse>(condition, target);
-        m_curr_block->add_successor(target);
-        patch_buffer.push_back(static_cast<BlockTerminator *>(m_curr_block->end()));
+        m_curr_block->add_successor({weight, target});
+    }
+
+    void Builder::create_branch(const Register &condition, BasicBlock *true_target,
+                                BasicBlock *false_target) {
+        assert(m_curr_block != nullptr);
+        m_curr_block->push<Branch>(condition, true_target, false_target);
+        m_curr_block->add_successor({Edge::CondJumpWeight + 20, true_target});
+        m_curr_block->add_successor({1, false_target});
     }
 
     void Builder::create_ret(const Register &value) {
@@ -185,7 +193,7 @@ namespace Nyx::ir {
     std::vector<uint8_t> Builder::finalize() {
         BasicBlockTracer tracer(m_blocks);
         auto blocks = tracer.trace();
-        BytecodeEmitter bytecode_emitter(blocks, patch_buffer);
+        BytecodeEmitter bytecode_emitter(blocks);
         return std::move(bytecode_emitter.emit());
     }
 } // namespace Nyx::ir

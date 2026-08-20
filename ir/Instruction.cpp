@@ -47,5 +47,10 @@ namespace Nyx::ir {
         emitter.jmp(m_target->code_offset());
     }
 
+    void Branch::lower(InstructionEmitter &emitter) {
+        emitter.jmp_if_true(m_condition, m_true_target->code_offset());
+        emitter.jmp(m_false_target->code_offset());
+    }
+
     void RetNil::lower(InstructionEmitter &emitter) { emitter.ret_nil(); }
 } // namespace Nyx::ir

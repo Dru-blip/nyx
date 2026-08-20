@@ -7,6 +7,15 @@
 #include "Instruction.h"
 
 namespace Nyx::ir {
+    struct Edge {
+        size_t weight;
+        BasicBlock *to;
+
+        Edge(size_t weight, BasicBlock *to) : weight(weight), to(to) {}
+
+        static constexpr size_t CondJumpWeight = 20;
+    };
+
     class BasicBlock {
     public:
         BasicBlock(mi_heap_t *heap, std::size_t id) : m_heap(heap), m_id(id) {}
@@ -26,14 +35,14 @@ namespace Nyx::ir {
         inline size_t code_size() const { return m_code_size; }
         inline std::size_t id() const { return m_id; }
 
-        void add_successor(BasicBlock *block) {
-            m_successors.push_back(block);
-            block->add_predecessor(this);
+        void add_successor(Edge edge) {
+            m_successors.push_back(edge);
+            // block->add_predecessor(this);
         }
 
         void add_predecessor(BasicBlock *block) { m_predecessors.push_back(block); }
 
-        inline std::vector<BasicBlock *> &successors() { return m_successors; }
+        inline std::vector<Edge> &successors() { return m_successors; }
         inline std::vector<BasicBlock *> &predecessors() { return m_predecessors; }
 
         inline Instruction *end() { return m_instructions.back(); }
@@ -48,6 +57,6 @@ namespace Nyx::ir {
         // TODO: fix leaking memory from vector buffers.
         std::vector<Instruction *> m_instructions;
         std::vector<BasicBlock *> m_predecessors;
-        std::vector<BasicBlock *> m_successors;
+        std::vector<Edge> m_successors;
     };
 } // namespace Nyx::ir

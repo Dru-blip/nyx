@@ -218,6 +218,22 @@ namespace Nyx::ir {
         BasicBlock *m_target;
     };
 
+    class Branch : public BlockTerminator {
+    public:
+        Branch(Register condition, BasicBlock *true_target, BasicBlock *false_target) :
+            m_condition(condition), m_true_target(true_target), m_false_target(false_target) {}
+        void lower(bytecode::InstructionEmitter &emitter) override;
+        constexpr std::size_t length() const override {
+            return sizeof(bytecode::JmpIfTrue) + sizeof(bytecode::Jmp) +
+                   sizeof(bytecode::Opcode) * 2;
+        }
+
+    private:
+        Register m_condition;
+        BasicBlock *m_true_target;
+        BasicBlock *m_false_target;
+    };
+
 
     class Ret : public BlockTerminator {
     public:

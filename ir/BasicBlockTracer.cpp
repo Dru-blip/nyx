@@ -1,4 +1,6 @@
 #include "BasicBlockTracer.h"
+#include <cstdio>
+#include <print>
 #include <queue>
 #include <vector>
 #include "ir/BasicBlock.h"
@@ -32,10 +34,19 @@ namespace Nyx::ir {
 
                 // TODO: should select a successor based on some heuristic.
                 // instead of picking first available successor.
-                for (auto successor: block->successors()) {
-                    if (!visited[successor->id()]) {
-                        queue.push(successor);
+                BasicBlock *likely_successor = nullptr;
+                size_t likely_weight = 0;
+                for (auto &successor: block->successors()) {
+                    if (!visited[successor.to->id()]) {
+                        if (successor.weight > likely_weight) {
+                            likely_successor = successor.to;
+                            likely_weight = successor.weight;
+                        }
                     }
+                }
+
+                if (likely_successor){
+                    queue.push(likely_successor);
                 }
             }
         }

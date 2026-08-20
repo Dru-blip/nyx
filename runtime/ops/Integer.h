@@ -1,5 +1,6 @@
 #pragma once
 
+#include <iostream>
 #include "runtime/Fiber.h"
 #include "runtime/Value.h"
 
@@ -26,22 +27,24 @@ namespace Nyx::Ops::Integer {
         return Value(a.as_int() / b.as_int());
     }
 
-    static inline Value lt(const Value a, const Value b) { return Value(a.as_int() < b.as_int()); }
+    static inline Value lt(const Value a, const Value b) { return Value::from_bool(a.as_int() < b.as_int()); }
 
 
     static inline Value lte(const Value a, const Value b) {
-        return Value(a.as_int() <= b.as_int());
+        return Value::from_bool(a.as_int() <= b.as_int());
     }
 
-    static inline Value gt(const Value a, const Value b) { return Value(a.as_int() > b.as_int()); }
+    static inline Value gt(const Value a, const Value b) {
+        return Value::from_bool(static_cast<bool>(a.as_int() > b.as_int()));
+    }
 
     static inline Value gte(const Value a, const Value b) {
-        return Value(a.as_int() >= b.as_int());
+        return Value::from_bool(a.as_int() >= b.as_int());
     }
-    static inline Value eq(const Value a, const Value b) { return Value(a.as_int() == b.as_int()); }
+    static inline Value eq(const Value a, const Value b) { return Value::from_bool(a.as_int() == b.as_int()); }
 
     static inline Value neq(const Value a, const Value b) {
-        return Value(a.as_int() != b.as_int());
+        return Value::from_bool(a.as_int() != b.as_int());
     }
 
     static inline Value neg(const Value a) { return Value(-a.as_int()); }

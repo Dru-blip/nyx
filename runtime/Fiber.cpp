@@ -2,6 +2,7 @@
 #include "runtime/Fiber.h"
 #include <cstdint>
 #include <cstdio>
+#include <iostream>
 #include <print>
 #include "bytecode/Instruction.h"
 #include "runtime/Frame.h"
