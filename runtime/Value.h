@@ -1,6 +1,7 @@
 #pragma once
 #include <cstdint>
 #include <print>
+#include <sys/types.h>
 
 
 namespace Nyx {
@@ -23,7 +24,7 @@ namespace Nyx {
         }
 
         static Value from_bool(bool value) {
-            return Value(static_cast<uintptr_t>(value) << 3 | BoolTag);
+            return Value::from_raw(static_cast<uintptr_t>(value) << 3 | BoolTag);
         }
 
         bool is_int() const { return (m_raw & Mask) == IntTag; }
@@ -34,7 +35,7 @@ namespace Nyx {
         bool is_truthy() const { return !is_nil() && !is_false(); }
 
         int64_t as_int() const { return static_cast<int64_t>(m_raw) >> 3; }
-        bool as_bool() const { return static_cast<bool>(m_raw) >> 3; }
+        bool as_bool() const { return static_cast<bool>(m_raw >> 3); }
         uintptr_t raw() const { return m_raw; }
 
         void print_tag() const {
@@ -59,6 +60,6 @@ namespace Nyx {
     };
 
     static Value Nil = Value::from_raw(Value::NilTag);
-    static Value True = Value(true);
-    static Value False = Value(false);
+    static Value True = Value::from_bool(true);
+    static Value False = Value::from_bool(false);
 } // namespace Nyx
