@@ -31,6 +31,9 @@ namespace Nyx::bytecode {
             case NodeTag::VarDecl: {
                 return lowerVarDecl(node);
             }
+            case NodeTag::While: {
+                return lowerWhileLoop(node);
+            }
             case NodeTag::Loop: {
                 return lowerLoop(node);
             }
@@ -73,6 +76,25 @@ namespace Nyx::bytecode {
         m_scope.add_local(name, slot.slot());
     }
 
+    void Generator::lowerWhileLoop(const Node *node) {
+        const WhileLoop *whileLoop = static_cast<const WhileLoop *>(node);
+
+        BasicBlock *test_block = m_builder.create_block();
+        BasicBlock *loop_block = m_builder.create_block();
+        BasicBlock *end_block = m_builder.create_block();
+
+        m_builder.create_jmp(test_block, ir::Edge::CondJumpWeight + 20);
+
+        m_builder.set_insert_point(test_block);
+        ir::Register test = lowerExpr(whileLoop->test);
+        m_builder.create_branch(test, loop_block, end_block);
+
+        m_builder.set_insert_point(loop_block);
+        lowerRoot(whileLoop->body);
+        m_builder.create_jmp(test_block, ir::Edge::CondJumpWeight + 20);
+
+        m_builder.set_insert_point(end_block);
+    }
 
     void Generator::lowerLoop(const Node *node) {
         const Loop *loop = static_cast<const Loop *>(node);

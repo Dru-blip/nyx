@@ -21,6 +21,7 @@ namespace Nyx {
 
         Node *parse_stmt();
         Node *parse_var_decl();
+        Node *parse_while_loop();
         Node *parse_loop_stmt();
         Node *parse_break_stmt();
         Node *parse_continue_stmt();

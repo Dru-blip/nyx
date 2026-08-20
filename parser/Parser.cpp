@@ -80,6 +80,9 @@ namespace Nyx {
             case TokenTag::Var: {
                 return parse_var_decl();
             }
+            case TokenTag::While: {
+                return parse_while_loop();
+            }
             case TokenTag::Loop: {
                 return parse_loop_stmt();
             }
@@ -114,6 +117,13 @@ namespace Nyx {
 
         return m_arena.allocate<VarDecl>(var_token.span.merge(semi_token.span), name.span,
                                          initializer);
+    }
+
+    Node *Parser::parse_while_loop() {
+        const auto while_token = consume_token();
+        const auto test = parse_expression(0);
+        const auto body = parse_stmt();
+        return m_arena.allocate<WhileLoop>(while_token.span.merge(body->span), test, body);
     }
 
     Node *Parser::parse_loop_stmt() {

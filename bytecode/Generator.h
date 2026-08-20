@@ -29,6 +29,7 @@ namespace Nyx::bytecode {
 
         void lowerRoot(const Node *node);
         void lowerVarDecl(const Node *node);
+        void lowerWhileLoop(const Node *node);
         void lowerLoop(const Node *node);
         void lowerBreak(const Node *node);
         void lowerContinue(const Node *node);

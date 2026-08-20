@@ -32,6 +32,8 @@ namespace Nyx {
                 {"loop", TokenTag::Loop},
                 {"break", TokenTag::Break},
                 {"continue", TokenTag::Continue},
+                {"for", TokenTag::For},
+                {"while", TokenTag::While},
                 {"else", TokenTag::Else},
                 {"var", TokenTag::Var},
                 {"and", TokenTag::And},

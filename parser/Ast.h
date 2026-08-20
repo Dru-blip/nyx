@@ -44,6 +44,8 @@ namespace Nyx {
         Loop,
         Break,
         Continue,
+        For,
+        While,
 
         VarDecl,
     };
@@ -107,6 +109,12 @@ namespace Nyx {
     struct Loop : Node {
         Loop(Span span, Node *body) : Node(NodeTag::Loop, span), body(body) {}
         Node *body;
+    };
+
+    struct WhileLoop : Node {
+        WhileLoop(Span span, Node *test, Node *body) :
+            Node(NodeTag::While, span), test(test), body(body) {}
+        Node *test, *body;
     };
 
     struct VarDecl : Node {

@@ -39,6 +39,8 @@ namespace Nyx {
         Loop,
         Break,
         Continue,
+        For,
+        While,
         Var,
         And,
         Or,

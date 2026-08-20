@@ -1,9 +1,6 @@
 var a=0;
 
-loop{
-    if a==1000{
-        break;
-    }
+while a<1000{
     a=a+1;
 }
 
