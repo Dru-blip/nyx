@@ -1,6 +1,6 @@
 #pragma once
 #include <cstdint>
-#include <string>
+#include <string_view>
 #include <unordered_map>
 #include <vector>
 
@@ -27,8 +27,15 @@ namespace Nyx {
 
         // TODO: what happens if you remove inline.
         inline static const std::unordered_map<std::string_view, TokenTag> keyword_map{
-                {"return", TokenTag::Return}, {"if", TokenTag::If},   {"else", TokenTag::Else},
-                {"var", TokenTag::Var},       {"and", TokenTag::And}, {"or", TokenTag::Or},
+                {"return", TokenTag::Return},
+                {"if", TokenTag::If},
+                {"loop", TokenTag::Loop},
+                {"break", TokenTag::Break},
+                {"continue", TokenTag::Continue},
+                {"else", TokenTag::Else},
+                {"var", TokenTag::Var},
+                {"and", TokenTag::And},
+                {"or", TokenTag::Or},
                 {"not", TokenTag::Not},
         };
     };

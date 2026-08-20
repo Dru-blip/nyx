@@ -1,11 +1,8 @@
 #include "Parser.h"
 #include <cstdint>
-#include <cstdio>
-#include <iostream>
 #include <optional>
 #include <print>
 #include <span>
-#include <stdexcept>
 #include "parser/Ast.h"
 #include "parser/Token.h"
 
@@ -83,6 +80,15 @@ namespace Nyx {
             case TokenTag::Var: {
                 return parse_var_decl();
             }
+            case TokenTag::Loop: {
+                return parse_loop_stmt();
+            }
+            case TokenTag::Break: {
+                return parse_break_stmt();
+            }
+            case TokenTag::Continue: {
+                return parse_continue_stmt();
+            }
             case TokenTag::If: {
                 return parse_if_stmt();
             }
@@ -108,6 +114,24 @@ namespace Nyx {
 
         return m_arena.allocate<VarDecl>(var_token.span.merge(semi_token.span), name.span,
                                          initializer);
+    }
+
+    Node *Parser::parse_loop_stmt() {
+        const auto loop_token = consume_token();
+        const auto body = parse_stmt();
+        return m_arena.allocate<Loop>(loop_token.span.merge(body->span), body);
+    }
+
+    Node *Parser::parse_break_stmt() {
+        const auto break_token = consume_token();
+        expect_token(TokenTag::Semicolon);
+        return m_arena.allocate<Break>(break_token.span);
+    }
+
+    Node *Parser::parse_continue_stmt() {
+        const auto continue_token = consume_token();
+        expect_token(TokenTag::Semicolon);
+        return m_arena.allocate<Continue>(continue_token.span);
     }
 
     Node *Parser::parse_if_stmt() {

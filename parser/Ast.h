@@ -41,6 +41,9 @@ namespace Nyx {
         Ret,
         BlockStmt,
         If,
+        Loop,
+        Break,
+        Continue,
 
         VarDecl,
     };
@@ -91,6 +94,19 @@ namespace Nyx {
         If(Span span, Node *test, Node *consequent, Node *alternate) :
             Node(NodeTag::If, span), test(test), consequent(consequent), alternate(alternate) {}
         Node *test, *consequent, *alternate;
+    };
+
+    struct Break : Node {
+        Break(Span span) : Node(NodeTag::Break, span) {}
+    };
+
+    struct Continue : Node {
+        Continue(Span span) : Node(NodeTag::Continue, span) {}
+    };
+
+    struct Loop : Node {
+        Loop(Span span, Node *body) : Node(NodeTag::Loop, span), body(body) {}
+        Node *body;
     };
 
     struct VarDecl : Node {

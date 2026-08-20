@@ -35,9 +35,9 @@ int main(int argc, char **argv) {
 
     executable->print_code();
 
-    Nyx::Fiber fiber;
-    Nyx::Value result = fiber.run(executable);
+    // Nyx::Fiber fiber;
+    // Nyx::Value result = fiber.run(executable);
 
-    std::println("{}", result.as_int());
+    // std::println("{}", result.as_int());
     return 0;
 }

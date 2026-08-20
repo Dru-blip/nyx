@@ -31,6 +31,15 @@ namespace Nyx::bytecode {
             case NodeTag::VarDecl: {
                 return lowerVarDecl(node);
             }
+            case NodeTag::Loop: {
+                return lowerLoop(node);
+            }
+            case NodeTag::Break: {
+                return lowerBreak(node);
+            }
+            case NodeTag::Continue: {
+                return lowerContinue(node);
+            }
             case NodeTag::If: {
                 return lowerIf(node);
             }
@@ -62,6 +71,44 @@ namespace Nyx::bytecode {
 
         const std::string_view name = m_ast.getSource(varDecl->name);
         m_scope.add_local(name, slot.slot());
+    }
+
+
+    void Generator::lowerLoop(const Node *node) {
+        const Loop *loop = static_cast<const Loop *>(node);
+
+        BasicBlock *loop_block = m_builder.create_block();
+        BasicBlock *end_block = m_builder.create_block();
+
+        m_loop_stack.push_back({loop_block, end_block});
+
+        m_builder.create_jmp(loop_block, ir::Edge::CondJumpWeight + 20);
+        m_builder.set_insert_point(loop_block);
+        lowerRoot(loop->body);
+        m_builder.create_jmp(loop_block, ir::Edge::CondJumpWeight + 20);
+        m_builder.set_insert_point(end_block);
+
+        m_loop_stack.pop_back();
+    }
+
+    void Generator::lowerBreak(const Node *node) {
+        (void) node;
+        if (m_loop_stack.empty()) {
+            // TODO: raise error , break outside of loop.
+            return;
+        }
+        const auto [loop_block, end_block] = m_loop_stack.back();
+        m_builder.create_jmp(end_block, ir::Edge::CondJumpWeight + 10);
+    }
+
+    void Generator::lowerContinue(const Node *node) {
+        (void) node;
+        if (m_loop_stack.empty()) {
+            // TODO: raise error , continue outside of loop.
+            return;
+        }
+        const auto [loop_block, end_block] = m_loop_stack.back();
+        m_builder.create_jmp(loop_block, ir::Edge::CondJumpWeight + 20);
     }
 
     void Generator::lowerIf(const Node *node) {

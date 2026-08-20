@@ -12,6 +12,12 @@
 namespace Nyx::bytecode {
     using BasicBlock = ir::BasicBlock;
 
+
+    struct LoopInfo {
+        BasicBlock *header;
+        BasicBlock *end;
+    };
+
     class Generator {
     public:
         Generator(Ast &ast, std::shared_ptr<Heap> heap) : m_ast(std::move(ast)), m_heap(heap) {};
@@ -23,6 +29,9 @@ namespace Nyx::bytecode {
 
         void lowerRoot(const Node *node);
         void lowerVarDecl(const Node *node);
+        void lowerLoop(const Node *node);
+        void lowerBreak(const Node *node);
+        void lowerContinue(const Node *node);
         void lowerIf(const Node *node);
         void lowerBlockStmt(const Node *node);
         void lowerRet(const Node *node);
@@ -55,6 +64,7 @@ namespace Nyx::bytecode {
         ir::Builder m_builder;
         std::shared_ptr<Heap> m_heap;
         std::vector<Value> m_constants;
+        std::vector<LoopInfo> m_loop_stack;
         Scope m_scope;
     };
 } // namespace Nyx::bytecode
