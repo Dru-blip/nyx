@@ -10,11 +10,12 @@
 
 namespace Nyx {
     using FiberId = uint16_t;
-    class Fiber {
-    public:
-        Value run(bytecode::Executable *executable);
+    struct Fiber {
 
-    private:
+        inline Frame *push_frame(bytecode::Executable *executable) {
+            return m_stack.push(executable);
+        }
+
         FiberId m_id{};
         CallStack m_stack;
     };

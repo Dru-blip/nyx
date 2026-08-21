@@ -7,7 +7,7 @@
 #include "bytecode/Generator.h"
 #include "heap/Heap.h"
 #include "parser/Ast.h"
-#include "runtime/Fiber.h"
+#include "runtime/VM.h"
 #include "runtime/Value.h"
 
 std::string read_file(const std::filesystem::path &path) {
@@ -27,17 +27,15 @@ int main(int argc, char **argv) {
 
     std::string source = read_file(std::filesystem::path(argv[1]));
 
+    Nyx::VM vm;
     Nyx::Ast ast = Nyx::Ast::parse(source);
-    std::shared_ptr<Nyx::Heap> heap = std::make_shared<Nyx::Heap>();
-
-    Nyx::bytecode::Generator generator(ast, heap);
+    Nyx::bytecode::Generator generator(ast, vm.heap());
     Nyx::bytecode::Executable *executable = generator.compile();
 
     executable->print_code();
 
-    Nyx::Fiber fiber;
-    Nyx::Value result = fiber.run(executable);
+    Nyx::Value result = vm.run_executable(executable);
+    std::println("{}", result.as_int());
 
-    std::printf("%p\n", static_cast<void *>(result.as_obj()));
     return 0;
 }

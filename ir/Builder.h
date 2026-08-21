@@ -15,6 +15,7 @@ namespace Nyx::ir {
         void set_insert_point(BasicBlock *block);
 
         Register create_load_imm_int(const int64_t &value);
+        Register create_load_const(const uint16_t &idx);
         Register create_load_string(const uint16_t &idx);
         Register create_move(const Register &src, const Register &dst);
 

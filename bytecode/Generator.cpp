@@ -437,7 +437,7 @@ namespace Nyx::bytecode {
         const auto str = m_ast.getSource(node);
         const uint16_t idx = add_string_constant(str.data(), str.size());
 
-        ir::Register reg = m_builder.create_load_string(idx);
+        ir::Register reg = m_builder.create_load_const(idx);
         return reg;
     }
 
@@ -448,15 +448,23 @@ namespace Nyx::bytecode {
         // handle error
         std::from_chars(int_str.data(), int_str.data() + int_str.size(), value);
 
-        ir::Register reg = m_builder.create_load_imm_int(value);
+        const uint16_t idx = add_int_constant(value);
+
+        ir::Register reg = m_builder.create_load_const(idx);
         return reg;
     }
 
     uint16_t Generator::add_string_constant(const char *data, std::size_t size) {
         // TODO: should intern string.
         // TODO: check for existing string constants inside string table.
-        String *str = String::create(m_heap.get(), data, size);
+        String *str = String::create(m_heap, data, size);
         const auto val = Value::from_object(str);
+        m_constants.push_back(val);
+        return static_cast<uint16_t>(m_constants.size() - 1);
+    }
+
+    uint16_t Generator::add_int_constant(int64_t value) {
+        const auto val = Value(value);
         m_constants.push_back(val);
         return static_cast<uint16_t>(m_constants.size() - 1);
     }

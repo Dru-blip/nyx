@@ -1,7 +1,6 @@
 #pragma once
 
 #include <cstdint>
-#include <memory>
 #include <vector>
 #include "bytecode/Executable.h"
 #include "bytecode/Scope.h"
@@ -21,7 +20,7 @@ namespace Nyx::bytecode {
 
     class Generator {
     public:
-        Generator(Ast &ast, std::shared_ptr<Heap> heap) : m_ast(std::move(ast)), m_heap(heap) {};
+        Generator(Ast &ast, Heap *heap) : m_ast(std::move(ast)), m_heap(heap) {};
         Executable *compile();
 
     private:
@@ -65,10 +64,11 @@ namespace Nyx::bytecode {
         ir::Register lowerInt(const Node *node);
 
         uint16_t add_string_constant(const char *data, std::size_t size);
+        uint16_t add_int_constant(int64_t value);
 
         Ast m_ast;
         ir::Builder m_builder;
-        std::shared_ptr<Heap> m_heap;
+        Heap *m_heap;
         std::vector<Value> m_constants;
         std::vector<LoopInfo> m_loop_stack;
         Scope m_scope;

@@ -12,6 +12,10 @@ namespace Nyx::bytecode {
         emit<LoadImmInt>(Opcode::LoadImmInt, reg.slot(), imm);
     }
 
+    void InstructionEmitter::load_const(const Register &reg, const uint16_t &idx) {
+        emit<LoadConst>(Opcode::LoadConst, reg.slot(), idx);
+    }
+
     void InstructionEmitter::load_string(const Register &reg, const uint16_t &idx) {
         emit<LoadString>(Opcode::LoadString, reg.slot(), idx);
     }
@@ -69,9 +73,7 @@ namespace Nyx::bytecode {
         emit<Neq>(Opcode::Neq, left.slot(), right.slot(), dst.slot());
     }
 
-    void InstructionEmitter::jmp(const uint16_t &offset) {
-        emit<Jmp>(Opcode::Jmp, offset);
-    }
+    void InstructionEmitter::jmp(const uint16_t &offset) { emit<Jmp>(Opcode::Jmp, offset); }
 
     void InstructionEmitter::jmp_if_false(const Register &arg, const uint32_t &offset) {
         emit<JmpIfFalse>(Opcode::JmpIfFalse, arg.slot(), offset);
@@ -81,9 +83,7 @@ namespace Nyx::bytecode {
         emit<JmpIfTrue>(Opcode::JmpIfTrue, arg.slot(), offset);
     }
 
-    void InstructionEmitter::ret_nil() {
-        push(static_cast<uint8_t>(Opcode::RetNil));
-    }
+    void InstructionEmitter::ret_nil() { push(static_cast<uint8_t>(Opcode::RetNil)); }
 
 
 } // namespace Nyx::bytecode

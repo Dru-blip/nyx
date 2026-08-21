@@ -7,7 +7,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-add_compile_options(-Wall -Wextra -Wpedantic -Werror -g)
+add_compile_options(-Wall -Wextra  -Werror -g)
 
 find_package(mimalloc REQUIRED)
 
@@ -35,7 +35,7 @@ set(HEAP_SRCS heap/Bin.cpp
 set(RUNTIME_SRCS runtime/CallStack.cpp
         runtime/Fiber.cpp
         runtime/FrameChunk.cpp
-        runtime/String.cpp)
+        runtime/String.cpp runtime/VM.cpp runtime/StringPool.cpp)
 
 set(SOURCES main.cpp
         ${PARSER_SRCS}

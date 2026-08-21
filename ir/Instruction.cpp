@@ -4,6 +4,8 @@
 namespace Nyx::ir {
     void LoadImmInt::lower(InstructionEmitter &emitter) { emitter.load_imm_int(m_reg, m_value); }
 
+    void LoadConst::lower(InstructionEmitter &emitter) { emitter.load_const(m_reg, m_idx); }
+
     void LoadString::lower(InstructionEmitter &emitter) { emitter.load_string(m_reg, m_idx); }
 
     void Move::lower(InstructionEmitter &emitter) { emitter.move(m_src, m_dst); }

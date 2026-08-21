@@ -16,7 +16,7 @@ namespace Nyx {
         if (str != nullptr) {
             return str;
         }
-        str = String::create(m_heap.get(), view.data(), view.size());
+        str = String::create(m_heap, view.data(), view.size());
         m_strings[view] = str;
         return str;
     }
