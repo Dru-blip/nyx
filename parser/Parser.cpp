@@ -7,14 +7,12 @@
 #include "parser/Ast.h"
 #include "parser/Token.h"
 
-
 struct Operator {
     Nyx::NodeTag tag;
     int8_t lbp;
     int8_t rbp;
     bool is_postfix{false};
 };
-
 
 namespace Nyx {
     static std::unordered_map<TokenTag, Operator> operator_map{

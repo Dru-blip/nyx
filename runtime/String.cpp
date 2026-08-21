@@ -20,4 +20,14 @@ namespace Nyx {
         HeapString *str = new (slot) HeapString(Type::Heap, size, data);
         return str;
     }
+
+    std::string_view String::as_view() const {
+        if (m_type == Type::SmallString) {
+            const SmallString *small = reinterpret_cast<const SmallString *>(this);
+            return std::string_view(small->data(), small->m_size);
+        }
+
+        const HeapString *heap = reinterpret_cast<const HeapString *>(this);
+        return std::string_view(heap->m_data, heap->m_size);
+    }
 } // namespace Nyx

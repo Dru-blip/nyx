@@ -14,7 +14,6 @@
 namespace Nyx::bytecode {
     using BasicBlock = ir::BasicBlock;
 
-
     struct LoopInfo {
         BasicBlock *header;
         BasicBlock *end;
@@ -41,6 +40,7 @@ namespace Nyx::bytecode {
         void lowerExprStmt(const Node *node);
 
         ir::Register lowerExpr(const Node *node);
+        ir::Register lowerCall(const Node *node);
         ir::Register lowerGrouped(const Node *node);
         ir::Register lowerAdd(const Node *node);
         ir::Register lowerSub(const Node *node);

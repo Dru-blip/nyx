@@ -3,6 +3,7 @@
 #include <cstddef>
 #include <cstring>
 #include <mimalloc.h>
+#include <string_view>
 
 #include "Object.h"
 #include "heap/Heap.h"
@@ -18,10 +19,10 @@ namespace Nyx {
         };
 
         virtual bool is_string() const override { return true; }
-
         static String *create(Heap *heap, const char *data, std::size_t size);
-
         String(Type type, std::size_t size) : m_type(type), m_size(size) {}
+
+        std::string_view as_view() const;
 
     protected:
         Type m_type;
@@ -32,12 +33,12 @@ namespace Nyx {
     class SmallString : public String {
     public:
         static SmallString *create(Heap *heap, const char *data, std::size_t size);
-
         SmallString(Type type, std::size_t size, const char *data) : String(type, size) {
             char *d = reinterpret_cast<char *>(this + 1);
             std::memcpy(d, data, size);
             d[size] = '\0';
         }
+        inline const char *data() const { return reinterpret_cast<const char *>(this + 1); }
     };
 
     class HeapString : public String {
@@ -45,7 +46,7 @@ namespace Nyx {
         static HeapString *create(Heap *heap, const char *data, std::size_t size);
 
         HeapString(Type type, std::size_t size, const char *data) : String(type, size) {
-            //TODO: should check if mi_malloc returns null
+            // TODO: should check if mi_malloc returns null
             char *d = static_cast<char *>(mi_malloc(size + 1));
             std::memcpy(d, data, size);
             d[size] = '\0';

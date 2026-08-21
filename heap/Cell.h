@@ -1,10 +1,12 @@
 #pragma once
 
 
+#include <cstdint>
+
 namespace Nyx {
     class Cell {
     public:
-        enum class State {
+        enum class State: uint8_t {
             Dead,
             Alive,
         };

@@ -2,8 +2,10 @@
 #include <cassert>
 #include <cstdint>
 #include <print>
+#include <string_view>
 #include <sys/types.h>
 #include "runtime/Object.h"
+#include "runtime/String.h"
 
 
 namespace Nyx {
@@ -15,6 +17,7 @@ namespace Nyx {
         static constexpr uintptr_t IntTag = 1ull;
         static constexpr uintptr_t NilTag = 2ull;
         static constexpr uintptr_t BoolTag = 3ull;
+
 
         Value() = default;
         explicit Value(int64_t value) { m_raw = static_cast<uintptr_t>(value) << 3 | IntTag; }
@@ -65,8 +68,24 @@ namespace Nyx {
             }
         }
 
+        bool operator==(const Value &other) const { return m_raw == other.m_raw; }
+
     private:
         uintptr_t m_raw{0};
+    };
+
+    struct ValueHash {
+        size_t operator()(const Value &value) const {
+            if (!value.is_obj()) {
+                return std::hash<int64_t>()(value.as_int());
+            }
+            const auto obj = value.as_obj();
+            if (!obj->is_string()) {
+                return std::hash<Object *>()(obj);
+            }
+            const auto str = static_cast<String *>(obj);
+            return std::hash<std::string_view>()(str->as_view());
+        }
     };
 
     static Value Nil = Value::from_raw(Value::NilTag);
