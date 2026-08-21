@@ -3,14 +3,18 @@
 #include <optional>
 #include <print>
 #include <span>
+#include <vector>
 #include "parser/Ast.h"
 #include "parser/Token.h"
+
 
 struct Operator {
     Nyx::NodeTag tag;
     int8_t lbp;
     int8_t rbp;
+    bool is_postfix{false};
 };
+
 
 namespace Nyx {
     static std::unordered_map<TokenTag, Operator> operator_map{
@@ -32,6 +36,8 @@ namespace Nyx {
             {TokenTag::Minus, {NodeTag::Sub, 50, 51}},
             {TokenTag::Asterisk, {NodeTag::Mul, 52, 53}},
             {TokenTag::Slash, {NodeTag::Div, 52, 53}},
+
+            {TokenTag::LeftParen, {NodeTag::Call, 100, 101, true}},
     };
 
     Parser::Parser(const std::string_view source) : m_source(source), m_lexer(Lexer(source)) {
@@ -203,6 +209,11 @@ namespace Nyx {
             }
 
             const auto _ = consume_token();
+
+            if (op_info.is_postfix) {
+                lhs = parse_postfix_expression(lhs, op_info.tag);
+                continue;
+            }
             const auto rhs = parse_expression(op_info.rbp);
 
             const Span span = lhs->span.merge(rhs->span);
@@ -211,6 +222,24 @@ namespace Nyx {
         }
 
         return lhs;
+    }
+
+    Node *Parser::parse_postfix_expression(Node *lhs, NodeTag tag) {
+        switch (tag) {
+            case NodeTag::Call: {
+                std::vector<Node *> args;
+                while (m_cur.tag != TokenTag::RightParen) {
+                    args.push_back(parse_expression(0));
+                }
+                const auto closing_paren = expect_token(TokenTag::RightParen);
+                const std::span<Node *> args_span = m_arena.nodes_span(args);
+                return m_arena.allocate<Call>(lhs->span.merge(closing_paren.span), lhs, args_span);
+            }
+            default: {
+                // TODO: handle other postfix expressions
+                abort();
+            }
+        }
     }
 
     Node *Parser::parse_primary_expression() {

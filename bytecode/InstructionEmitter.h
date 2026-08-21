@@ -16,13 +16,13 @@ namespace Nyx::bytecode {
         void push(const uint8_t byte) { m_code.push_back(byte); }
 
         template<typename InstType>
-        void emit(const InstType &inst) {
+        inline void emit(const InstType &inst) {
             m_code.resize(m_code.size() + sizeof(InstType));
             std::memcpy(m_code.data() + m_code.size() - sizeof(InstType), &inst, sizeof(InstType));
         }
 
         template<typename InstType, typename... Args>
-        void emit(Opcode opcode, Args... args) {
+        inline void emit(Opcode opcode, Args... args) {
             push(static_cast<uint8_t>(opcode));
             InstType inst(args...);
             emit(inst);

@@ -2,9 +2,11 @@
 #include <cstdint>
 #include "Ast.h"
 #include "Lexer.h"
+#include "parser/Token.h"
 
 
 namespace Nyx {
+
     class Parser {
     public:
         Parser(std::string_view source);
@@ -32,6 +34,7 @@ namespace Nyx {
         Node *parse_expr_stmt();
 
         Node *parse_expression(int8_t prec);
+        Node *parse_postfix_expression(Node *lhs, NodeTag tag);
         Node *parse_primary_expression();
         Node *parse_integer();
 

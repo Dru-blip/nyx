@@ -36,6 +36,7 @@ namespace Nyx {
         Or,
 
         Grouped,
+        Call,
         Assignment,
 
         ExprStmt,
@@ -79,6 +80,13 @@ namespace Nyx {
         Binary(NodeTag tag, Span span, Node *left, Node *right) :
             Node(tag, span), left(left), right(right) {}
         Node *left, *right;
+    };
+
+    struct Call : Node {
+        Call(Span span, Node *callee, std::span<Node *> args) :
+            Node(NodeTag::Call, span), callee(callee), args(args) {}
+        Node *callee;
+        std::span<Node *> args;
     };
 
     struct ExprStmt : Node {
