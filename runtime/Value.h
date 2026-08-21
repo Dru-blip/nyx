@@ -1,7 +1,9 @@
 #pragma once
+#include <cassert>
 #include <cstdint>
 #include <print>
 #include <sys/types.h>
+#include "runtime/Object.h"
 
 
 namespace Nyx {
@@ -25,6 +27,13 @@ namespace Nyx {
 
         static Value from_bool(bool value) {
             return Value::from_raw(static_cast<uintptr_t>(value) << 3 | BoolTag);
+        }
+
+        static Value from_object(Object *obj) {
+            const uintptr_t raw = reinterpret_cast<uintptr_t>(obj);
+            // check for pointer alignment to 8 bytes.
+            assert((raw & Mask) == 0);
+            return Value::from_raw(raw);
         }
 
         bool is_int() const { return (m_raw & Mask) == IntTag; }

@@ -30,7 +30,6 @@ namespace Nyx {
 
         mi_heap_t *m_heap = nullptr;
 
-        // unused fields
         FrameChunk *m_cached_chunk = nullptr;
         size_t m_cached_chunk_count = 0;
     };

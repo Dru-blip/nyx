@@ -13,18 +13,18 @@ namespace Nyx {
     struct Frame {
         Frame(bytecode::Executable *executable) : m_executable(executable) {};
 
-        uint8_t *get_code() { return m_executable->data(); }
-        uint8_t *code_end() { return m_executable->data() + m_executable->size(); }
+        inline uint8_t *get_code() { return m_executable->data(); }
+        inline uint8_t *code_end() { return m_executable->data() + m_executable->size(); }
 
         template<typename Instr>
-        Instr read_at(uint8_t *&pc) {
+        inline Instr read_at(uint8_t *&pc) {
             Instr instr;
             std::memcpy(&instr, pc, sizeof(Instr));
             pc += sizeof(Instr);
             return instr;
         }
 
-        Value *registers() { return reinterpret_cast<Value *>(this + 1); }
+        inline Value *registers() { return reinterpret_cast<Value *>(this + 1); }
 
         Frame *m_prev = nullptr;
         bytecode::Executable *m_executable;
