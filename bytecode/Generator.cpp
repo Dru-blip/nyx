@@ -6,13 +6,13 @@
 #include "ir/Register.h"
 #include "parser/Ast.h"
 #include "runtime/Object.h"
+#include "runtime/VM.h"
 #include "runtime/Value.h"
-
 
 namespace Nyx::bytecode {
     Executable *Generator::build_executable() {
         auto code = m_builder.finalize();
-        return m_heap->alloc<Executable>(code, m_builder.register_count(), m_constants);
+        return m_vm.heap()->alloc<Executable>(code, m_builder.register_count(), m_constants);
     }
 
     Executable *Generator::compile() {
@@ -457,7 +457,7 @@ namespace Nyx::bytecode {
     uint16_t Generator::add_string_constant(const char *data, std::size_t size) {
         // TODO: should intern string.
         // TODO: check for existing string constants inside string table.
-        String *str = String::create(m_heap, data, size);
+        String *str = String::create(m_vm, data, size);
         const auto val = Value::from_object(str);
         m_constants.push_back(val);
         return static_cast<uint16_t>(m_constants.size() - 1);

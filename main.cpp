@@ -1,11 +1,10 @@
 #include <filesystem>
 #include <fstream>
-#include <memory>
+
 #include <print>
 #include <sstream>
 #include "bytecode/Executable.h"
 #include "bytecode/Generator.h"
-#include "heap/Heap.h"
 #include "parser/Ast.h"
 #include "runtime/VM.h"
 #include "runtime/Value.h"
@@ -29,7 +28,7 @@ int main(int argc, char **argv) {
 
     Nyx::VM vm;
     Nyx::Ast ast = Nyx::Ast::parse(source);
-    Nyx::bytecode::Generator generator(ast, vm.heap());
+    Nyx::bytecode::Generator generator(ast, vm);
     Nyx::bytecode::Executable *executable = generator.compile();
 
     executable->print_code();

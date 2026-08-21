@@ -9,6 +9,7 @@
 #include "heap/Heap.h"
 
 namespace Nyx {
+    class VM;
     class String : public Object {
     public:
         static constexpr std::size_t SmallStringSize = 31;
@@ -19,7 +20,7 @@ namespace Nyx {
         };
 
         virtual bool is_string() const override { return true; }
-        static String *create(Heap *heap, const char *data, std::size_t size);
+        static String *create(VM &vm, const char *data, std::size_t size);
         String(Type type, std::size_t size) : m_type(type), m_size(size) {}
 
         std::string_view as_view() const;

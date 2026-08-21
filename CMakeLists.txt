@@ -35,7 +35,14 @@ set(HEAP_SRCS heap/Bin.cpp
 set(RUNTIME_SRCS runtime/CallStack.cpp
         runtime/Fiber.cpp
         runtime/FrameChunk.cpp
-        runtime/String.cpp runtime/VM.cpp runtime/StringPool.cpp)
+        runtime/String.cpp
+        runtime/VM.cpp
+        runtime/StringPool.cpp
+        runtime/Instance.cpp
+        runtime/GlobalObject.cpp
+        runtime/NativeFunction.cpp
+        runtime/FieldMap.cpp
+        runtime/Builtins.cpp)
 
 set(SOURCES main.cpp
         ${PARSER_SRCS}

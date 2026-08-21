@@ -4,7 +4,6 @@
 #include <vector>
 #include "bytecode/Executable.h"
 #include "bytecode/Scope.h"
-#include "heap/Heap.h"
 #include "ir/Builder.h"
 #include "ir/Register.h"
 #include "parser/Ast.h"
@@ -20,7 +19,7 @@ namespace Nyx::bytecode {
 
     class Generator {
     public:
-        Generator(Ast &ast, Heap *heap) : m_ast(std::move(ast)), m_heap(heap) {};
+        Generator(Ast &ast, VM &vm) : m_ast(std::move(ast)), m_vm(vm) {};
         Executable *compile();
 
     private:
@@ -68,7 +67,7 @@ namespace Nyx::bytecode {
 
         Ast m_ast;
         ir::Builder m_builder;
-        Heap *m_heap;
+        VM& m_vm;
         std::vector<Value> m_constants;
         std::vector<LoopInfo> m_loop_stack;
         Scope m_scope;

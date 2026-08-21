@@ -2,6 +2,7 @@
 #include "runtime/NativeFunction.h"
 #include "runtime/Value.h"
 
+#include "runtime/VM.h"
 
 namespace Nyx {
     Instance *Instance::create(Heap *heap) {
@@ -15,11 +16,10 @@ namespace Nyx {
         return m_field_map->add_entry(key, value);
     }
 
-    uint32_t Instance::put_native_function(Heap *heap, const std::string_view &name,
+    uint32_t Instance::put_native_function(VM &vm, String *name,
                                            NativeFunctionPtr func) {
-        String *str = String::create(heap, name.data(), name.size());
-        NativeFunction *native_func = NativeFunction::create(heap, str, func);
+        NativeFunction *native_func = NativeFunction::create(vm, name, func);
 
-        return m_field_map->add_entry(Value::from_object(str), Value::from_object(native_func));
+        return m_field_map->add_entry(Value::from_object(name), Value::from_object(native_func));
     }
 } // namespace Nyx

@@ -1,5 +1,7 @@
 #include "runtime/VM.h"
 #include <cstdint>
+#include "runtime/Builtins.h"
+#include "runtime/NativeFunction.h"
 #include "runtime/Value.h"
 #include "runtime/handlers/binary.h"
 
@@ -10,7 +12,9 @@ namespace Nyx {
         m_heap = new (ptr) Heap();
 
         void *string_pool_ptr = mi_malloc(sizeof(StringPool));
-        m_string_pool = new (string_pool_ptr) StringPool(m_heap);
+        m_string_pool = new (string_pool_ptr) StringPool(*this);
+
+        Builtins::register_builtins(*this);
     }
 
     VM::~VM() {
@@ -19,6 +23,11 @@ namespace Nyx {
 
         m_string_pool->~StringPool();
         mi_free(m_string_pool);
+    }
+
+    uint32_t VM::register_builtin_function(std::string_view &name, NativeFunctionPtr func) {
+        String *identifier = m_string_pool->add_string(name);
+        return m_global_object->put_native_function(*this, identifier, func);
     }
 
     Value VM::run_executable(bytecode::Executable *executable) {
