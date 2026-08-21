@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstdint>
 #include <memory>
 #include <vector>
 #include "bytecode/Executable.h"
@@ -8,6 +9,7 @@
 #include "ir/Builder.h"
 #include "ir/Register.h"
 #include "parser/Ast.h"
+#include "runtime/String.h"
 
 namespace Nyx::bytecode {
     using BasicBlock = ir::BasicBlock;
@@ -59,7 +61,10 @@ namespace Nyx::bytecode {
         ir::Register lowerNeg(const Node *node);
         ir::Register lowerNot(const Node *node);
         ir::Register lowerIdentifier(const Node *node);
+        ir::Register lowerString(const Node *node);
         ir::Register lowerInt(const Node *node);
+
+        uint16_t add_string_constant(const char *data, std::size_t size);
 
         Ast m_ast;
         ir::Builder m_builder;

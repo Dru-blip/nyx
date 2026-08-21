@@ -2,6 +2,7 @@
 
 #include <cstddef>
 #include <cstring>
+#include <mimalloc.h>
 
 #include "Object.h"
 #include "heap/Heap.h"
@@ -42,6 +43,14 @@ namespace Nyx {
     class HeapString : public String {
     public:
         static HeapString *create(Heap *heap, const char *data, std::size_t size);
+
+        HeapString(Type type, std::size_t size, const char *data) : String(type, size) {
+            //TODO: should check if mi_malloc returns null
+            char *d = static_cast<char *>(mi_malloc(size + 1));
+            std::memcpy(d, data, size);
+            d[size] = '\0';
+            m_data = d;
+        }
         char *m_data;
     };
 } // namespace Nyx

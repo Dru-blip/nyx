@@ -38,6 +38,6 @@ int main(int argc, char **argv) {
     Nyx::Fiber fiber;
     Nyx::Value result = fiber.run(executable);
 
-    std::println("{}", result.as_int());
+    std::printf("%p\n", static_cast<void *>(result.as_obj()));
     return 0;
 }

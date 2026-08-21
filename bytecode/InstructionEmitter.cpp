@@ -12,6 +12,10 @@ namespace Nyx::bytecode {
         emit<LoadImmInt>(Opcode::LoadImmInt, reg.slot(), imm);
     }
 
+    void InstructionEmitter::load_string(const Register &reg, const uint16_t &idx) {
+        emit<LoadString>(Opcode::LoadString, reg.slot(), idx);
+    }
+
     void InstructionEmitter::move(const Register &src, const Register &dst) {
         emit<Move>(Opcode::Move, src.slot(), dst.slot());
     }

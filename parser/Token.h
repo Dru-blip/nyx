@@ -6,6 +6,7 @@
 namespace Nyx {
     enum class TokenTag {
         Integer,
+        String,
         Identifier,
 
         Plus,

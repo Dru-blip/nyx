@@ -14,6 +14,7 @@
 namespace Nyx {
     enum class NodeTag {
         Integer,
+        String,
         Identifier,
 
         Neg,
@@ -59,6 +60,10 @@ namespace Nyx {
 
     struct IntLiteral : Node {
         IntLiteral(Span span) : Node(NodeTag::Integer, span) {}
+    };
+
+    struct StringLiteral : Node {
+        StringLiteral(Span span) : Node(NodeTag::String, span) {}
     };
 
     struct Identifier : Node {

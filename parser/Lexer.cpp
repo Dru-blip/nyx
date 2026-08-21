@@ -33,6 +33,20 @@ namespace Nyx {
         return TokenTag::Identifier;
     }
 
+    void Lexer::eat_string() {
+        // TODO: handle escaped sequences.
+        m_pos++;
+        while (!is_end() && current_char() != '"') {
+            m_pos++;
+        }
+
+        if (current_char() == '"') {
+            m_pos++;
+        }
+
+        // TODO: handle non terminated strings.
+    }
+
     Token Lexer::next_token() {
         skip_whitespaces();
 
@@ -130,6 +144,11 @@ namespace Nyx {
                 }
                 tag = TokenTag::Equal;
                 m_pos++;
+                break;
+            }
+            case '"': {
+                tag = TokenTag::String;
+                eat_string();
                 break;
             }
             default: {

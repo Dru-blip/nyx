@@ -37,6 +37,19 @@ namespace Nyx::ir {
         Register m_reg;
     };
 
+    class LoadString: public Instruction {
+    public:
+        LoadString(uint16_t idx, Register reg) : m_idx(idx), m_reg(reg) {}
+        void lower(InstructionEmitter &emitter) override;
+        constexpr std::size_t length() const override {
+            return sizeof(bytecode::LoadString) + sizeof(bytecode::Opcode);
+        }
+
+    private:
+        uint16_t m_idx;
+        Register m_reg;
+    };
+
     class Move : public Instruction {
     public:
         Move(Register src, Register dst) : m_src(src), m_dst(dst) {}

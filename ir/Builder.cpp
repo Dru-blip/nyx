@@ -145,6 +145,13 @@ namespace Nyx::ir {
         return dst;
     }
 
+    Register Builder::create_load_string(const uint16_t &idx) {
+        Register dst = m_register_allocator.allocate();
+        assert(m_curr_block != nullptr);
+        m_curr_block->push<LoadString>(idx, dst);
+        return dst;
+    }
+
     Register Builder::create_move(const Register &src, const Register &dst) {
         assert(m_curr_block != nullptr);
         m_register_allocator.free(src);

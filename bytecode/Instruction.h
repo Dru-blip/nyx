@@ -5,6 +5,7 @@
 namespace Nyx::bytecode {
     enum class Opcode : uint8_t {
         LoadImmInt,
+        LoadString,
         Move,
 
         Not,
@@ -40,6 +41,13 @@ namespace Nyx::bytecode {
         int64_t imm;
         LoadImmInt() = default;
         LoadImmInt(uint8_t reg, int64_t imm) : reg(reg), imm(imm) {}
+    };
+
+    struct LoadString {
+        uint8_t reg;
+        uint16_t idx;
+        LoadString() = default;
+        LoadString(uint8_t reg, uint16_t idx) : reg(reg), idx(idx) {}
     };
 
     struct Move {

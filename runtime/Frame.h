@@ -25,6 +25,8 @@ namespace Nyx {
         }
 
         inline Value *registers() { return reinterpret_cast<Value *>(this + 1); }
+        inline Value *constants() { return m_executable->constants(); }
+
 
         Frame *m_prev = nullptr;
         bytecode::Executable *m_executable;

@@ -31,6 +31,14 @@ namespace Nyx::bytecode {
                     pc += sizeof(LoadImmInt);
                     break;
                 }
+                case Opcode::LoadString: {
+                    LoadString load;
+                    std::memcpy(&load, pc, sizeof(LoadString));
+                    std::println("[{}] LoadString %{} = {}", pc - m_code.data(), load.reg,
+                                 load.idx);
+                    pc += sizeof(LoadString);
+                    break;
+                }
                 case Opcode::Move: {
                     Move move;
                     std::memcpy(&move, pc, sizeof(Move));

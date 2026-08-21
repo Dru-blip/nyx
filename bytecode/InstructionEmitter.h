@@ -35,6 +35,7 @@ namespace Nyx::bytecode {
         void ret_nil();
 
         void load_imm_int(const Register &reg, const int64_t &imm);
+        void load_string(const Register &reg, const uint16_t &idx);
         void move(const Register &src, const Register &dst);
 
         void not_(const Register &arg, const Register &dst);

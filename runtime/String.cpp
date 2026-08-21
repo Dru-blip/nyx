@@ -14,4 +14,10 @@ namespace Nyx {
         SmallString *str = new (slot) SmallString(Type::SmallString, size, data);
         return str;
     }
+
+    HeapString *HeapString::create(Heap *heap, const char *data, std::size_t size) {
+        void *slot = heap->allocate_cell(sizeof(HeapString));
+        HeapString *str = new (slot) HeapString(Type::Heap, size, data);
+        return str;
+    }
 } // namespace Nyx

@@ -32,7 +32,10 @@ set(HEAP_SRCS heap/Bin.cpp
         heap/Region.cpp
         heap/RegionAllocator.cpp)
 
-set(RUNTIME_SRCS runtime/CallStack.cpp runtime/Fiber.cpp runtime/FrameChunk.cpp)
+set(RUNTIME_SRCS runtime/CallStack.cpp
+        runtime/Fiber.cpp
+        runtime/FrameChunk.cpp
+        runtime/String.cpp)
 
 set(SOURCES main.cpp
         ${PARSER_SRCS}

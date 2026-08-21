@@ -20,6 +20,7 @@ namespace Nyx {
         char current_char() const;
         char peek_char() const;
         void eat_integer();
+        void eat_string();
         TokenTag eat_identifier();
 
         const std::string_view m_source;

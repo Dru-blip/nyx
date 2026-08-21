@@ -17,6 +17,7 @@ namespace Nyx {
         frame->m_pc = pc;
 
         Value *registers = frame->registers();
+        Value *constants = frame->constants();
 
         while (true) {
             bytecode::Opcode op = static_cast<bytecode::Opcode>(*pc++);
@@ -24,6 +25,11 @@ namespace Nyx {
                 case bytecode::Opcode::LoadImmInt: {
                     bytecode::LoadImmInt instr = frame->read_at<bytecode::LoadImmInt>(pc);
                     registers[instr.reg] = Value(instr.imm);
+                    break;
+                }
+                case bytecode::Opcode::LoadString: {
+                    bytecode::LoadString instr = frame->read_at<bytecode::LoadString>(pc);
+                    registers[instr.reg] = constants[instr.idx];
                     break;
                 }
                 case bytecode::Opcode::Move: {

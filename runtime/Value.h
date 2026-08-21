@@ -45,6 +45,7 @@ namespace Nyx {
 
         int64_t as_int() const { return static_cast<int64_t>(m_raw) >> 3; }
         bool as_bool() const { return static_cast<bool>(m_raw >> 3); }
+        Object *as_obj() const { return reinterpret_cast<Object *>(m_raw); }
         uintptr_t raw() const { return m_raw; }
 
         void print_tag() const {

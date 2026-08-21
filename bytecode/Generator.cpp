@@ -5,12 +5,14 @@
 #include "ir/BasicBlock.h"
 #include "ir/Register.h"
 #include "parser/Ast.h"
+#include "runtime/Object.h"
+#include "runtime/Value.h"
 
 
 namespace Nyx::bytecode {
     Executable *Generator::build_executable() {
         auto code = m_builder.finalize();
-        return m_heap->alloc<Executable>(code, m_builder.register_count());
+        return m_heap->alloc<Executable>(code, m_builder.register_count(), m_constants);
     }
 
     Executable *Generator::compile() {
@@ -192,6 +194,9 @@ namespace Nyx::bytecode {
         switch (node->tag) {
             case NodeTag::Integer: {
                 return lowerInt(node);
+            }
+            case NodeTag::String: {
+                return lowerString(node);
             }
             case NodeTag::Identifier: {
                 return lowerIdentifier(node);
@@ -428,6 +433,14 @@ namespace Nyx::bytecode {
         return ir::Register(slot);
     }
 
+    ir::Register Generator::lowerString(const Node *node) {
+        const auto str = m_ast.getSource(node);
+        const uint16_t idx = add_string_constant(str.data(), str.size());
+
+        ir::Register reg = m_builder.create_load_string(idx);
+        return reg;
+    }
+
     ir::Register Generator::lowerInt(const Node *node) {
         const auto int_str = m_ast.getSource(node);
 
@@ -437,5 +450,14 @@ namespace Nyx::bytecode {
 
         ir::Register reg = m_builder.create_load_imm_int(value);
         return reg;
+    }
+
+    uint16_t Generator::add_string_constant(const char *data, std::size_t size) {
+        // TODO: should intern string.
+        // TODO: check for existing string constants inside string table.
+        String *str = String::create(m_heap.get(), data, size);
+        const auto val = Value::from_object(str);
+        m_constants.push_back(val);
+        return static_cast<uint16_t>(m_constants.size() - 1);
     }
 } // namespace Nyx::bytecode
