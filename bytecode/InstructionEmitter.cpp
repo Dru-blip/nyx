@@ -85,5 +85,9 @@ namespace Nyx::bytecode {
 
     void InstructionEmitter::ret_nil() { push(static_cast<uint8_t>(Opcode::RetNil)); }
 
+    void InstructionEmitter::call(const Register &callee, const uint8_t &arg_count,
+                                  const Register &result) {
+        emit<Call>(Opcode::Call, callee.slot(), arg_count, result.slot());
+    }
 
 } // namespace Nyx::bytecode

@@ -204,6 +204,13 @@ namespace Nyx::ir {
         m_curr_block->push<RetNil>();
     }
 
+    Register Builder::create_call(const Register &callee, const size_t arg_count) {
+        assert(m_curr_block != nullptr);
+        auto result = m_register_allocator.allocate();
+        m_curr_block->push<Call>(callee, result, arg_count);
+        return result;
+    }
+
     std::vector<uint8_t> Builder::finalize() {
         // BasicBlockTracer tracer(m_blocks);
         // auto blocks = tracer.trace();

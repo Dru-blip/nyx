@@ -35,6 +35,8 @@ namespace Nyx::ir {
         Register create_eq(const Register &lhs, const Register &rhs);
         Register create_neq(const Register &lhs, const Register &rhs);
 
+        Register create_call(const Register &callee, const size_t arg_count);
+
         void create_jmp(BasicBlock *target, const size_t weight);
         void create_jmpif_true(const Register &condition, BasicBlock *target, const size_t weight);
         void create_jmpif_false(const Register &condition, BasicBlock *target, const size_t weight);
@@ -48,6 +50,8 @@ namespace Nyx::ir {
         BasicBlock *create_block();
 
         Register allocate_register() { return m_register_allocator.allocate(); }
+
+        Register allocate_local() {return m_register_allocator.allocate_local();}
 
         uint8_t register_count() const { return m_register_allocator.max_used(); }
 

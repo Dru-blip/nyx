@@ -85,6 +85,11 @@ namespace Nyx {
                 m_pos++;
                 break;
             }
+            case ',': {
+                tag = TokenTag::Comma;
+                m_pos++;
+                break;
+            }
             case '!': {
                 if (peek_char() == '=') {
                     tag = TokenTag::BangEqual;

@@ -82,8 +82,8 @@ namespace Nyx {
         Node *left, *right;
     };
 
-    struct Call : Node {
-        Call(Span span, Node *callee, std::span<Node *> args) :
+    struct CallExpr : Node {
+        CallExpr(Span span, Node *callee, std::span<Node *> args) :
             Node(NodeTag::Call, span), callee(callee), args(args) {}
         Node *callee;
         std::span<Node *> args;

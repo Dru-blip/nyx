@@ -16,7 +16,7 @@ namespace Nyx {
         inline std::size_t size() const { return m_values.size(); }
 
     private:
-        std::unordered_map<Value, uint32_t, ValueHash> m_field_indices;
-        std::vector<Value> m_values;
+        std::unordered_map<Value, uint32_t, ValueHash> m_field_indices{};
+        std::vector<Value> m_values{};
     };
 } // namespace Nyx

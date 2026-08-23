@@ -67,7 +67,7 @@ namespace Nyx::bytecode {
         const VarDecl *varDecl = static_cast<const VarDecl *>(node);
         const Node *value = varDecl->initializer;
 
-        ir::Register slot = m_builder.allocate_register();
+        ir::Register slot = m_builder.allocate_local();
 
         if (value != nullptr) {
             const auto result = lowerExpr(value);
@@ -249,10 +249,25 @@ namespace Nyx::bytecode {
             case NodeTag::Assignment: {
                 return lowerAssignment(node);
             }
+            case NodeTag::Call: {
+                return lowerCall(node);
+            }
             default: {
                 abort();
             }
         }
+    }
+
+    ir::Register Generator::lowerCall(const Node *node) {
+        const CallExpr *call = static_cast<const CallExpr *>(node);
+        ir::Register callee = lowerExpr(call->callee);
+
+        for (const Node *arg: call->args) {
+            lowerExpr(arg);
+        }
+
+        ir::Register reg = m_builder.create_call(callee, call->args.size());
+        return reg;
     }
 
     ir::Register Generator::lowerGrouped(const Node *node) {

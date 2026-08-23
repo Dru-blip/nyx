@@ -34,8 +34,7 @@ namespace Nyx::bytecode {
                 case Opcode::LoadConst: {
                     LoadConst load;
                     std::memcpy(&load, pc, sizeof(LoadConst));
-                    std::println("[{}] LoadConst %{} = {}", pc - m_code.data(), load.reg,
-                                 load.idx);
+                    std::println("[{}] LoadConst %{} = {}", pc - m_code.data(), load.reg, load.idx);
                     pc += sizeof(LoadConst);
                     break;
                 }
@@ -125,6 +124,14 @@ namespace Nyx::bytecode {
                     std::println("[{}] JmpIfTrue %{} {}", pc - m_code.data(), inst.arg,
                                  inst.offset);
                     pc += sizeof(JmpIfTrue);
+                    break;
+                }
+                case Opcode::Call: {
+                    Call inst;
+                    std::memcpy(&inst, pc, sizeof(Call));
+                    std::println("[{}] {} Call %{} {}", pc - m_code.data(), inst.callee,
+                                 inst.arg_count, inst.result);
+                    pc += sizeof(Call);
                     break;
                 }
                 default: {

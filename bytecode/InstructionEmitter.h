@@ -53,6 +53,7 @@ namespace Nyx::bytecode {
         void eq(const Register &left, const Register &right, const Register &dst);
         void neq(const Register &left, const Register &right, const Register &dst);
 
+        void call(const Register &callee, const uint8_t &arg_count, const Register &result);
         void jmp(const uint16_t &offset);
         void jmp_if_false(const Register &arg, const uint32_t &offset);
         void jmp_if_true(const Register &arg, const uint32_t &offset);

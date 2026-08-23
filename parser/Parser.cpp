@@ -228,10 +228,13 @@ namespace Nyx {
                 std::vector<Node *> args;
                 while (m_cur.tag != TokenTag::RightParen) {
                     args.push_back(parse_expression(0));
+                    if (m_cur.tag == TokenTag::Comma) {
+                        advance();
+                    }
                 }
                 const auto closing_paren = expect_token(TokenTag::RightParen);
                 const std::span<Node *> args_span = m_arena.nodes_span(args);
-                return m_arena.allocate<Call>(lhs->span.merge(closing_paren.span), lhs, args_span);
+                return m_arena.allocate<CallExpr>(lhs->span.merge(closing_paren.span), lhs, args_span);
             }
             default: {
                 // TODO: handle other postfix expressions

@@ -57,4 +57,6 @@ namespace Nyx::ir {
     }
 
     void RetNil::lower(InstructionEmitter &emitter) { emitter.ret_nil(); }
+
+    void Call::lower(InstructionEmitter &emitter) { emitter.call(m_callee, m_arg_count, m_result); }
 } // namespace Nyx::ir

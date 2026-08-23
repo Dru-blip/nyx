@@ -28,6 +28,8 @@ namespace Nyx::bytecode {
         JmpIfTrue,
         Ret,
         RetNil,
+
+        Call,
     };
 
 #pragma pack(push, 1)
@@ -118,6 +120,18 @@ namespace Nyx::bytecode {
         JmpIfTrue() = default;
         JmpIfTrue(uint8_t arg, uint16_t offset) : arg(arg), offset(offset) {}
     };
+
+    struct Call {
+        uint8_t callee;
+        uint8_t arg_count;
+        uint8_t result;
+
+
+        Call() = default;
+        Call(uint8_t callee, uint8_t arg_count, uint8_t result) :
+            callee(callee), arg_count(arg_count), result(result) {}
+    };
+
 
 #pragma pack(pop)
 } // namespace Nyx::bytecode

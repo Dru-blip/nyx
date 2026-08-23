@@ -14,6 +14,8 @@ namespace Nyx {
         void *string_pool_ptr = mi_malloc(sizeof(StringPool));
         m_string_pool = new (string_pool_ptr) StringPool(*this);
 
+        m_global_object = m_heap->alloc<GlobalObject>();
+
         Builtins::register_builtins(*this);
     }
 

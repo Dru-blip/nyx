@@ -261,6 +261,22 @@ namespace Nyx::ir {
     };
 
 
+    class Call : public Instruction {
+    public:
+        Call(Register callee, Register result, size_t arg_count) :
+            m_callee(callee), m_result(result), m_arg_count(arg_count) {}
+        void lower(bytecode::InstructionEmitter &emitter) override;
+        constexpr std::size_t length() const override {
+            return sizeof(bytecode::Call) + sizeof(bytecode::Opcode);
+        }
+
+    private:
+        Register m_callee;
+        Register m_result;
+        size_t m_arg_count;
+    };
+
+
     class Ret : public BlockTerminator {
     public:
         Ret(Register value) : m_value(value) {}

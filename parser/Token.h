@@ -33,6 +33,7 @@ namespace Nyx {
         LeftBrace,
         RightBrace,
         Semicolon,
+        Comma,
 
         Return,
         If,

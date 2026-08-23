@@ -6,7 +6,7 @@
 
 namespace Nyx::ir {
     Register RegisterAllocator::allocate() {
-        for (uint8_t i = 0; i < m_max_used; i++) {
+        for (uint8_t i = m_local_start; i < m_max_used; i++) {
             if (!m_used_registers[i]) {
                 m_used_registers[i] = true;
                 return Register(i);
