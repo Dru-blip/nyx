@@ -5,7 +5,6 @@
 
 #include <cstdint>
 
-// TODO: i dont know how to correctly use this fucking library.
 #include <mimalloc.h>
 
 

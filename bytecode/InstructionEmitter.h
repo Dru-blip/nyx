@@ -4,12 +4,9 @@
 #include <cstring>
 #include <vector>
 
-#include "ir/Register.h"
 
 namespace Nyx::bytecode {
     enum class Opcode : uint8_t;
-
-    using Register = ir::Register;
 
     class InstructionEmitter {
     public:
@@ -31,32 +28,32 @@ namespace Nyx::bytecode {
 
         std::vector<uint8_t> &code() { return m_code; }
 
-        void ret(const Register &reg);
+        void ret();
         void ret_nil();
 
-        void load_imm_int(const Register &reg, const int64_t &imm);
-        void load_const(const Register &reg, const uint16_t &idx);
-        void load_string(const Register &reg, const uint16_t &idx);
-        void move(const Register &src, const Register &dst);
+        void load_imm_int(const int64_t &imm);
+        void load_const(const uint16_t &idx);
+        void load_string(const uint16_t &idx);
 
-        void not_(const Register &arg, const Register &dst);
-        void neg(const Register &arg, const Register &dst);
 
-        void add(const Register &left, const Register &right, const Register &dst);
-        void sub(const Register &left, const Register &right, const Register &dst);
-        void mul(const Register &left, const Register &right, const Register &dst);
-        void div(const Register &left, const Register &right, const Register &dst);
-        void lt(const Register &left, const Register &right, const Register &dst);
-        void lte(const Register &left, const Register &right, const Register &dst);
-        void gt(const Register &left, const Register &right, const Register &dst);
-        void gte(const Register &left, const Register &right, const Register &dst);
-        void eq(const Register &left, const Register &right, const Register &dst);
-        void neq(const Register &left, const Register &right, const Register &dst);
+        void not_();
+        void neg();
 
-        void call(const Register &callee, const uint8_t &arg_count, const Register &result);
+        void add();
+        void sub();
+        void mul();
+        void div();
+        void lt();
+        void lte();
+        void gt();
+        void gte();
+        void eq();
+        void neq();
+
+        void call(const uint8_t &arg_count);
         void jmp(const uint16_t &offset);
-        void jmp_if_false(const Register &arg, const uint32_t &offset);
-        void jmp_if_true(const Register &arg, const uint32_t &offset);
+        void jmp_if_false(const uint32_t &offset);
+        void jmp_if_true(const uint32_t &offset);
 
     private:
         std::vector<uint8_t> m_code;

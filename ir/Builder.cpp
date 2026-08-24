@@ -4,7 +4,7 @@
 #include "ir/BasicBlock.h"
 #include "ir/BasicBlockTracer.h"
 #include "ir/BytecodeEmitter.h"
-#include "ir/Register.h"
+
 
 namespace Nyx::ir {
     Builder::~Builder() {
@@ -23,148 +23,87 @@ namespace Nyx::ir {
 
     void Builder::set_insert_point(BasicBlock *block) { m_curr_block = block; }
 
-    Register Builder::create_not(const Register &value) {
-        m_register_allocator.free(value);
-        Register dst = m_register_allocator.allocate();
-
+    void Builder::create_not() {
         assert(m_curr_block != nullptr);
-        m_curr_block->push<Not>(value, dst);
-        return dst;
+        m_curr_block->push<Not>();
     }
 
-    Register Builder::create_neg(const Register &value) {
-        m_register_allocator.free(value);
-        Register dst = m_register_allocator.allocate();
-
+    void Builder::create_neg() {
         assert(m_curr_block != nullptr);
-        m_curr_block->push<Neg>(value, dst);
-        return dst;
+        m_curr_block->push<Neg>();
     }
 
-    Register Builder::create_add(const Register &lhs, const Register &rhs) {
-        m_register_allocator.free(rhs);
-        m_register_allocator.free(lhs);
-        Register dst = m_register_allocator.allocate();
-
+    void Builder::create_add() {
         assert(m_curr_block != nullptr);
-        m_curr_block->push<Add>(lhs, rhs, dst);
-        return dst;
+        m_curr_block->push<Add>();
     }
 
-    Register Builder::create_sub(const Register &lhs, const Register &rhs) {
-        m_register_allocator.free(rhs);
-        m_register_allocator.free(lhs);
-        Register dst = m_register_allocator.allocate();
+    void Builder::create_sub() {
         assert(m_curr_block != nullptr);
-        m_curr_block->push<Sub>(lhs, rhs, dst);
-        return dst;
+        m_curr_block->push<Sub>();
     }
 
 
-    Register Builder::create_mul(const Register &lhs, const Register &rhs) {
-        m_register_allocator.free(rhs);
-        m_register_allocator.free(lhs);
-        Register dst = m_register_allocator.allocate();
+    void Builder::create_mul() {
         assert(m_curr_block != nullptr);
-        m_curr_block->push<Mul>(lhs, rhs, dst);
-        return dst;
+        m_curr_block->push<Mul>();
     }
 
 
-    Register Builder::create_div(const Register &lhs, const Register &rhs) {
-        m_register_allocator.free(rhs);
-        m_register_allocator.free(lhs);
-        Register dst = m_register_allocator.allocate();
+    void Builder::create_div() {
         assert(m_curr_block != nullptr);
-        m_curr_block->push<Div>(lhs, rhs, dst);
-        return dst;
+        m_curr_block->push<Div>();
     }
 
 
-    Register Builder::create_lt(const Register &lhs, const Register &rhs) {
-        m_register_allocator.free(rhs);
-        m_register_allocator.free(lhs);
-        Register dst = m_register_allocator.allocate();
+    void Builder::create_lt() {
         assert(m_curr_block != nullptr);
-        m_curr_block->push<Lt>(lhs, rhs, dst);
-        return dst;
+        m_curr_block->push<Lt>();
     }
 
 
-    Register Builder::create_lte(const Register &lhs, const Register &rhs) {
-        m_register_allocator.free(rhs);
-        m_register_allocator.free(lhs);
-        Register dst = m_register_allocator.allocate();
+    void Builder::create_lte() {
         assert(m_curr_block != nullptr);
-        m_curr_block->push<Lte>(lhs, rhs, dst);
-        return dst;
+        m_curr_block->push<Lte>();
     }
 
 
-    Register Builder::create_gt(const Register &lhs, const Register &rhs) {
-        m_register_allocator.free(rhs);
-        m_register_allocator.free(lhs);
-        Register dst = m_register_allocator.allocate();
+    void Builder::create_gt() {
         assert(m_curr_block != nullptr);
-        m_curr_block->push<Gt>(lhs, rhs, dst);
-        return dst;
+        m_curr_block->push<Gt>();
     }
 
-    Register Builder::create_gte(const Register &lhs, const Register &rhs) {
-        m_register_allocator.free(rhs);
-        m_register_allocator.free(lhs);
-        Register dst = m_register_allocator.allocate();
+    void Builder::create_gte() {
         assert(m_curr_block != nullptr);
-        m_curr_block->push<Gte>(lhs, rhs, dst);
-        return dst;
+        m_curr_block->push<Gte>();
     }
 
 
-    Register Builder::create_eq(const Register &lhs, const Register &rhs) {
-        m_register_allocator.free(rhs);
-        m_register_allocator.free(lhs);
-        Register dst = m_register_allocator.allocate();
+    void Builder::create_eq() {
         assert(m_curr_block != nullptr);
-        m_curr_block->push<Eq>(lhs, rhs, dst);
-        return dst;
+        m_curr_block->push<Eq>();
     }
 
-    Register Builder::create_neq(const Register &lhs, const Register &rhs) {
-        m_register_allocator.free(rhs);
-        m_register_allocator.free(lhs);
-        Register dst = m_register_allocator.allocate();
+    void Builder::create_neq() {
         assert(m_curr_block != nullptr);
-        m_curr_block->push<Neq>(lhs, rhs, dst);
-        return dst;
+        m_curr_block->push<Neq>();
     }
 
-    Register Builder::create_load_imm_int(const int64_t &value) {
-        Register dst = m_register_allocator.allocate();
+    void Builder::create_load_imm_int(const int64_t &value) {
         assert(m_curr_block != nullptr);
-        m_curr_block->push<LoadImmInt>(value, dst);
-        return dst;
+        m_curr_block->push<LoadImmInt>(value);
     }
 
-    Register Builder::create_load_const(const uint16_t &idx) {
-        Register dst = m_register_allocator.allocate();
+    void Builder::create_load_const(const uint16_t &idx) {
         assert(m_curr_block != nullptr);
-        m_curr_block->push<LoadConst>(idx, dst);
-        return dst;
+        m_curr_block->push<LoadConst>(idx);
     }
 
-    Register Builder::create_load_string(const uint16_t &idx) {
-        Register dst = m_register_allocator.allocate();
+    void Builder::create_load_string(const uint16_t &idx) {
         assert(m_curr_block != nullptr);
-        m_curr_block->push<LoadString>(idx, dst);
-        return dst;
+        m_curr_block->push<LoadString>(idx);
     }
 
-    Register Builder::create_move(const Register &src, const Register &dst) {
-        assert(m_curr_block != nullptr);
-        m_register_allocator.free(src);
-        m_curr_block->push<Move>(src, dst);
-        return dst;
-    }
 
     void Builder::create_jmp(BasicBlock *target, const size_t weight) {
         assert(m_curr_block != nullptr);
@@ -172,31 +111,28 @@ namespace Nyx::ir {
         m_curr_block->push<Jmp>(target);
     }
 
-    void Builder::create_jmpif_true(const Register &condition, BasicBlock *target,
-                                    const size_t weight) {
+    void Builder::create_jmpif_true(BasicBlock *target, const size_t weight) {
         assert(m_curr_block != nullptr);
-        m_curr_block->push<JmpIfTrue>(condition, target);
+        m_curr_block->push<JmpIfTrue>(target);
         m_curr_block->add_successor({weight, target});
     }
 
-    void Builder::create_jmpif_false(const Register &condition, BasicBlock *target,
-                                     const size_t weight) {
+    void Builder::create_jmpif_false(BasicBlock *target, const size_t weight) {
         assert(m_curr_block != nullptr);
-        m_curr_block->push<JmpIfFalse>(condition, target);
+        m_curr_block->push<JmpIfFalse>(target);
         m_curr_block->add_successor({weight, target});
     }
 
-    void Builder::create_branch(const Register &condition, BasicBlock *true_target,
-                                BasicBlock *false_target) {
+    void Builder::create_branch(BasicBlock *true_target, BasicBlock *false_target) {
         assert(m_curr_block != nullptr);
-        m_curr_block->push<Branch>(condition, true_target, false_target);
+        m_curr_block->push<Branch>(true_target, false_target);
         m_curr_block->add_successor({Edge::CondJumpWeight + 20, true_target});
         m_curr_block->add_successor({1, false_target});
     }
 
-    void Builder::create_ret(const Register &value) {
+    void Builder::create_ret() {
         assert(m_curr_block != nullptr);
-        m_curr_block->push<Ret>(value);
+        m_curr_block->push<Ret>();
     }
 
     void Builder::create_ret_nil() {
@@ -204,11 +140,9 @@ namespace Nyx::ir {
         m_curr_block->push<RetNil>();
     }
 
-    Register Builder::create_call(const Register &callee, const size_t arg_count) {
+    void Builder::create_call(const size_t arg_count) {
         assert(m_curr_block != nullptr);
-        auto result = m_register_allocator.allocate();
-        m_curr_block->push<Call>(callee, result, arg_count);
-        return result;
+        m_curr_block->push<Call>(arg_count);
     }
 
     std::vector<uint8_t> Builder::finalize() {
