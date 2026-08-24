@@ -5,7 +5,6 @@
 #include "bytecode/Executable.h"
 #include "bytecode/Scope.h"
 #include "ir/Builder.h"
-#include "ir/Register.h"
 #include "parser/Ast.h"
 #include "runtime/String.h"
 
@@ -37,37 +36,37 @@ namespace Nyx::bytecode {
         void lowerRet(const Node *node);
         void lowerExprStmt(const Node *node);
 
-        ir::Register lowerExpr(const Node *node);
-        ir::Register lowerCall(const Node *node);
-        ir::Register lowerGrouped(const Node *node);
-        ir::Register lowerAdd(const Node *node);
-        ir::Register lowerSub(const Node *node);
-        ir::Register lowerMul(const Node *node);
-        ir::Register lowerDiv(const Node *node);
-        ir::Register lowerLt(const Node *node);
-        ir::Register lowerLte(const Node *node);
-        ir::Register lowerGt(const Node *node);
-        ir::Register lowerGte(const Node *node);
-        ir::Register lowerEq(const Node *node);
-        ir::Register lowerNeq(const Node *node);
+        void lowerExpr(const Node *node);
+        void lowerCall(const Node *node);
+        void lowerGrouped(const Node *node);
+        void lowerAdd(const Node *node);
+        void lowerSub(const Node *node);
+        void lowerMul(const Node *node);
+        void lowerDiv(const Node *node);
+        void lowerLt(const Node *node);
+        void lowerLte(const Node *node);
+        void lowerGt(const Node *node);
+        void lowerGte(const Node *node);
+        void lowerEq(const Node *node);
+        void lowerNeq(const Node *node);
 
-        ir::Register lowerAnd(const Node *node);
-        ir::Register lowerOr(const Node *node);
+        void lowerAnd(const Node *node);
+        void lowerOr(const Node *node);
 
-        ir::Register lowerAssignment(const Node *node);
+        void lowerAssignment(const Node *node);
 
-        ir::Register lowerNeg(const Node *node);
-        ir::Register lowerNot(const Node *node);
-        ir::Register lowerIdentifier(const Node *node);
-        ir::Register lowerString(const Node *node);
-        ir::Register lowerInt(const Node *node);
+        void lowerNeg(const Node *node);
+        void lowerNot(const Node *node);
+        void lowerIdentifier(const Node *node);
+        void lowerString(const Node *node);
+        void lowerInt(const Node *node);
 
         uint16_t add_string_constant(const char *data, std::size_t size);
         uint16_t add_int_constant(int64_t value);
 
         Ast m_ast;
         ir::Builder m_builder;
-        VM& m_vm;
+        VM &m_vm;
         std::vector<Value> m_constants;
         std::vector<LoopInfo> m_loop_stack;
         Scope m_scope;

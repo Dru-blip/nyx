@@ -15,7 +15,7 @@ namespace Nyx::bytecode {
                 case Opcode::Ret: {
                     Ret ret;
                     std::memcpy(&ret, pc, sizeof(Ret));
-                    std::println("[{}] Ret %{}", pc - m_code.data(), ret.reg);
+                    std::println("[{}] Ret", pc - m_code.data());
                     pc += sizeof(Ret);
                     break;
                 }
@@ -26,31 +26,22 @@ namespace Nyx::bytecode {
                 case Opcode::LoadImmInt: {
                     LoadImmInt load;
                     std::memcpy(&load, pc, sizeof(LoadImmInt));
-                    std::println("[{}] LoadImmInt %{} = {}", pc - m_code.data(), load.reg,
-                                 load.imm);
+                    std::println("[{}] LoadImmInt  {}", pc - m_code.data(), load.imm);
                     pc += sizeof(LoadImmInt);
                     break;
                 }
                 case Opcode::LoadConst: {
                     LoadConst load;
                     std::memcpy(&load, pc, sizeof(LoadConst));
-                    std::println("[{}] LoadConst %{} = {}", pc - m_code.data(), load.reg, load.idx);
+                    std::println("[{}] LoadConst  = {}", pc - m_code.data(), load.idx);
                     pc += sizeof(LoadConst);
                     break;
                 }
                 case Opcode::LoadString: {
                     LoadString load;
                     std::memcpy(&load, pc, sizeof(LoadString));
-                    std::println("[{}] LoadString %{} = {}", pc - m_code.data(), load.reg,
-                                 load.idx);
+                    std::println("[{}] LoadString {}", pc - m_code.data(), load.idx);
                     pc += sizeof(LoadString);
-                    break;
-                }
-                case Opcode::Move: {
-                    Move move;
-                    std::memcpy(&move, pc, sizeof(Move));
-                    std::println("[{}] Move %{} = %{}", pc - m_code.data(), move.dst, move.src);
-                    pc += sizeof(Move);
                     break;
                 }
                 case Opcode::Neg: {
@@ -113,24 +104,21 @@ namespace Nyx::bytecode {
                 case Opcode::JmpIfFalse: {
                     JmpIfFalse inst;
                     std::memcpy(&inst, pc, sizeof(JmpIfFalse));
-                    std::println("[{}] JmpIfFalse %{} {}", pc - m_code.data(), inst.arg,
-                                 inst.offset);
+                    std::println("[{}] JmpIfFalse {}", pc - m_code.data(), inst.offset);
                     pc += sizeof(JmpIfFalse);
                     break;
                 }
                 case Opcode::JmpIfTrue: {
                     JmpIfTrue inst;
                     std::memcpy(&inst, pc, sizeof(JmpIfTrue));
-                    std::println("[{}] JmpIfTrue %{} {}", pc - m_code.data(), inst.arg,
-                                 inst.offset);
+                    std::println("[{}] JmpIfTrue {}", pc - m_code.data(), inst.offset);
                     pc += sizeof(JmpIfTrue);
                     break;
                 }
                 case Opcode::Call: {
                     Call inst;
                     std::memcpy(&inst, pc, sizeof(Call));
-                    std::println("[{}] {} Call %{} {}", pc - m_code.data(), inst.callee,
-                                 inst.arg_count, inst.result);
+                    std::println("[{}]  Call {}", pc - m_code.data(), inst.arg_count);
                     pc += sizeof(Call);
                     break;
                 }
