@@ -54,6 +54,9 @@ namespace Nyx::bytecode {
                     std::println("[{}] LoadConst   {}", offset, idx);
                     break;
                 }
+                case Opcode::Pop:
+                    std::println("[{}] Pop", offset);
+                    break;
                 case Opcode::GetLocal: {
                     uint8_t slot = read_u8(pc);
                     std::println("[{}] GetLocal    {}", offset, slot);

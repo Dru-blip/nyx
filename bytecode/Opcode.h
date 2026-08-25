@@ -8,6 +8,7 @@ namespace Nyx::bytecode {
         LoadConst,
         LoadString,
 
+        Pop,
 
         StoreLocal,
         GetLocal,

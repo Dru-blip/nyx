@@ -63,6 +63,16 @@ namespace Nyx::ir {
         uint16_t m_idx;
     };
 
+    class Pop : public Instruction {
+    public:
+        Pop() {}
+        void lower(std::vector<uint8_t> &buffer) override;
+        constexpr std::size_t length() const override {
+            return sizeof(bytecode::Opcode);
+        }
+        int stack_cost() const override { return -1; }
+    };
+
     class StoreLocal : public Instruction {
     public:
         StoreLocal(uint8_t slot) : m_slot(slot) {}

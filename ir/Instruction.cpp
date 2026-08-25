@@ -27,6 +27,10 @@ namespace Nyx::ir {
         buffer.push_back(static_cast<uint8_t>(m_idx >> 8));
     }
 
+    void Pop::lower(std::vector<uint8_t> &buffer) {
+        buffer.push_back(static_cast<uint8_t>(bytecode::Opcode::Pop));
+    }
+
     void StoreLocal::lower(std::vector<uint8_t> &buffer) {
         buffer.push_back(static_cast<uint8_t>(bytecode::Opcode::StoreLocal));
         buffer.push_back(static_cast<uint8_t>(m_slot));

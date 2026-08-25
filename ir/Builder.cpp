@@ -25,6 +25,11 @@ namespace Nyx::ir {
 
     void Builder::set_insert_point(BasicBlock *block) { m_curr_block = block; }
 
+    void Builder::create_pop() {
+        assert(m_curr_block != nullptr);
+        m_curr_block->push<Pop>();
+    }
+
     void Builder::create_not() {
         assert(m_curr_block != nullptr);
         m_curr_block->push<Not>();

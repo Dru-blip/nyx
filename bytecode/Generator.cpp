@@ -377,24 +377,17 @@ namespace Nyx::bytecode {
 
         lowerExpr(and_node->left);
 
-        // TODO:
-        //  BasicBlock *true_block = m_builder.create_block();
-        //  BasicBlock *end_block = m_builder.create_block();
+        BasicBlock *true_block = m_builder.create_block();
+        BasicBlock *end_block = m_builder.create_block();
 
-        // ir::Register dst = m_builder.allocate_register();
+        m_builder.create_branch(true_block, end_block);
 
-        // m_builder.create_move(left, dst);
-        // m_builder.create_jmpif_false(dst, end_block, ir::Edge::CondJumpWeight);
+        m_builder.set_insert_point(true_block);
+        m_builder.create_pop();
+        lowerExpr(and_node->right);
+        m_builder.create_jmp(end_block, ir::Edge::CondJumpWeight + 20);
 
-        // m_builder.set_insert_point(true_block);
-        // ir::Register right = lowerExpr(and_node->right);
-        // m_builder.create_move(right, dst);
-
-        // m_builder.create_jmp(end_block, ir::Edge::CondJumpWeight + 20);
-
-        // m_builder.set_insert_point(end_block);
-
-        // return dst;
+        m_builder.set_insert_point(end_block);
     }
 
     void Generator::lowerOr(const Node *node) {
@@ -402,25 +395,17 @@ namespace Nyx::bytecode {
 
         lowerExpr(or_node->left);
 
-        // TODO: implement short-circuit
-        //  BasicBlock *false_block = m_builder.create_block();
-        //  BasicBlock *end_block = m_builder.create_block();
+        BasicBlock *false_block = m_builder.create_block();
+        BasicBlock *end_block = m_builder.create_block();
 
-        // ir::Register dst = m_builder.allocate_register();
+        m_builder.create_branch(false_block, end_block);
 
-        // // TODO: should combine both move and jump into a single instruction.
-        // m_builder.create_move(left, dst);
-        // m_builder.create_jmpif_true(dst, end_block, ir::Edge::CondJumpWeight);
+        m_builder.set_insert_point(false_block);
+        m_builder.create_pop();
+        lowerExpr(or_node->right);
+        m_builder.create_jmp(end_block, ir::Edge::CondJumpWeight + 20);
 
-        // m_builder.set_insert_point(false_block);
-        // ir::Register right = lowerExpr(or_node->right);
-        // m_builder.create_move(right, dst);
-
-        // m_builder.create_jmp(end_block, ir::Edge::CondJumpWeight + 20);
-
-        // m_builder.set_insert_point(end_block);
-
-        // return dst;
+        m_builder.set_insert_point(end_block);
     }
 
     void Generator::lowerAssignment(const Node *node) {
