@@ -47,22 +47,24 @@ namespace Nyx {
         return static_cast<int64_t>(val);
     }
 
-    // static uint8_t read_u8(uint8_t *&pc) { return *pc++; }
+    static uint8_t read_u8(uint8_t *&pc) { return *pc++; }
 
     Value VM::run_executable(bytecode::Executable *executable) {
         Frame *frame = m_fiber.push_frame(executable);
 
         uint8_t *pc = frame->get_code();
         Value *stack = frame->stack();
-        // Value *locals = frame->locals();
+        Value *locals = frame->locals();
         Value *constants = frame->constants();
 
 
         static const void *labels[] = {
-                &&HandleLoadImmInt, &&HandleLoadConst, &&HandleNeg, &&HandleNot,    &&HandleAdd,
-                &&HandleSub,        &&HandleMul,       &&HandleDiv, &&HandleLt,     &&HandleLte,
-                &&HandleGt,         &&HandleGte,       &&HandleEq,  &&HandleNeq,    &&HandleJmp,
-                &&HandleJmpIfFalse, &&HandleJmpIfTrue, &&HandleRet, &&HandleRetNil,
+                &&HandleLoadImmInt, &&HandleLoadConst, &&HandleLoadString, &&HandleStoreLocal,
+                &&HandleGetLocal,   &&HandleNot,       &&HandleNeg,        &&HandleAdd,
+                &&HandleSub,        &&HandleMul,       &&HandleDiv,        &&HandleLt,
+                &&HandleLte,        &&HandleGt,        &&HandleGte,        &&HandleEq,
+                &&HandleNeq,        &&HandleJmp,       &&HandleJmpIfFalse, &&HandleJmpIfTrue,
+                &&HandleBranch,     &&HandleRet,       &&HandleRetNil,
         };
 
 #define PUSH(v) *stack++ = v
@@ -84,6 +86,26 @@ namespace Nyx {
             PUSH(constants[idx]);
             DISPATCH();
         }
+
+        HANDLE_INSTR(LoadString) {
+            // TODO: should remove inplace of LoadConst
+            uint16_t idx = read_u16(pc);
+            PUSH(constants[idx]);
+            DISPATCH();
+        }
+
+        HANDLE_INSTR(GetLocal) {
+            uint8_t slot = read_u8(pc);
+            PUSH(locals[slot]);
+            DISPATCH();
+        }
+
+        HANDLE_INSTR(StoreLocal) {
+            uint8_t slot = read_u8(pc);
+            locals[slot] = POP();
+            DISPATCH();
+        }
+
         HANDLE_INSTR(Neg) {
             *(stack - 1) = Handlers::handle_neg(*(stack - 1));
             DISPATCH();
@@ -158,6 +180,16 @@ namespace Nyx {
             uint16_t offset = read_u16(pc);
             if ((POP()).is_truthy()) {
                 pc = frame->get_code() + offset;
+            }
+            DISPATCH();
+        }
+        HANDLE_INSTR(Branch) {
+            uint16_t true_offset = read_u16(pc);
+            uint16_t false_offset = read_u16(pc);
+            if ((POP()).is_truthy()) {
+                pc = frame->get_code() + true_offset;
+            } else {
+                pc = frame->get_code() + false_offset;
             }
             DISPATCH();
         }

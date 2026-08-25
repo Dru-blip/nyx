@@ -32,6 +32,11 @@ namespace Nyx::ir {
         buffer.push_back(static_cast<uint8_t>(m_slot));
     }
 
+    void GetLocal::lower(std::vector<uint8_t> &buffer) {
+        buffer.push_back(static_cast<uint8_t>(bytecode::Opcode::GetLocal));
+        buffer.push_back(static_cast<uint8_t>(m_slot));
+    }
+
     void Not::lower(std::vector<uint8_t> &buffer) {
         buffer.push_back(static_cast<uint8_t>(bytecode::Opcode::Not));
     }

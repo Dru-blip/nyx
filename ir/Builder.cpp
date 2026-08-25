@@ -111,6 +111,11 @@ namespace Nyx::ir {
         m_curr_block->push<StoreLocal>(slot);
     }
 
+    void Builder::create_get_local(uint8_t slot) {
+        assert(m_curr_block != nullptr);
+        m_curr_block->push<GetLocal>(slot);
+    }
+
     void Builder::create_jmp(BasicBlock *target, const size_t weight) {
         assert(m_curr_block != nullptr);
         m_curr_block->add_successor({weight, target});
@@ -178,10 +183,10 @@ namespace Nyx::ir {
     }
 
     std::vector<uint8_t> Builder::finalize() {
-        // BasicBlockTracer tracer(m_blocks);
-        // auto blocks = tracer.trace();
         calculate_stack_size();
-        BytecodeEmitter bytecode_emitter(m_blocks);
+        BasicBlockTracer tracer(m_blocks);
+        auto blocks = tracer.trace();
+        BytecodeEmitter bytecode_emitter(blocks);
         return std::move(bytecode_emitter.emit());
     }
 } // namespace Nyx::ir

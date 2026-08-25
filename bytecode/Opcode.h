@@ -10,6 +10,7 @@ namespace Nyx::bytecode {
 
 
         StoreLocal,
+        GetLocal,
 
         Not,
         Neg,

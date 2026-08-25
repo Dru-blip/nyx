@@ -434,8 +434,9 @@ namespace Nyx::bytecode {
         // TODO: should emit a load or just access the slot directly if reference is local or load
         // module or global context.
         const auto name = m_ast.getSource(node);
-        m_scope.resolve(name);
+        const uint8_t slot = m_scope.resolve(name);
         // TODO: throw error if not found.
+        m_builder.create_get_local(slot);
     }
 
     void Generator::lowerString(const Node *node) {

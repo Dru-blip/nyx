@@ -17,6 +17,7 @@ namespace Nyx::ir {
         void create_load_string(const uint16_t &idx);
 
         void create_store_local(uint8_t slot);
+        void create_get_local(uint8_t slot);
 
         void create_not();
         void create_neg();

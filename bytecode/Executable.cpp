@@ -54,9 +54,9 @@ namespace Nyx::bytecode {
                     std::println("[{}] LoadConst   {}", offset, idx);
                     break;
                 }
-                case Opcode::LoadString: {
-                    uint16_t idx = read_u16(pc);
-                    std::println("[{}] LoadString  {}", offset, idx);
+                case Opcode::GetLocal: {
+                    uint8_t slot = read_u8(pc);
+                    std::println("[{}] GetLocal    {}", offset, slot);
                     break;
                 }
                 case Opcode::StoreLocal: {

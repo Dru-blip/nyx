@@ -26,7 +26,8 @@ namespace Nyx::ir {
             void *mem = mi_heap_malloc(m_heap, sizeof(Instr));
             Instruction *instr = new (mem) Instr(std::forward<Args>(args)...);
             m_instructions.push_back(instr);
-            m_stack_effect += instr->stack_cost();
+            int max_effect = std::max(m_stack_effect, m_stack_effect + instr->stack_cost());
+            m_stack_effect = max_effect;
             m_code_size += instr->length();
         }
 
@@ -57,7 +58,7 @@ namespace Nyx::ir {
         std::size_t m_id;
         std::size_t m_code_size{0};
         std::size_t m_code_offset{0};
-        std::size_t m_stack_effect{0};
+        int m_stack_effect{0};
 
 
         std::vector<Instruction *> m_instructions;

@@ -76,6 +76,19 @@ namespace Nyx::ir {
         uint8_t m_slot;
     };
 
+    class GetLocal : public Instruction {
+    public:
+        GetLocal(uint8_t slot) : m_slot(slot) {}
+        void lower(std::vector<uint8_t> &buffer) override;
+        constexpr std::size_t length() const override {
+            return sizeof(uint8_t) + sizeof(bytecode::Opcode);
+        }
+        int stack_cost() const override { return 1; }
+
+    private:
+        uint8_t m_slot;
+    };
+
 
     class Unary : public Instruction {
     public:
