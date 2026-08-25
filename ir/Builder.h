@@ -16,6 +16,8 @@ namespace Nyx::ir {
         void create_load_const(const uint16_t &idx);
         void create_load_string(const uint16_t &idx);
 
+        void create_store_local(uint8_t slot);
+
         void create_not();
         void create_neg();
 
@@ -43,9 +45,12 @@ namespace Nyx::ir {
         void create_ret();
         void create_ret_nil();
 
-        BasicBlock *create_block();
+        void calculate_stack_size();
 
-        uint32_t slot_count() const { return m_slot_count; }
+        BasicBlock *create_block();
+        uint8_t allocate_local();
+        uint32_t local_count() const { return m_local_count; }
+        uint32_t stack_size() const { return m_stack_size; }
 
         std::vector<uint8_t> finalize();
 
@@ -53,6 +58,7 @@ namespace Nyx::ir {
         std::vector<BasicBlock *> m_blocks;
         BasicBlock *m_curr_block;
         mi_heap_t *m_heap;
-        uint32_t m_slot_count{0};
+        uint32_t m_local_count{0};
+        uint32_t m_stack_size{0};
     };
 } // namespace Nyx::ir

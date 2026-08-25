@@ -2,92 +2,60 @@
 #include "InstructionEmitter.h"
 #include <cstdint>
 #include "bytecode/Instruction.h"
-#include "ir/Register.h"
 
 
 namespace Nyx::bytecode {
-    void InstructionEmitter::ret(const Register &reg) { emit<Ret>(Opcode::Ret, reg.slot()); }
+    void InstructionEmitter::ret() { emit<Ret>(Opcode::Ret); }
 
-    void InstructionEmitter::load_imm_int(const Register &reg, const int64_t &imm) {
-        emit<LoadImmInt>(Opcode::LoadImmInt, reg.slot(), imm);
+    void InstructionEmitter::load_imm_int(const int64_t &imm) {
+        emit<LoadImmInt>(Opcode::LoadImmInt, imm);
     }
 
-    void InstructionEmitter::load_const(const Register &reg, const uint16_t &idx) {
-        emit<LoadConst>(Opcode::LoadConst, reg.slot(), idx);
+    void InstructionEmitter::load_const(const uint16_t &idx) {
+        emit<LoadConst>(Opcode::LoadConst, idx);
     }
 
-    void InstructionEmitter::load_string(const Register &reg, const uint16_t &idx) {
-        emit<LoadString>(Opcode::LoadString, reg.slot(), idx);
-    }
-
-    void InstructionEmitter::move(const Register &src, const Register &dst) {
-        emit<Move>(Opcode::Move, src.slot(), dst.slot());
-    }
-
-    void InstructionEmitter::neg(const Register &arg, const Register &dst) {
-        emit<Neg>(Opcode::Neg, arg.slot(), dst.slot());
-    }
-
-    void InstructionEmitter::not_(const Register &arg, const Register &dst) {
-        emit<Not>(Opcode::Not, arg.slot(), dst.slot());
-    }
-
-    void InstructionEmitter::add(const Register &left, const Register &right, const Register &dst) {
-        emit<Add>(Opcode::Add, left.slot(), right.slot(), dst.slot());
-    }
-
-    void InstructionEmitter::sub(const Register &left, const Register &right, const Register &dst) {
-        emit<Sub>(Opcode::Sub, left.slot(), right.slot(), dst.slot());
+    void InstructionEmitter::load_string(const uint16_t &idx) {
+        emit<LoadString>(Opcode::LoadString, idx);
     }
 
 
-    void InstructionEmitter::mul(const Register &left, const Register &right, const Register &dst) {
-        emit<Mul>(Opcode::Mul, left.slot(), right.slot(), dst.slot());
-    }
+    void InstructionEmitter::neg() { emit<Neg>(Opcode::Neg); }
 
-    void InstructionEmitter::div(const Register &left, const Register &right, const Register &dst) {
-        emit<Div>(Opcode::Div, left.slot(), right.slot(), dst.slot());
-    }
+    void InstructionEmitter::not_() { emit<Not>(Opcode::Not); }
 
-    void InstructionEmitter::lt(const Register &left, const Register &right, const Register &dst) {
-        emit<Lt>(Opcode::Lt, left.slot(), right.slot(), dst.slot());
-    }
+    void InstructionEmitter::add() { emit<Add>(Opcode::Add); }
 
-    void InstructionEmitter::lte(const Register &left, const Register &right, const Register &dst) {
-        emit<Lte>(Opcode::Lte, left.slot(), right.slot(), dst.slot());
-    }
+    void InstructionEmitter::sub() { emit<Sub>(Opcode::Sub); }
 
-    void InstructionEmitter::gt(const Register &left, const Register &right, const Register &dst) {
-        emit<Gt>(Opcode::Gt, left.slot(), right.slot(), dst.slot());
-    }
+    void InstructionEmitter::mul() { emit<Mul>(Opcode::Mul); }
 
-    void InstructionEmitter::gte(const Register &left, const Register &right, const Register &dst) {
-        emit<Gte>(Opcode::Gte, left.slot(), right.slot(), dst.slot());
-    }
+    void InstructionEmitter::div() { emit<Div>(Opcode::Div); }
 
-    void InstructionEmitter::eq(const Register &left, const Register &right, const Register &dst) {
-        emit<Eq>(Opcode::Eq, left.slot(), right.slot(), dst.slot());
-    }
+    void InstructionEmitter::lt() { emit<Lt>(Opcode::Lt); }
 
-    void InstructionEmitter::neq(const Register &left, const Register &right, const Register &dst) {
-        emit<Neq>(Opcode::Neq, left.slot(), right.slot(), dst.slot());
-    }
+    void InstructionEmitter::lte() { emit<Lte>(Opcode::Lte); }
+
+    void InstructionEmitter::gt() { emit<Gt>(Opcode::Gt); }
+
+    void InstructionEmitter::gte() { emit<Gte>(Opcode::Gte); }
+
+    void InstructionEmitter::eq() { emit<Eq>(Opcode::Eq); }
+
+    void InstructionEmitter::neq() { emit<Neq>(Opcode::Neq); }
 
     void InstructionEmitter::jmp(const uint16_t &offset) { emit<Jmp>(Opcode::Jmp, offset); }
 
-    void InstructionEmitter::jmp_if_false(const Register &arg, const uint32_t &offset) {
-        emit<JmpIfFalse>(Opcode::JmpIfFalse, arg.slot(), offset);
+    void InstructionEmitter::jmp_if_false(const uint32_t &offset) {
+        emit<JmpIfFalse>(Opcode::JmpIfFalse, offset);
     }
 
-    void InstructionEmitter::jmp_if_true(const Register &arg, const uint32_t &offset) {
-        emit<JmpIfTrue>(Opcode::JmpIfTrue, arg.slot(), offset);
+    void InstructionEmitter::jmp_if_true(const uint32_t &offset) {
+        emit<JmpIfTrue>(Opcode::JmpIfTrue, offset);
     }
 
     void InstructionEmitter::ret_nil() { push(static_cast<uint8_t>(Opcode::RetNil)); }
 
-    void InstructionEmitter::call(const Register &callee, const uint8_t &arg_count,
-                                  const Register &result) {
-        emit<Call>(Opcode::Call, callee.slot(), arg_count, result.slot());
-    }
+    void InstructionEmitter::call(const uint8_t &arg_count) { emit<Call>(Opcode::Call, arg_count); }
 
 } // namespace Nyx::bytecode

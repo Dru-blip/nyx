@@ -26,6 +26,7 @@ namespace Nyx::ir {
             void *mem = mi_heap_malloc(m_heap, sizeof(Instr));
             Instruction *instr = new (mem) Instr(std::forward<Args>(args)...);
             m_instructions.push_back(instr);
+            m_stack_effect += instr->stack_cost();
             m_code_size += instr->length();
         }
 
@@ -46,6 +47,8 @@ namespace Nyx::ir {
         inline std::vector<BasicBlock *> &predecessors() { return m_predecessors; }
 
         inline Instruction *end() { return m_instructions.back(); }
+        inline size_t stack_effect() const { return m_stack_effect; }
+
 
         void lower(InstructionEmitter &emitter);
 
@@ -54,7 +57,9 @@ namespace Nyx::ir {
         std::size_t m_id;
         std::size_t m_code_size{0};
         std::size_t m_code_offset{0};
-        // TODO: fix leaking memory from vector buffers.
+        std::size_t m_stack_effect{0};
+
+
         std::vector<Instruction *> m_instructions;
         std::vector<BasicBlock *> m_predecessors;
         std::vector<Edge> m_successors;

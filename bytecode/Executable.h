@@ -12,14 +12,15 @@
 namespace Nyx::bytecode {
     class Executable : public Cell {
     public:
-        Executable(std::vector<uint8_t> &code, std::vector<Value> &constants) :
-            m_code(std::move(code)), m_constants(std::move(constants)) {}
+        Executable(std::vector<uint8_t> &code, std::vector<Value> &constants, size_t stack_size) :
+            m_code(std::move(code)), m_constants(std::move(constants)), m_stack_size(stack_size) {}
 
 
         void print_code();
         Value *constants() { return m_constants.data(); }
         size_t size() { return m_code.size(); }
         uint8_t *data() { return m_code.data(); }
+        size_t stack_size() { return m_stack_size; }
 
 
     private:
@@ -41,5 +42,6 @@ namespace Nyx::bytecode {
 
         std::vector<uint8_t> m_code;
         std::vector<Value> m_constants;
+        size_t m_stack_size{0};
     };
 } // namespace Nyx::bytecode

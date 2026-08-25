@@ -1,6 +1,8 @@
 #include "ir/Builder.h"
+#include <algorithm>
 #include <cassert>
 #include <mimalloc.h>
+#include <stack>
 #include "ir/BasicBlock.h"
 #include "ir/BasicBlockTracer.h"
 #include "ir/BytecodeEmitter.h"
@@ -104,6 +106,10 @@ namespace Nyx::ir {
         m_curr_block->push<LoadString>(idx);
     }
 
+    void Builder::create_store_local(uint8_t slot) {
+        assert(m_curr_block != nullptr);
+        m_curr_block->push<StoreLocal>(slot);
+    }
 
     void Builder::create_jmp(BasicBlock *target, const size_t weight) {
         assert(m_curr_block != nullptr);
@@ -145,9 +151,36 @@ namespace Nyx::ir {
         m_curr_block->push<Call>(arg_count);
     }
 
+    uint8_t Builder::allocate_local() { return m_local_count++; }
+
+
+    void Builder::calculate_stack_size() {
+        size_t max_stack_size = 0;
+
+        std::stack<BasicBlock *> block_stack;
+        std::vector<bool> visited(m_blocks.size(), false);
+
+        block_stack.push(m_blocks[0]);
+        while (!block_stack.empty()) {
+            BasicBlock *block = block_stack.top();
+            block_stack.pop();
+
+            max_stack_size += block->stack_effect();
+
+            for (auto &successor: block->successors()) {
+                if (visited[successor.to->id()])
+                    continue;
+                block_stack.push(successor.to);
+                visited[successor.to->id()] = true;
+            }
+        }
+        m_stack_size = max_stack_size;
+    }
+
     std::vector<uint8_t> Builder::finalize() {
         // BasicBlockTracer tracer(m_blocks);
         // auto blocks = tracer.trace();
+        calculate_stack_size();
         BytecodeEmitter bytecode_emitter(m_blocks);
         return std::move(bytecode_emitter.emit());
     }

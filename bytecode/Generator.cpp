@@ -10,7 +10,10 @@
 namespace Nyx::bytecode {
     Executable *Generator::build_executable() {
         auto code = m_builder.finalize();
-        return m_vm.heap()->alloc<Executable>(code, m_constants);
+        return m_vm.heap()->alloc<Executable>(
+                code, m_constants,
+                (static_cast<std::size_t>(m_builder.local_count()) << 32) |
+                        static_cast<std::size_t>(m_builder.stack_size()));
     }
 
     Executable *Generator::compile() {
@@ -65,12 +68,13 @@ namespace Nyx::bytecode {
         const VarDecl *varDecl = static_cast<const VarDecl *>(node);
         const Node *value = varDecl->initializer;
 
-        uint32_t slot = m_builder.allocate_local();
+        uint8_t slot = m_builder.allocate_local();
 
         if (value != nullptr) {
             lowerExpr(value);
             // TODO: should emit store local instruction or
             // move the top value to the slot.
+            m_builder.create_store_local(slot);
         }
 
         const std::string_view name = m_ast.getSource(varDecl->name);
@@ -166,7 +170,7 @@ namespace Nyx::bytecode {
     }
 
     void Generator::lowerBlockStmt(const Node *node) {
-        const BlockStmt *blockStmt = static_cast<const Bl]ockStmt *>(node);
+        const BlockStmt *blockStmt = static_cast<const BlockStmt *>(node);
 
         for (const Node *stmt: blockStmt->stmts) {
             lowerRoot(stmt);

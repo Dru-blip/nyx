@@ -8,6 +8,9 @@ namespace Nyx::bytecode {
         LoadConst,
         LoadString,
 
+
+        StoreLocal,
+
         Not,
         Neg,
         Add,
@@ -54,6 +57,11 @@ namespace Nyx::bytecode {
         LoadString(uint16_t idx) : idx(idx) {}
     };
 
+    struct StoreLocal {
+        uint8_t slot;
+        StoreLocal() = default;
+        StoreLocal(uint8_t slot) : slot(slot) {}
+    };
 
 #define DefineUnaryInst(name)                                                                      \
     struct name {                                                                                  \

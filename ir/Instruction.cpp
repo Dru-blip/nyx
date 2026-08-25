@@ -8,6 +8,8 @@ namespace Nyx::ir {
 
     void LoadString::lower(InstructionEmitter &emitter) { emitter.load_string(m_idx); }
 
+    void StoreLocal::lower(InstructionEmitter &emitter) { emitter.store_local(m_slot); }
+
     void Not::lower(InstructionEmitter &emitter) { emitter.not_(); }
 
     void Neg::lower(InstructionEmitter &emitter) { emitter.neg(); }

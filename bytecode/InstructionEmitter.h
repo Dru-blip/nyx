@@ -35,6 +35,7 @@ namespace Nyx::bytecode {
         void load_const(const uint16_t &idx);
         void load_string(const uint16_t &idx);
 
+        void store_local(const uint8_t &slot);
 
         void not_();
         void neg();

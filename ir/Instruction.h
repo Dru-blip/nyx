@@ -15,6 +15,9 @@ namespace Nyx::ir {
         virtual ~Instruction() = default;
         virtual void lower(InstructionEmitter &emitter) = 0;
         virtual bool is_terminator() const { return false; }
+
+        // TODO: change the name , stack_cost is not accurate.
+        virtual int stack_cost() const { return 0; }
         virtual constexpr std::size_t length() const = 0;
     };
 
@@ -30,6 +33,7 @@ namespace Nyx::ir {
         constexpr std::size_t length() const override {
             return sizeof(bytecode::LoadImmInt) + sizeof(bytecode::Opcode);
         }
+        int stack_cost() const override { return 1; }
         void lower(InstructionEmitter &emitter) override;
 
     private:
@@ -43,6 +47,7 @@ namespace Nyx::ir {
         constexpr std::size_t length() const override {
             return sizeof(bytecode::LoadConst) + sizeof(bytecode::Opcode);
         }
+        int stack_cost() const override { return 1; }
 
     private:
         uint16_t m_idx;
@@ -55,9 +60,23 @@ namespace Nyx::ir {
         constexpr std::size_t length() const override {
             return sizeof(bytecode::LoadString) + sizeof(bytecode::Opcode);
         }
+        int stack_cost() const override { return 1; }
 
     private:
         uint16_t m_idx;
+    };
+
+    class StoreLocal : public Instruction {
+    public:
+        StoreLocal(uint8_t slot) : m_slot(slot) {}
+        void lower(InstructionEmitter &emitter) override;
+        constexpr std::size_t length() const override {
+            return sizeof(bytecode::StoreLocal) + sizeof(bytecode::Opcode);
+        }
+        int stack_cost() const override { return -1; }
+
+    private:
+        uint8_t m_slot;
     };
 
 
@@ -65,6 +84,8 @@ namespace Nyx::ir {
     public:
         Unary() {}
         constexpr std::size_t length() const override { return sizeof(bytecode::Opcode); }
+
+        int stack_cost() const override { return 0; }
 
     protected:
     };
@@ -74,6 +95,7 @@ namespace Nyx::ir {
         Not() {}
         void lower(InstructionEmitter &emitter) override;
         constexpr std::size_t length() const override { return sizeof(bytecode::Opcode); }
+        int stack_cost() const override { return 0; }
     };
 
     class Neg : public Unary {
@@ -83,6 +105,7 @@ namespace Nyx::ir {
         constexpr std::size_t length() const override {
             return sizeof(bytecode::Neg) + sizeof(bytecode::Opcode);
         }
+        int stack_cost() const override { return 0; }
     };
 
     class Binary : public Instruction {
@@ -90,6 +113,7 @@ namespace Nyx::ir {
         Binary() {}
 
         virtual constexpr std::size_t length() const override { return sizeof(bytecode::Opcode); }
+        int stack_cost() const override { return -1; }
 
     protected:
     };
@@ -162,6 +186,7 @@ namespace Nyx::ir {
         constexpr std::size_t length() const override {
             return sizeof(bytecode::Jmp) + sizeof(bytecode::Opcode);
         }
+
     private:
         BasicBlock *m_target;
     };
@@ -173,6 +198,7 @@ namespace Nyx::ir {
         constexpr std::size_t length() const override {
             return sizeof(bytecode::JmpIfFalse) + sizeof(bytecode::Opcode);
         }
+        int stack_cost() const override { return -1; }
 
     private:
         BasicBlock *m_target;
@@ -185,6 +211,7 @@ namespace Nyx::ir {
         constexpr std::size_t length() const override {
             return sizeof(bytecode::JmpIfTrue) + sizeof(bytecode::Opcode);
         }
+        int stack_cost() const override { return -1; }
 
     private:
         BasicBlock *m_target;
@@ -199,6 +226,7 @@ namespace Nyx::ir {
             return sizeof(bytecode::JmpIfTrue) + sizeof(bytecode::Jmp) +
                    sizeof(bytecode::Opcode) * 2;
         }
+        int stack_cost() const override { return -1; }
 
     private:
         BasicBlock *m_true_target;
@@ -213,6 +241,7 @@ namespace Nyx::ir {
         constexpr std::size_t length() const override {
             return sizeof(bytecode::Call) + sizeof(bytecode::Opcode);
         }
+        int stack_cost() const override { return -m_arg_count - 1 + 1; }
 
     private:
         size_t m_arg_count;
@@ -224,6 +253,7 @@ namespace Nyx::ir {
         Ret() {}
         void lower(bytecode::InstructionEmitter &emitter) override;
         constexpr std::size_t length() const override { return sizeof(bytecode::Opcode); }
+        int stack_cost() const override { return -1; }
     };
 
     class RetNil : public BlockTerminator {
