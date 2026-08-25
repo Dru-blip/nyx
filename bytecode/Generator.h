@@ -64,6 +64,9 @@ namespace Nyx::bytecode {
         uint16_t add_string_constant(const char *data, std::size_t size);
         uint16_t add_int_constant(int64_t value);
 
+        int resolve_global(const std::string_view &name);
+        uint16_t intern_string_and_constant(std::string_view data);
+
         Ast m_ast;
         ir::Builder m_builder;
         VM &m_vm;

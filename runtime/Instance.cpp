@@ -16,10 +16,12 @@ namespace Nyx {
         return m_field_map->add_entry(key, value);
     }
 
-    uint32_t Instance::put_native_function(VM &vm, String *name,
-                                           NativeFunctionPtr func) {
+    uint32_t Instance::put_native_function(VM &vm, String *name, NativeFunctionPtr func) {
         NativeFunction *native_func = NativeFunction::create(vm, name, func);
 
         return m_field_map->add_entry(Value::from_object(name), Value::from_object(native_func));
     }
+
+    int32_t Instance::get_field(const Value &key) const { return m_field_map->get_index(key); }
+
 } // namespace Nyx

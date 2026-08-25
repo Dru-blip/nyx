@@ -121,6 +121,16 @@ namespace Nyx::ir {
         m_curr_block->push<GetLocal>(slot);
     }
 
+    void Builder::create_get_global_fast(uint16_t slot) {
+        assert(m_curr_block != nullptr);
+        m_curr_block->push<GetGlobalFast>(slot);
+    }
+
+    void Builder::create_get_global_unresolved(uint16_t slot) {
+        assert(m_curr_block != nullptr);
+        m_curr_block->push<GetGlobalUnresolved>(slot);
+    }
+
     void Builder::create_jmp(BasicBlock *target, const size_t weight) {
         assert(m_curr_block != nullptr);
         m_curr_block->add_successor({weight, target});

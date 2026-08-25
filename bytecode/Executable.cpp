@@ -67,6 +67,17 @@ namespace Nyx::bytecode {
                     std::println("[{}] StoreLocal  {}", offset, slot);
                     break;
                 }
+                case Opcode::GetGlobalFast: {
+                    uint16_t idx = read_u16(pc);
+                    std::println("[{}] GetGlobalFast {}", offset, idx);
+                    break;
+                }
+
+                case Opcode::GetGlobalUnresolved: {
+                    uint16_t idx = read_u16(pc);
+                    std::println("[{}] GetGlobalUnresolved {}", offset, idx);
+                    break;
+                }
                 case Opcode::Neg:
                     std::println("[{}] Neg", offset);
                     break;

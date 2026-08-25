@@ -12,6 +12,8 @@ namespace Nyx::bytecode {
 
         StoreLocal,
         GetLocal,
+        GetGlobalFast,
+        GetGlobalUnresolved,
 
         Not,
         Neg,

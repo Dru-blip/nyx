@@ -59,12 +59,31 @@ namespace Nyx {
 
 
         static const void *labels[] = {
-                &&HandleLoadImmInt, &&HandleLoadConst, &&HandleLoadString, &&HandleStoreLocal,
-                &&HandleGetLocal,   &&HandleNot,       &&HandleNeg,        &&HandleAdd,
-                &&HandleSub,        &&HandleMul,       &&HandleDiv,        &&HandleLt,
-                &&HandleLte,        &&HandleGt,        &&HandleGte,        &&HandleEq,
-                &&HandleNeq,        &&HandleJmp,       &&HandleJmpIfFalse, &&HandleJmpIfTrue,
-                &&HandleBranch,     &&HandleRet,       &&HandleRetNil,
+                &&HandleLoadImmInt,
+                &&HandleLoadConst,
+                &&HandleLoadString,
+                &&HandleStoreLocal,
+                &&HandleGetLocal,
+                &&HandleGetGlobalFast,
+                &&HandleGetGlobalUnresolved,
+                &&HandleNot,
+                &&HandleNeg,
+                &&HandleAdd,
+                &&HandleSub,
+                &&HandleMul,
+                &&HandleDiv,
+                &&HandleLt,
+                &&HandleLte,
+                &&HandleGt,
+                &&HandleGte,
+                &&HandleEq,
+                &&HandleNeq,
+                &&HandleJmp,
+                &&HandleJmpIfFalse,
+                &&HandleJmpIfTrue,
+                &&HandleBranch,
+                &&HandleRet,
+                &&HandleRetNil,
         };
 
 #define PUSH(v) *stack++ = v
@@ -103,6 +122,19 @@ namespace Nyx {
         HANDLE_INSTR(StoreLocal) {
             uint8_t slot = read_u8(pc);
             locals[slot] = POP();
+            DISPATCH();
+        }
+
+        HANDLE_INSTR(GetGlobalFast) {
+            uint16_t idx = read_u16(pc);
+            PUSH(m_global_object->get_field_value(idx));
+            DISPATCH();
+        }
+
+        HANDLE_INSTR(GetGlobalUnresolved) {
+            uint16_t idx = read_u16(pc);
+            Value v = m_global_object->get_field_by_key(constants[idx]);
+            PUSH(v);
             DISPATCH();
         }
 

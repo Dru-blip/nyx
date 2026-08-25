@@ -419,9 +419,20 @@ namespace Nyx::bytecode {
         // TODO: should emit a load or just access the slot directly if reference is local or load
         // module or global context.
         const auto name = m_ast.getSource(node);
-        const uint8_t slot = m_scope.resolve(name);
-        // TODO: throw error if not found.
-        m_builder.create_get_local(slot);
+        const int slot = m_scope.resolve(name);
+        if (slot != -1) {
+            m_builder.create_get_local(slot);
+            return;
+        }
+
+        const int global_slot = resolve_global(name);
+        if (global_slot != -1) {
+            m_builder.create_get_global_fast(global_slot);
+            return;
+        }
+
+        const uint16_t idx = intern_string_and_constant(name);
+        m_builder.create_get_global_unresolved(idx);
     }
 
     void Generator::lowerString(const Node *node) {
@@ -457,4 +468,17 @@ namespace Nyx::bytecode {
         m_constants.push_back(val);
         return static_cast<uint16_t>(m_constants.size() - 1);
     }
+
+    int Generator::resolve_global(const std::string_view &name) {
+        String *interned_id = m_vm.string_pool()->add_string(name);
+        return m_vm.global_object()->get_field(Value::from_object(interned_id));
+    }
+
+    uint16_t Generator::intern_string_and_constant(std::string_view data) {
+        String *interned_id = m_vm.string_pool()->add_string(data);
+        const auto val = Value::from_object(interned_id);
+        m_constants.push_back(val);
+        return static_cast<uint16_t>(m_constants.size() - 1);
+    }
+
 } // namespace Nyx::bytecode

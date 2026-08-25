@@ -17,6 +17,7 @@ namespace Nyx {
 
         inline Heap *heap() { return m_heap; }
         inline StringPool *string_pool() { return m_string_pool; }
+        inline GlobalObject *global_object() { return m_global_object; }
 
         Value run_executable(bytecode::Executable *executable);
 

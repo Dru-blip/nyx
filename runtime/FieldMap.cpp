@@ -8,4 +8,12 @@ namespace Nyx {
         m_field_indices[key] = index;
         return index;
     }
+
+    int32_t FieldMap::get_index(const Value &key) const {
+        auto it = m_field_indices.find(key);
+        if (it != m_field_indices.end()) {
+            return it->second;
+        }
+        return -1;
+    }
 } // namespace Nyx

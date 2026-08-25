@@ -12,6 +12,7 @@ namespace Nyx {
     class FieldMap {
     public:
         uint32_t add_entry(const Value &key, const Value &value);
+        int32_t get_index(const Value &key) const;
         inline Value get_value(uint32_t index) const { return m_values[index]; }
         inline std::size_t size() const { return m_values.size(); }
 

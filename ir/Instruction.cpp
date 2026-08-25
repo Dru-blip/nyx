@@ -41,6 +41,18 @@ namespace Nyx::ir {
         buffer.push_back(static_cast<uint8_t>(m_slot));
     }
 
+    void GetGlobalFast::lower(std::vector<uint8_t> &buffer) {
+        buffer.push_back(static_cast<uint8_t>(bytecode::Opcode::GetGlobalFast));
+        buffer.push_back(static_cast<uint8_t>(m_slot));
+        buffer.push_back(static_cast<uint8_t>(m_slot >> 8));
+    }
+
+    void GetGlobalUnresolved::lower(std::vector<uint8_t> &buffer) {
+        buffer.push_back(static_cast<uint8_t>(bytecode::Opcode::GetGlobalUnresolved));
+        buffer.push_back(static_cast<uint8_t>(m_slot));
+        buffer.push_back(static_cast<uint8_t>(m_slot >> 8));
+    }
+
     void Not::lower(std::vector<uint8_t> &buffer) {
         buffer.push_back(static_cast<uint8_t>(bytecode::Opcode::Not));
     }

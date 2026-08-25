@@ -67,9 +67,7 @@ namespace Nyx::ir {
     public:
         Pop() {}
         void lower(std::vector<uint8_t> &buffer) override;
-        constexpr std::size_t length() const override {
-            return sizeof(bytecode::Opcode);
-        }
+        constexpr std::size_t length() const override { return sizeof(bytecode::Opcode); }
         int stack_cost() const override { return -1; }
     };
 
@@ -99,6 +97,30 @@ namespace Nyx::ir {
         uint8_t m_slot;
     };
 
+    class GetGlobalFast : public Instruction {
+    public:
+        GetGlobalFast(uint16_t slot) : m_slot(slot) {}
+        void lower(std::vector<uint8_t> &buffer) override;
+        constexpr std::size_t length() const override {
+            return sizeof(uint16_t) + sizeof(bytecode::Opcode);
+        }
+        int stack_cost() const override { return 1; }
+
+    private:
+        uint16_t m_slot;
+    };
+
+    class GetGlobalUnresolved : public Instruction {
+    public:
+        GetGlobalUnresolved(uint16_t slot) : m_slot(slot) {}
+        void lower(std::vector<uint8_t> &buffer) override;
+        constexpr std::size_t length() const override {
+            return sizeof(uint16_t) + sizeof(bytecode::Opcode);
+        }
+        int stack_cost() const override { return 1; }
+    private:
+        uint16_t m_slot;
+    };
 
     class Unary : public Instruction {
     public:

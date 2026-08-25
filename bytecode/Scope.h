@@ -18,13 +18,14 @@ namespace Nyx::bytecode {
             locals.emplace_back(Symbol{slot, name});
         }
 
-        uint8_t resolve(const std::string_view name) {
+        int resolve(const std::string_view name) {
             for (const auto &local: locals) {
                 if (local.name == name) {
                     return local.slot;
                 }
             }
-            return 0;
+
+            return -1;
         }
     };
 } // namespace Nyx::bytecode
