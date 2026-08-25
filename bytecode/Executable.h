@@ -29,22 +29,6 @@ namespace Nyx::bytecode {
 
 
     private:
-        template<typename Instr>
-        void print_binary_instruction(std::string_view name,uint8_t *&pc) {
-            Instr instr;
-            std::memcpy(&instr, pc, sizeof(Instr));
-            std::println("[{}] {}", pc - m_code.data(), name);
-            pc += sizeof(Instr);
-        }
-
-        template<typename Instr>
-        void print_unary_instruction(std::string_view name, uint8_t *&pc) {
-            Instr instr;
-            std::memcpy(&instr, pc, sizeof(Instr));
-            std::println("[{}] {}", pc - m_code.data(), name);
-            pc += sizeof(Instr);
-        }
-
         std::vector<uint8_t> m_code;
         std::vector<Value> m_constants;
         uint32_t m_nlocals;

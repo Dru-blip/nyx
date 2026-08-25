@@ -21,8 +21,7 @@ set(IR_SRCS ir/Builder.cpp
         ir/BasicBlockTracer.cpp)
 
 set(BYTECODE_SRCS bytecode/Executable.cpp
-        bytecode/Generator.cpp
-        bytecode/InstructionEmitter.cpp)
+        bytecode/Generator.cpp)
 
 set(HEAP_SRCS heap/Bin.cpp
         heap/Block.cpp

@@ -1,132 +1,139 @@
 #include "bytecode/Executable.h"
 #include <cstdint>
-#include <cstring>
 #include <print>
-#include "bytecode/Instruction.h"
+#include "bytecode/Opcode.h"
 
 namespace Nyx::bytecode {
+    static uint16_t read_u16(const uint8_t *&pc) {
+        uint16_t val = static_cast<uint16_t>(pc[0]) | (static_cast<uint16_t>(pc[1]) << 8);
+        pc += 2;
+        return val;
+    }
+
+    static int64_t read_i64(const uint8_t *&pc) {
+        uint64_t val = 0;
+        for (int i = 0; i < 8; ++i) {
+            val |= (static_cast<uint64_t>(pc[i]) << (i * 8));
+        }
+        pc += 8;
+        return static_cast<int64_t>(val);
+    }
+
+    static uint8_t read_u8(const uint8_t *&pc) { return *pc++; }
+
     void Executable::print_code() {
-        const std::size_t size = m_code.size();
-        uint8_t *pc = m_code.data();
-        const uint8_t *end = pc + size;
+        // AI:
+        std::println("Max Stack Size : {}", m_stack_size);
+        std::println("Constants Count: {}", m_constants.size());
+        std::println("Code Size      : {} bytes", m_code.size());
+
+        const uint8_t *start = m_code.data();
+        const uint8_t *pc = start;
+        const uint8_t *end = pc + m_code.size();
+
         while (pc < end) {
+            std::size_t offset = pc - start;
             Opcode op = static_cast<Opcode>(*pc++);
+
             switch (op) {
                 case Opcode::Ret: {
-                    Ret ret;
-                    std::memcpy(&ret, pc, sizeof(Ret));
-                    std::println("[{}] Ret", pc - m_code.data());
-                    pc += sizeof(Ret);
+                    std::println("[{}] Ret", offset);
                     break;
                 }
                 case Opcode::RetNil: {
-                    std::println("[{}] RetNil", pc - m_code.data());
+                    std::println("[{}] RetNil", offset);
                     break;
                 }
                 case Opcode::LoadImmInt: {
-                    LoadImmInt load;
-                    std::memcpy(&load, pc, sizeof(LoadImmInt));
-                    std::println("[{}] LoadImmInt  {}", pc - m_code.data(), load.imm);
-                    pc += sizeof(LoadImmInt);
+                    int64_t imm = read_i64(pc);
+                    std::println("[{}] LoadImmInt  {}", offset, imm);
                     break;
                 }
                 case Opcode::LoadConst: {
-                    LoadConst load;
-                    std::memcpy(&load, pc, sizeof(LoadConst));
-                    std::println("[{}] LoadConst  = {}", pc - m_code.data(), load.idx);
-                    pc += sizeof(LoadConst);
+                    uint16_t idx = read_u16(pc);
+                    std::println("[{}] LoadConst   {}", offset, idx);
                     break;
                 }
                 case Opcode::LoadString: {
-                    LoadString load;
-                    std::memcpy(&load, pc, sizeof(LoadString));
-                    std::println("[{}] LoadString {}", pc - m_code.data(), load.idx);
-                    pc += sizeof(LoadString);
+                    uint16_t idx = read_u16(pc);
+                    std::println("[{}] LoadString  {}", offset, idx);
                     break;
                 }
-                case Opcode::Neg: {
-                    print_unary_instruction<Neg>("Neg", pc);
+                case Opcode::StoreLocal: {
+                    uint8_t slot = read_u8(pc);
+                    std::println("[{}] StoreLocal  {}", offset, slot);
                     break;
                 }
-                case Opcode::Not: {
-                    print_unary_instruction<Not>("Not", pc);
+                case Opcode::Neg:
+                    std::println("[{}] Neg", offset);
                     break;
-                }
-                case Opcode::Add: {
-                    print_binary_instruction<Add>("Add", pc);
+                case Opcode::Not:
+                    std::println("[{}] Not", offset);
                     break;
-                }
-                case Opcode::Sub: {
-                    print_binary_instruction<Sub>("Sub", pc);
+                case Opcode::Add:
+                    std::println("[{}] Add", offset);
                     break;
-                }
-                case Opcode::Mul: {
-                    print_binary_instruction<Mul>("Mul", pc);
+                case Opcode::Sub:
+                    std::println("[{}] Sub", offset);
                     break;
-                }
-                case Opcode::Div: {
-                    print_binary_instruction<Div>("Div", pc);
+                case Opcode::Mul:
+                    std::println("[{}] Mul", offset);
                     break;
-                }
-                case Opcode::Lt: {
-                    print_binary_instruction<Lt>("Lt", pc);
+                case Opcode::Div:
+                    std::println("[{}] Div", offset);
                     break;
-                }
-                case Opcode::Gt: {
-                    print_binary_instruction<Gt>("Gt", pc);
+                case Opcode::Lt:
+                    std::println("[{}] Lt", offset);
                     break;
-                }
-                case Opcode::Lte: {
-                    print_binary_instruction<Lte>("Lte", pc);
+                case Opcode::Lte:
+                    std::println("[{}] Lte", offset);
                     break;
-                }
-                case Opcode::Gte: {
-                    print_binary_instruction<Gte>("Gte", pc);
+                case Opcode::Gt:
+                    std::println("[{}] Gt", offset);
                     break;
-                }
-                case Opcode::Eq: {
-                    print_binary_instruction<Eq>("Eq", pc);
+                case Opcode::Gte:
+                    std::println("[{}] Gte", offset);
                     break;
-                }
-                case Opcode::Neq: {
-                    print_binary_instruction<Neq>("Neq", pc);
+                case Opcode::Eq:
+                    std::println("[{}] Eq", offset);
                     break;
-                }
+                case Opcode::Neq:
+                    std::println("[{}] Neq", offset);
+                    break;
 
                 case Opcode::Jmp: {
-                    Jmp inst;
-                    std::memcpy(&inst, pc, sizeof(Jmp));
-                    std::println("[{}] Jmp {}", pc - m_code.data(), inst.offset);
-                    pc += sizeof(Jmp);
+                    uint16_t target = read_u16(pc);
+                    std::println("[{}] Jmp {}", offset, target);
                     break;
                 }
-
                 case Opcode::JmpIfFalse: {
-                    JmpIfFalse inst;
-                    std::memcpy(&inst, pc, sizeof(JmpIfFalse));
-                    std::println("[{}] JmpIfFalse {}", pc - m_code.data(), inst.offset);
-                    pc += sizeof(JmpIfFalse);
+                    uint16_t target = read_u16(pc);
+                    std::println("[{}] JmpIfFalse {}", offset, target);
                     break;
                 }
                 case Opcode::JmpIfTrue: {
-                    JmpIfTrue inst;
-                    std::memcpy(&inst, pc, sizeof(JmpIfTrue));
-                    std::println("[{}] JmpIfTrue {}", pc - m_code.data(), inst.offset);
-                    pc += sizeof(JmpIfTrue);
+                    uint16_t target = read_u16(pc);
+                    std::println("[{}] JmpIfTrue {}", offset, target);
+                    break;
+                }
+                case Opcode::Branch: {
+                    uint16_t true_target = read_u16(pc);
+                    uint16_t false_target = read_u16(pc);
+                    std::println("[{}] Branch true:{}, false:{}", offset, true_target,
+                                 false_target);
                     break;
                 }
                 case Opcode::Call: {
-                    Call inst;
-                    std::memcpy(&inst, pc, sizeof(Call));
-                    std::println("[{}]  Call {}", pc - m_code.data(), inst.arg_count);
-                    pc += sizeof(Call);
+                    uint8_t arg_count = read_u8(pc);
+                    std::println("[{}] Call {}", offset, arg_count);
                     break;
                 }
                 default: {
-                    std::println("Unknown opcode");
+                    std::println("[{}] Unknown Opcode: {:#x}", offset, static_cast<uint8_t>(op));
                     break;
                 }
             }
         }
     }
+
 } // namespace Nyx::bytecode

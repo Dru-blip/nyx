@@ -1,12 +1,11 @@
 #include "ir/BytecodeEmitter.h"
-#include <print>
 #include "ir/BasicBlock.h"
 
 
 namespace Nyx::ir {
-    void BasicBlock::lower(InstructionEmitter &emitter) {
+    void BasicBlock::lower(std::vector<uint8_t> &buffer) {
         for (auto &instruction: m_instructions) {
-            instruction->lower(emitter);
+            instruction->lower(buffer);
         }
     }
 
@@ -25,7 +24,7 @@ namespace Nyx::ir {
             block->lower(m_emitter);
         }
 
-        return m_emitter.code();
+        return m_emitter;
     }
 
 } // namespace Nyx::ir

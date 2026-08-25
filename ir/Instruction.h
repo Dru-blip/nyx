@@ -1,19 +1,16 @@
 #pragma once
 #include <cstdint>
-
-#include "bytecode/Instruction.h"
-#include "bytecode/InstructionEmitter.h"
+#include <vector>
+#include "bytecode/Opcode.h"
 
 
 namespace Nyx::ir {
     class BasicBlock;
 
-    using InstructionEmitter = bytecode::InstructionEmitter;
-
     class Instruction {
     public:
         virtual ~Instruction() = default;
-        virtual void lower(InstructionEmitter &emitter) = 0;
+        virtual void lower(std::vector<uint8_t> &buffer) = 0;
         virtual bool is_terminator() const { return false; }
 
         // TODO: change the name , stack_cost is not accurate.
@@ -31,10 +28,10 @@ namespace Nyx::ir {
     public:
         LoadImmInt(int64_t value) : m_value(value) {}
         constexpr std::size_t length() const override {
-            return sizeof(bytecode::LoadImmInt) + sizeof(bytecode::Opcode);
+            return sizeof(int64_t) + sizeof(bytecode::Opcode);
         }
         int stack_cost() const override { return 1; }
-        void lower(InstructionEmitter &emitter) override;
+        void lower(std::vector<uint8_t> &buffer) override;
 
     private:
         int64_t m_value;
@@ -43,9 +40,9 @@ namespace Nyx::ir {
     class LoadConst : public Instruction {
     public:
         LoadConst(uint16_t idx) : m_idx(idx) {}
-        void lower(InstructionEmitter &emitter) override;
+        void lower(std::vector<uint8_t> &buffer) override;
         constexpr std::size_t length() const override {
-            return sizeof(bytecode::LoadConst) + sizeof(bytecode::Opcode);
+            return sizeof(uint16_t) + sizeof(bytecode::Opcode);
         }
         int stack_cost() const override { return 1; }
 
@@ -56,9 +53,9 @@ namespace Nyx::ir {
     class LoadString : public Instruction {
     public:
         LoadString(uint16_t idx) : m_idx(idx) {}
-        void lower(InstructionEmitter &emitter) override;
+        void lower(std::vector<uint8_t> &buffer) override;
         constexpr std::size_t length() const override {
-            return sizeof(bytecode::LoadString) + sizeof(bytecode::Opcode);
+            return sizeof(uint16_t) + sizeof(bytecode::Opcode);
         }
         int stack_cost() const override { return 1; }
 
@@ -69,9 +66,9 @@ namespace Nyx::ir {
     class StoreLocal : public Instruction {
     public:
         StoreLocal(uint8_t slot) : m_slot(slot) {}
-        void lower(InstructionEmitter &emitter) override;
+        void lower(std::vector<uint8_t> &buffer) override;
         constexpr std::size_t length() const override {
-            return sizeof(bytecode::StoreLocal) + sizeof(bytecode::Opcode);
+            return sizeof(uint8_t) + sizeof(bytecode::Opcode);
         }
         int stack_cost() const override { return -1; }
 
@@ -84,7 +81,6 @@ namespace Nyx::ir {
     public:
         Unary() {}
         constexpr std::size_t length() const override { return sizeof(bytecode::Opcode); }
-
         int stack_cost() const override { return 0; }
 
     protected:
@@ -93,7 +89,7 @@ namespace Nyx::ir {
     class Not : public Unary {
     public:
         Not() {}
-        void lower(InstructionEmitter &emitter) override;
+        void lower(std::vector<uint8_t> &buffer) override;
         constexpr std::size_t length() const override { return sizeof(bytecode::Opcode); }
         int stack_cost() const override { return 0; }
     };
@@ -101,10 +97,8 @@ namespace Nyx::ir {
     class Neg : public Unary {
     public:
         Neg() {}
-        void lower(InstructionEmitter &emitter) override;
-        constexpr std::size_t length() const override {
-            return sizeof(bytecode::Neg) + sizeof(bytecode::Opcode);
-        }
+        void lower(std::vector<uint8_t> &buffer) override;
+        constexpr std::size_t length() const override { return sizeof(bytecode::Opcode); }
         int stack_cost() const override { return 0; }
     };
 
@@ -122,69 +116,69 @@ namespace Nyx::ir {
     class Add : public Binary {
     public:
         Add() : Binary() {}
-        void lower(InstructionEmitter &emitter) override;
+        void lower(std::vector<uint8_t> &buffer) override;
     };
 
     class Sub : public Binary {
     public:
         Sub() : Binary() {}
-        void lower(bytecode::InstructionEmitter &emitter) override;
+        void lower(std::vector<uint8_t> &buffer) override;
     };
 
     class Mul : public Binary {
     public:
         Mul() : Binary() {}
-        void lower(bytecode::InstructionEmitter &emitter) override;
+        void lower(std::vector<uint8_t> &buffer) override;
     };
 
     class Div : public Binary {
     public:
         Div() : Binary() {}
-        void lower(bytecode::InstructionEmitter &emitter) override;
+        void lower(std::vector<uint8_t> &buffer) override;
     };
 
     class Lt : public Binary {
     public:
         Lt() : Binary() {}
-        void lower(bytecode::InstructionEmitter &emitter) override;
+        void lower(std::vector<uint8_t> &buffer) override;
     };
 
     class Lte : public Binary {
     public:
         Lte() : Binary() {}
-        void lower(bytecode::InstructionEmitter &emitter) override;
+        void lower(std::vector<uint8_t> &buffer) override;
     };
 
     class Gt : public Binary {
     public:
         Gt() : Binary() {}
-        void lower(bytecode::InstructionEmitter &emitter) override;
+        void lower(std::vector<uint8_t> &buffer) override;
     };
 
     class Gte : public Binary {
     public:
         Gte() : Binary() {}
-        void lower(bytecode::InstructionEmitter &emitter) override;
+        void lower(std::vector<uint8_t> &buffer) override;
     };
 
     class Eq : public Binary {
     public:
         Eq() : Binary() {}
-        void lower(bytecode::InstructionEmitter &emitter) override;
+        void lower(std::vector<uint8_t> &buffer) override;
     };
 
     class Neq : public Binary {
     public:
         Neq() : Binary() {}
-        void lower(bytecode::InstructionEmitter &emitter) override;
+        void lower(std::vector<uint8_t> &buffer) override;
     };
 
     class Jmp : public BlockTerminator {
     public:
         Jmp(BasicBlock *target) : m_target(target) {}
-        void lower(bytecode::InstructionEmitter &emitter) override;
+        void lower(std::vector<uint8_t> &buffer) override;
         constexpr std::size_t length() const override {
-            return sizeof(bytecode::Jmp) + sizeof(bytecode::Opcode);
+            return sizeof(uint16_t) + sizeof(bytecode::Opcode);
         }
 
     private:
@@ -194,9 +188,9 @@ namespace Nyx::ir {
     class JmpIfFalse : public BlockTerminator {
     public:
         JmpIfFalse(BasicBlock *target) : m_target(target) {}
-        void lower(bytecode::InstructionEmitter &emitter) override;
+        void lower(std::vector<uint8_t> &buffer) override;
         constexpr std::size_t length() const override {
-            return sizeof(bytecode::JmpIfFalse) + sizeof(bytecode::Opcode);
+            return sizeof(uint16_t) + sizeof(bytecode::Opcode);
         }
         int stack_cost() const override { return -1; }
 
@@ -207,9 +201,9 @@ namespace Nyx::ir {
     class JmpIfTrue : public BlockTerminator {
     public:
         JmpIfTrue(BasicBlock *target) : m_target(target) {}
-        void lower(bytecode::InstructionEmitter &emitter) override;
+        void lower(std::vector<uint8_t> &buffer) override;
         constexpr std::size_t length() const override {
-            return sizeof(bytecode::JmpIfTrue) + sizeof(bytecode::Opcode);
+            return sizeof(uint16_t) + sizeof(bytecode::Opcode);
         }
         int stack_cost() const override { return -1; }
 
@@ -221,10 +215,9 @@ namespace Nyx::ir {
     public:
         Branch(BasicBlock *true_target, BasicBlock *false_target) :
             m_true_target(true_target), m_false_target(false_target) {}
-        void lower(bytecode::InstructionEmitter &emitter) override;
+        void lower(std::vector<uint8_t> &buffer) override;
         constexpr std::size_t length() const override {
-            return sizeof(bytecode::JmpIfTrue) + sizeof(bytecode::Jmp) +
-                   sizeof(bytecode::Opcode) * 2;
+            return sizeof(uint16_t) + sizeof(uint16_t) + sizeof(bytecode::Opcode);
         }
         int stack_cost() const override { return -1; }
 
@@ -237,11 +230,11 @@ namespace Nyx::ir {
     class Call : public Instruction {
     public:
         Call(size_t arg_count) : m_arg_count(arg_count) {}
-        void lower(bytecode::InstructionEmitter &emitter) override;
+        void lower(std::vector<uint8_t> &buffer) override;
         constexpr std::size_t length() const override {
-            return sizeof(bytecode::Call) + sizeof(bytecode::Opcode);
+            return sizeof(uint8_t) + sizeof(bytecode::Opcode);
         }
-        int stack_cost() const override { return -m_arg_count - 1 + 1; }
+        int stack_cost() const override { return (-m_arg_count - 1) + 1; }
 
     private:
         size_t m_arg_count;
@@ -251,7 +244,7 @@ namespace Nyx::ir {
     class Ret : public BlockTerminator {
     public:
         Ret() {}
-        void lower(bytecode::InstructionEmitter &emitter) override;
+        void lower(std::vector<uint8_t> &buffer) override;
         constexpr std::size_t length() const override { return sizeof(bytecode::Opcode); }
         int stack_cost() const override { return -1; }
     };
@@ -259,7 +252,7 @@ namespace Nyx::ir {
     class RetNil : public BlockTerminator {
     public:
         RetNil() {}
-        void lower(bytecode::InstructionEmitter &emitter) override;
+        void lower(std::vector<uint8_t> &buffer) override;
         constexpr std::size_t length() const override { return sizeof(bytecode::Opcode); }
     };
 } // namespace Nyx::ir

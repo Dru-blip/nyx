@@ -50,7 +50,7 @@ namespace Nyx::ir {
         inline size_t stack_effect() const { return m_stack_effect; }
 
 
-        void lower(InstructionEmitter &emitter);
+        void lower(std::vector<uint8_t> &buffer);
 
     private:
         mi_heap_t *m_heap;
