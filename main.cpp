@@ -33,8 +33,8 @@ int main(int argc, char **argv) {
 
     executable->print_code();
 
-    // Nyx::Value result = vm.run_executable(executable);
-    // std::println("{}", result.as_int());
+    Nyx::Value result = vm.run_executable(executable);
+    std::println("{}", result.as_int());
 
     return 0;
 }

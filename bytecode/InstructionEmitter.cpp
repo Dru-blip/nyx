@@ -19,6 +19,10 @@ namespace Nyx::bytecode {
         emit<LoadString>(Opcode::LoadString, idx);
     }
 
+    void InstructionEmitter::store_local(const uint8_t &slot) {
+        emit<StoreLocal>(Opcode::StoreLocal, slot);
+    }
+
 
     void InstructionEmitter::neg() { emit<Neg>(Opcode::Neg); }
 

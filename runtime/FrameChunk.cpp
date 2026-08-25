@@ -32,7 +32,7 @@ namespace Nyx {
     }
 
     void FrameChunk::acquire_frame(Frame *frame) {
-        m_next_offset -= sizeof(Frame) + (frame->m_executable->register_count() * sizeof(Value));
+        m_next_offset -= frame->size();
         m_frame_count--;
     }
 } // namespace Nyx

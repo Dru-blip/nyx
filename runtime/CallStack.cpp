@@ -6,7 +6,9 @@
 
 namespace Nyx {
     Frame *CallStack::push(bytecode::Executable *executable) {
-        const size_t frame_size = sizeof(Frame) + executable->register_count() * sizeof(Value);
+        const size_t frame_size =
+                sizeof(Frame) +
+                (executable->stack_size() + executable->num_locals()) * sizeof(Value);
         try_acquire_chunk(frame_size);
         Frame *frame = m_head_chunk->new_frame(frame_size);
         frame->m_executable = executable;

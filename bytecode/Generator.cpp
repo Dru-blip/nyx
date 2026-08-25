@@ -10,10 +10,8 @@
 namespace Nyx::bytecode {
     Executable *Generator::build_executable() {
         auto code = m_builder.finalize();
-        return m_vm.heap()->alloc<Executable>(
-                code, m_constants,
-                (static_cast<std::size_t>(m_builder.local_count()) << 32) |
-                        static_cast<std::size_t>(m_builder.stack_size()));
+        return m_vm.heap()->alloc<Executable>(code, m_constants, m_builder.local_count(),
+                                              m_builder.stack_size());
     }
 
     Executable *Generator::compile() {

@@ -12,8 +12,10 @@
 namespace Nyx::bytecode {
     class Executable : public Cell {
     public:
-        Executable(std::vector<uint8_t> &code, std::vector<Value> &constants, size_t stack_size) :
-            m_code(std::move(code)), m_constants(std::move(constants)), m_stack_size(stack_size) {}
+        Executable(std::vector<uint8_t> &code, std::vector<Value> &constants, uint32_t nlocals,
+                   uint32_t stack_size) :
+            m_code(std::move(code)), m_constants(std::move(constants)), m_nlocals(nlocals),
+            m_stack_size(stack_size) {}
 
 
         void print_code();
@@ -22,26 +24,30 @@ namespace Nyx::bytecode {
         uint8_t *data() { return m_code.data(); }
         size_t stack_size() { return m_stack_size; }
 
+        uint8_t num_locals() const { return m_nlocals; }
+        uint32_t stack_size() const { return m_stack_size; }
+
 
     private:
         template<typename Instr>
-        void print_binary_instruction(std::string_view name, std::string_view op, uint8_t *&pc) {
+        void print_binary_instruction(std::string_view name,uint8_t *&pc) {
             Instr instr;
             std::memcpy(&instr, pc, sizeof(Instr));
-            std::println("[{}] {} %{}", pc - m_code.data(), name, op);
+            std::println("[{}] {}", pc - m_code.data(), name);
             pc += sizeof(Instr);
         }
 
         template<typename Instr>
-        void print_unary_instruction(std::string_view name, std::string_view op, uint8_t *&pc) {
+        void print_unary_instruction(std::string_view name, uint8_t *&pc) {
             Instr instr;
             std::memcpy(&instr, pc, sizeof(Instr));
-            std::println("[{}] {} %{}", pc - m_code.data(), name, op);
+            std::println("[{}] {}", pc - m_code.data(), name);
             pc += sizeof(Instr);
         }
 
         std::vector<uint8_t> m_code;
         std::vector<Value> m_constants;
-        size_t m_stack_size{0};
+        uint32_t m_nlocals;
+        uint32_t m_stack_size;
     };
 } // namespace Nyx::bytecode

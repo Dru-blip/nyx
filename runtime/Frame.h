@@ -24,12 +24,19 @@ namespace Nyx {
             return instr;
         }
 
-        inline Value *registers() { return reinterpret_cast<Value *>(this + 1); }
+        inline Value *locals() { return reinterpret_cast<Value *>(this + 1); }
+        inline Value *stack() { return locals() + m_executable->num_locals(); }
         inline Value *constants() { return m_executable->constants(); }
+
+        inline size_t size() {
+            return sizeof(Frame) +
+                   (m_executable->stack_size() + m_executable->num_locals()) * sizeof(Value);
+        }
 
 
         Frame *m_prev = nullptr;
         bytecode::Executable *m_executable;
         uint8_t *m_pc = nullptr;
+        uint8_t m_tos = 0;
     };
 } // namespace Nyx

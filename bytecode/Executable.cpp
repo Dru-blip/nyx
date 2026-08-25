@@ -45,51 +45,51 @@ namespace Nyx::bytecode {
                     break;
                 }
                 case Opcode::Neg: {
-                    print_unary_instruction<Neg>("Neg", "-", pc);
+                    print_unary_instruction<Neg>("Neg", pc);
                     break;
                 }
                 case Opcode::Not: {
-                    print_unary_instruction<Not>("Not", "!", pc);
+                    print_unary_instruction<Not>("Not", pc);
                     break;
                 }
                 case Opcode::Add: {
-                    print_binary_instruction<Add>("Add", "+", pc);
+                    print_binary_instruction<Add>("Add", pc);
                     break;
                 }
                 case Opcode::Sub: {
-                    print_binary_instruction<Sub>("Sub", "-", pc);
+                    print_binary_instruction<Sub>("Sub", pc);
                     break;
                 }
                 case Opcode::Mul: {
-                    print_binary_instruction<Mul>("Mul", "*", pc);
+                    print_binary_instruction<Mul>("Mul", pc);
                     break;
                 }
                 case Opcode::Div: {
-                    print_binary_instruction<Div>("Div", "/", pc);
+                    print_binary_instruction<Div>("Div", pc);
                     break;
                 }
                 case Opcode::Lt: {
-                    print_binary_instruction<Lt>("Lt", "<", pc);
+                    print_binary_instruction<Lt>("Lt", pc);
                     break;
                 }
                 case Opcode::Gt: {
-                    print_binary_instruction<Gt>("Gt", ">", pc);
+                    print_binary_instruction<Gt>("Gt", pc);
                     break;
                 }
                 case Opcode::Lte: {
-                    print_binary_instruction<Lte>("Lte", "<=", pc);
+                    print_binary_instruction<Lte>("Lte", pc);
                     break;
                 }
                 case Opcode::Gte: {
-                    print_binary_instruction<Gte>("Gte", ">=", pc);
+                    print_binary_instruction<Gte>("Gte", pc);
                     break;
                 }
                 case Opcode::Eq: {
-                    print_binary_instruction<Eq>("Eq", "==", pc);
+                    print_binary_instruction<Eq>("Eq", pc);
                     break;
                 }
                 case Opcode::Neq: {
-                    print_binary_instruction<Neq>("Neq", "!=", pc);
+                    print_binary_instruction<Neq>("Neq", pc);
                     break;
                 }
 

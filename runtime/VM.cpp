@@ -36,17 +36,20 @@ namespace Nyx {
         Frame *frame = m_fiber.push_frame(executable);
 
         uint8_t *pc = frame->get_code();
-        Value *registers = frame->registers();
+        Value *stack = frame->stack();
+        // Value *locals = frame->locals();
         Value *constants = frame->constants();
 
+
         static const void *labels[] = {
-                &&HandleLoadImmInt, &&HandleLoadConst, &&HandleMove, &&HandleNeg,
-                &&HandleNot,        &&HandleAdd,       &&HandleSub,  &&HandleMul,
-                &&HandleDiv,        &&HandleLt,        &&HandleLte,  &&HandleGt,
-                &&HandleGte,        &&HandleEq,        &&HandleNeq,  &&HandleJmp,
-                &&HandleJmpIfFalse, &&HandleJmpIfTrue, &&HandleRet,  &&HandleRetNil,
+                &&HandleLoadImmInt, &&HandleLoadConst, &&HandleNeg, &&HandleNot,    &&HandleAdd,
+                &&HandleSub,        &&HandleMul,       &&HandleDiv, &&HandleLt,     &&HandleLte,
+                &&HandleGt,         &&HandleGte,       &&HandleEq,  &&HandleNeq,    &&HandleJmp,
+                &&HandleJmpIfFalse, &&HandleJmpIfTrue, &&HandleRet, &&HandleRetNil,
         };
 
+#define PUSH(v) *stack++ = v
+#define POP() *(--stack)
 #define DISPATCH() goto *labels[*pc++]
 
         DISPATCH();
@@ -55,82 +58,83 @@ namespace Nyx {
 
         HANDLE_INSTR(LoadImmInt) {
             bytecode::LoadImmInt instr = frame->read_at<bytecode::LoadImmInt>(pc);
-            registers[instr.reg] = Value(instr.imm);
+            PUSH(Value(instr.imm));
             DISPATCH();
         }
 
         HANDLE_INSTR(LoadConst) {
             bytecode::LoadConst instr = frame->read_at<bytecode::LoadConst>(pc);
-            registers[instr.reg] = constants[instr.idx];
+            PUSH(constants[instr.idx]);
             DISPATCH();
         }
-
-        HANDLE_INSTR(Move) {
-            bytecode::Move instr = frame->read_at<bytecode::Move>(pc);
-            registers[instr.dst] = registers[instr.src];
-            DISPATCH();
-        }
-
         HANDLE_INSTR(Neg) {
-            bytecode::Neg instr = frame->read_at<bytecode::Neg>(pc);
-            registers[instr.result] = Handlers::handle_neg(registers[instr.arg]);
+            frame->read_at<bytecode::Neg>(pc);
+            *(stack - 1) = Handlers::handle_neg(*(stack - 1));
             DISPATCH();
         }
-
-
         HANDLE_INSTR(Not) {
-            bytecode::Not instr = frame->read_at<bytecode::Not>(pc);
-            registers[instr.result] = Handlers::handle_not(registers[instr.arg]);
+            frame->read_at<bytecode::Not>(pc);
+            *(stack - 1) = Handlers::handle_not(*(stack - 1));
             DISPATCH();
         }
         HANDLE_INSTR(Add) {
-            bytecode::Add instr = frame->read_at<bytecode::Add>(pc);
-            registers[instr.reg] = Handlers::handle_add(registers[instr.lhs], registers[instr.rhs]);
+            frame->read_at<bytecode::Add>(pc);
+            *(stack - 2) = Handlers::handle_add(*(stack - 2), *(stack - 1));
+            stack--;
             DISPATCH();
         }
         HANDLE_INSTR(Sub) {
-            bytecode::Sub instr = frame->read_at<bytecode::Sub>(pc);
-            registers[instr.reg] = Handlers::handle_sub(registers[instr.lhs], registers[instr.rhs]);
+            frame->read_at<bytecode::Sub>(pc);
+            *(stack - 2) = Handlers::handle_sub(*(stack - 2), *(stack - 1));
+            stack--;
             DISPATCH();
         }
         HANDLE_INSTR(Mul) {
-            bytecode::Mul instr = frame->read_at<bytecode::Mul>(pc);
-            registers[instr.reg] = Handlers::handle_mul(registers[instr.lhs], registers[instr.rhs]);
+            frame->read_at<bytecode::Mul>(pc);
+            *(stack - 2) = Handlers::handle_mul(*(stack - 2), *(stack - 1));
+            stack--;
             DISPATCH();
         }
         HANDLE_INSTR(Div) {
-            bytecode::Div instr = frame->read_at<bytecode::Div>(pc);
-            registers[instr.reg] = Handlers::handle_div(registers[instr.lhs], registers[instr.rhs]);
+            frame->read_at<bytecode::Div>(pc);
+            *(stack - 2) = Handlers::handle_div(*(stack - 2), *(stack - 1));
+            stack--;
             DISPATCH();
         }
         HANDLE_INSTR(Lt) {
-            bytecode::Lt instr = frame->read_at<bytecode::Lt>(pc);
-            registers[instr.reg] = Handlers::handle_lt(registers[instr.lhs], registers[instr.rhs]);
+            frame->read_at<bytecode::Lt>(pc);
+            *(stack - 2) = Handlers::handle_lt(*(stack - 2), *(stack - 1));
+            stack--;
             DISPATCH();
         }
         HANDLE_INSTR(Lte) {
-            bytecode::Lte instr = frame->read_at<bytecode::Lte>(pc);
-            registers[instr.reg] = Handlers::handle_lte(registers[instr.lhs], registers[instr.rhs]);
+            frame->read_at<bytecode::Lte>(pc);
+            *(stack - 2) = Handlers::handle_lte(*(stack - 2), *(stack - 1));
+            stack--;
             DISPATCH();
         }
         HANDLE_INSTR(Gt) {
-            bytecode::Gt instr = frame->read_at<bytecode::Gt>(pc);
-            registers[instr.reg] = Handlers::handle_gt(registers[instr.lhs], registers[instr.rhs]);
+            frame->read_at<bytecode::Gt>(pc);
+            *(stack - 2) = Handlers::handle_gt(*(stack - 2), *(stack - 1));
+            stack--;
             DISPATCH();
         }
         HANDLE_INSTR(Gte) {
-            bytecode::Gte instr = frame->read_at<bytecode::Gte>(pc);
-            registers[instr.reg] = Handlers::handle_gte(registers[instr.lhs], registers[instr.rhs]);
+            frame->read_at<bytecode::Gte>(pc);
+            *(stack - 2) = Handlers::handle_gte(*(stack - 2), *(stack - 1));
+            stack--;
             DISPATCH();
         }
         HANDLE_INSTR(Eq) {
-            bytecode::Eq instr = frame->read_at<bytecode::Eq>(pc);
-            registers[instr.reg] = Handlers::handle_eq(registers[instr.lhs], registers[instr.rhs]);
+            frame->read_at<bytecode::Eq>(pc);
+            *(stack - 2) = Handlers::handle_eq(*(stack - 2), *(stack - 1));
+            stack--;
             DISPATCH();
         }
         HANDLE_INSTR(Neq) {
-            bytecode::Neq instr = frame->read_at<bytecode::Neq>(pc);
-            registers[instr.reg] = Handlers::handle_neq(registers[instr.lhs], registers[instr.rhs]);
+            frame->read_at<bytecode::Neq>(pc);
+            *(stack - 2) = Handlers::handle_neq(*(stack - 2), *(stack - 1));
+            stack--;
             DISPATCH();
         }
         HANDLE_INSTR(Jmp) {
@@ -140,25 +144,21 @@ namespace Nyx {
         }
         HANDLE_INSTR(JmpIfFalse) {
             bytecode::JmpIfFalse instr = frame->read_at<bytecode::JmpIfFalse>(pc);
-
-            if (!registers[instr.arg].is_truthy()) {
+            if (!((POP()).is_truthy())) {
                 pc = frame->get_code() + instr.offset;
             }
-
             DISPATCH();
         }
         HANDLE_INSTR(JmpIfTrue) {
             bytecode::JmpIfTrue instr = frame->read_at<bytecode::JmpIfTrue>(pc);
-
-            if (registers[instr.arg].is_truthy()) {
+            if ((POP()).is_truthy()) {
                 pc = frame->get_code() + instr.offset;
             }
-
             DISPATCH();
         }
         HANDLE_INSTR(Ret) {
-            bytecode::Ret instr = frame->read_at<bytecode::Ret>(pc);
-            return registers[instr.reg];
+            frame->read_at<bytecode::Ret>(pc);
+            return POP();
         }
         HANDLE_INSTR(RetNil) { return Nil; }
     }
