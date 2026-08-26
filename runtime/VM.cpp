@@ -2,6 +2,7 @@
 #include <cstdint>
 #include "runtime/Builtins.h"
 #include "runtime/NativeFunction.h"
+#include "runtime/Object.h"
 #include "runtime/Value.h"
 #include "runtime/handlers/binary.h"
 
@@ -62,6 +63,7 @@ namespace Nyx {
                 &&HandleLoadImmInt,
                 &&HandleLoadConst,
                 &&HandleLoadString,
+                &&HandlePop,
                 &&HandleStoreLocal,
                 &&HandleGetLocal,
                 &&HandleGetGlobalFast,
@@ -82,12 +84,15 @@ namespace Nyx {
                 &&HandleJmpIfFalse,
                 &&HandleJmpIfTrue,
                 &&HandleBranch,
+                &&HandleCall,
                 &&HandleRet,
                 &&HandleRetNil,
         };
 
 #define PUSH(v) *stack++ = v
 #define POP() *(--stack)
+#define POP_N(n) (stack -= n)
+#define PEEK_N(n) (stack - n)
 #define DISPATCH() goto *labels[*pc++]
 
         DISPATCH();
@@ -110,6 +115,11 @@ namespace Nyx {
             // TODO: should remove inplace of LoadConst
             uint16_t idx = read_u16(pc);
             PUSH(constants[idx]);
+            DISPATCH();
+        }
+
+        HANDLE_INSTR(Pop) {
+            (void) POP();
             DISPATCH();
         }
 
@@ -225,6 +235,30 @@ namespace Nyx {
             }
             DISPATCH();
         }
+
+        HANDLE_INSTR(Call) {
+            uint8_t arg_count = read_u8(pc);
+            Value *args = PEEK_N(arg_count);
+            Value callee = *(args - 1);
+
+            if (!callee.is_obj()) {
+                // TODO: throw runtime error.
+            }
+
+            Object *obj = callee.as_obj();
+            if (!obj->is_native_function()) {
+                // TODO: throw runtime error.
+            }
+
+            NativeFunction *natfn = static_cast<NativeFunction *>(obj);
+
+            Value result = natfn->call(*this, args, arg_count);
+            POP_N(arg_count + 1);
+
+            PUSH(result);
+            DISPATCH();
+        }
+
         HANDLE_INSTR(Ret) { return POP(); }
         HANDLE_INSTR(RetNil) { return Nil; }
     }

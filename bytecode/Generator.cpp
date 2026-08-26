@@ -262,7 +262,6 @@ namespace Nyx::bytecode {
     void Generator::lowerCall(const Node *node) {
         const CallExpr *call = static_cast<const CallExpr *>(node);
         lowerExpr(call->callee);
-        // Calle is at the top of the stack.
 
         for (const Node *arg: call->args) {
             lowerExpr(arg);

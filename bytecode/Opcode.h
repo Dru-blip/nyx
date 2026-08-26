@@ -34,9 +34,8 @@ namespace Nyx::bytecode {
         JmpIfTrue,
         Branch,
 
+        Call,
         Ret,
         RetNil,
-
-        Call,
     };
 } // namespace Nyx::bytecode

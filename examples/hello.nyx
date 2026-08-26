@@ -1,1 +1,1 @@
-return 4 and 5;
+print(1+2);

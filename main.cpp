@@ -18,6 +18,7 @@ std::string read_file(const std::filesystem::path &path) {
     return buffer.str();
 }
 
+
 int main(int argc, char **argv) {
     if (argc != 2) {
         std::println("Usage: {} <file>", argv[0]);
@@ -31,10 +32,10 @@ int main(int argc, char **argv) {
     Nyx::bytecode::Generator generator(ast, vm);
     Nyx::bytecode::Executable *executable = generator.compile();
 
-    executable->print_code();
+    // executable->print_code();
 
-    Nyx::Value result = vm.run_executable(executable);
-    std::println("{}", result.as_int());
+    vm.run_executable(executable);
+
 
     return 0;
 }
