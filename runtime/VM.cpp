@@ -253,7 +253,7 @@ namespace Nyx {
             NativeFunction *natfn = static_cast<NativeFunction *>(obj);
 
             Value result = natfn->call(*this, args, arg_count);
-            POP_N(arg_count + 1);
+            POP_N((arg_count + 1));
 
             PUSH(result);
             DISPATCH();

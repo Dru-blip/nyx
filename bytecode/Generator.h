@@ -26,6 +26,7 @@ namespace Nyx::bytecode {
         std::size_t make_block();
 
         void lowerRoot(const Node *node);
+        void lowerFnDecl(const Node *node);
         void lowerVarDecl(const Node *node);
         void lowerWhileLoop(const Node *node);
         void lowerLoop(const Node *node);

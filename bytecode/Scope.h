@@ -1,31 +1,48 @@
 #pragma once
 
-
 #include <cstdint>
+#include <optional>
 #include <string_view>
 #include <vector>
 
 namespace Nyx::bytecode {
+    enum class ScopeType {
+        Module,
+        Function,
+    };
+
     struct Symbol {
-        uint8_t slot;
+        uint16_t slot;
+        uint8_t depth;
         std::string_view name;
     };
 
     struct Scope {
-        std::vector<Symbol> locals;
+        ScopeType type;
+        std::vector<Symbol> symbols;
+        uint8_t depth;
 
-        void add_local(std::string_view name, uint8_t slot) {
-            locals.emplace_back(Symbol{slot, name});
+
+        void add_local(std::string_view name, uint16_t slot) {
+            symbols.emplace_back(Symbol{slot, depth, name});
         }
 
-        int resolve(const std::string_view name) {
-            for (const auto &local: locals) {
+
+        void begin_block() { depth++; }
+
+        void end_block() {
+            std::erase_if(symbols, [this](const Symbol &symbol) { return symbol.depth == depth; });
+            depth--;
+        }
+
+        std::optional<uint16_t> resolve(const std::string_view name) {
+            for (const auto &local: symbols) {
                 if (local.name == name) {
                     return local.slot;
                 }
             }
 
-            return -1;
+            return std::nullopt;
         }
     };
 } // namespace Nyx::bytecode

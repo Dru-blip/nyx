@@ -50,6 +50,8 @@ namespace Nyx {
         While,
 
         VarDecl,
+        Param,
+        FnDecl,
     };
 
     struct Node {
@@ -135,6 +137,20 @@ namespace Nyx {
             Node(NodeTag::VarDecl, span), name(name), initializer(value) {}
         Span name;
         Node *initializer;
+    };
+
+    struct Param : Node {
+        Param(Span span, Span name) :
+            Node(NodeTag::Param, span), name(name){}
+        Span name;
+    };
+
+    struct FnDecl : Node {
+        FnDecl(Span span, Span name, std::span<Node *> params, Node *body) :
+            Node(NodeTag::FnDecl, span), name(name), params(params), body(body) {}
+        Span name;
+        std::span<Node *> params;
+        Node *body;
     };
 
     class NodeArena {

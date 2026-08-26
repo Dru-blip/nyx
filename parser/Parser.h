@@ -1,12 +1,12 @@
 #pragma once
 #include <cstdint>
+#include <span>
 #include "Ast.h"
 #include "Lexer.h"
 #include "parser/Token.h"
 
 
 namespace Nyx {
-
     class Parser {
     public:
         Parser(std::string_view source);
@@ -22,6 +22,8 @@ namespace Nyx {
 
 
         Node *parse_stmt();
+        Node *parse_fn_decl();
+        std::span<Node*> parse_fn_params();
         Node *parse_var_decl();
         Node *parse_while_loop();
         Node *parse_loop_stmt();

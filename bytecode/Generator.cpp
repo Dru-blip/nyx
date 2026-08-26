@@ -29,6 +29,9 @@ namespace Nyx::bytecode {
 
     void Generator::lowerRoot(const Node *node) {
         switch (node->tag) {
+            case NodeTag::FnDecl: {
+                return lowerFnDecl(node);
+            }
             case NodeTag::VarDecl: {
                 return lowerVarDecl(node);
             }
@@ -60,6 +63,10 @@ namespace Nyx::bytecode {
                 abort();
             }
         }
+    }
+
+    void Generator::lowerFnDecl(const Node *node) {
+        const FnDecl *fnDecl = static_cast<const FnDecl *>(node);
     }
 
     void Generator::lowerVarDecl(const Node *node) {
@@ -418,9 +425,9 @@ namespace Nyx::bytecode {
         // TODO: should emit a load or just access the slot directly if reference is local or load
         // module or global context.
         const auto name = m_ast.getSource(node);
-        const int slot = m_scope.resolve(name);
-        if (slot != -1) {
-            m_builder.create_get_local(slot);
+        const auto slot = m_scope.resolve(name);
+        if (slot.has_value()) {
+            m_builder.create_get_local(slot.value());
             return;
         }
 
@@ -479,5 +486,4 @@ namespace Nyx::bytecode {
         m_constants.push_back(val);
         return static_cast<uint16_t>(m_constants.size() - 1);
     }
-
 } // namespace Nyx::bytecode

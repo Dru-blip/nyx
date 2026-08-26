@@ -81,6 +81,9 @@ namespace Nyx {
     Node *Parser::parse_stmt() {
         const auto [tag, span] = m_cur;
         switch (tag) {
+            case TokenTag::Def: {
+                return parse_fn_decl();
+            }
             case TokenTag::Var: {
                 return parse_var_decl();
             }
@@ -109,6 +112,29 @@ namespace Nyx {
                 return parse_expr_stmt();
             }
         }
+    }
+
+    Node *Parser::parse_fn_decl() {
+        const auto fn_token = consume_token();
+        const auto name = expect_token(TokenTag::Identifier);
+
+        const auto params = parse_fn_params();
+        const auto body = parse_stmt();
+
+        return m_arena.allocate<FnDecl>(fn_token.span.merge(body->span), name.span, params, body);
+    }
+
+    std::span<Node *> Parser::parse_fn_params() {
+        expect_token(TokenTag::LeftParen);
+
+        std::vector<Node *> params;
+        while (m_cur.tag != TokenTag::RightParen) {
+            const auto param = expect_token(TokenTag::Identifier);
+            params.push_back(m_arena.allocate<Param>(param.span, param.span));
+        }
+
+        expect_token(TokenTag::RightParen);
+        return m_arena.nodes_span(params);
     }
 
     Node *Parser::parse_var_decl() {
@@ -234,7 +260,8 @@ namespace Nyx {
                 }
                 const auto closing_paren = expect_token(TokenTag::RightParen);
                 const std::span<Node *> args_span = m_arena.nodes_span(args);
-                return m_arena.allocate<CallExpr>(lhs->span.merge(closing_paren.span), lhs, args_span);
+                return m_arena.allocate<CallExpr>(lhs->span.merge(closing_paren.span), lhs,
+                                                  args_span);
             }
             default: {
                 // TODO: handle other postfix expressions

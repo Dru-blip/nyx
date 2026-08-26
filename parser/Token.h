@@ -36,6 +36,7 @@ namespace Nyx {
         Comma,
 
         Return,
+        Def,
         If,
         Else,
         Loop,
