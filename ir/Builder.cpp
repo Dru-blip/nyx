@@ -1,5 +1,4 @@
 #include "ir/Builder.h"
-#include <algorithm>
 #include <cassert>
 #include <mimalloc.h>
 #include <stack>
@@ -62,6 +61,10 @@ namespace Nyx::ir {
         m_curr_block->push<Div>();
     }
 
+    void Builder::create_mod() {
+        assert(m_curr_block != nullptr);
+        m_curr_block->push<Mod>();
+    }
 
     void Builder::create_lt() {
         assert(m_curr_block != nullptr);

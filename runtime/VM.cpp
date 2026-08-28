@@ -60,33 +60,20 @@ namespace Nyx {
 
 
         static const void *labels[] = {
-                &&HandleLoadImmInt,
-                &&HandleLoadConst,
-                &&HandleLoadString,
-                &&HandlePop,
-                &&HandleStoreLocal,
-                &&HandleGetLocal,
-                &&HandleGetGlobalFast,
-                &&HandleGetGlobalUnresolved,
-                &&HandleNot,
-                &&HandleNeg,
-                &&HandleAdd,
-                &&HandleSub,
-                &&HandleMul,
-                &&HandleDiv,
-                &&HandleLt,
-                &&HandleLte,
-                &&HandleGt,
-                &&HandleGte,
-                &&HandleEq,
-                &&HandleNeq,
-                &&HandleJmp,
-                &&HandleJmpIfFalse,
-                &&HandleJmpIfTrue,
-                &&HandleBranch,
-                &&HandleCall,
-                &&HandleRet,
-                &&HandleRetNil,
+                &&HandleLoadImmInt,    &&HandleLoadConst,
+                &&HandleLoadString,    &&HandlePop,
+                &&HandleStoreLocal,    &&HandleGetLocal,
+                &&HandleGetGlobalFast, &&HandleGetGlobalUnresolved,
+                &&HandleNot,           &&HandleNeg,
+                &&HandleAdd,           &&HandleSub,
+                &&HandleMul,           &&HandleDiv,
+                &&HandleMod,           &&HandleLt,
+                &&HandleLte,           &&HandleGt,
+                &&HandleGte,           &&HandleEq,
+                &&HandleNeq,           &&HandleJmp,
+                &&HandleJmpIfFalse,    &&HandleJmpIfTrue,
+                &&HandleBranch,        &&HandleCall,
+                &&HandleRet,           &&HandleRetNil,
         };
 
 #define PUSH(v) *stack++ = v
@@ -173,6 +160,11 @@ namespace Nyx {
         }
         HANDLE_INSTR(Div) {
             *(stack - 2) = Handlers::handle_div(*(stack - 2), *(stack - 1));
+            stack--;
+            DISPATCH();
+        }
+        HANDLE_INSTR(Mod) {
+            *(stack - 2) = Handlers::handle_mod(*(stack - 2), *(stack - 1));
             stack--;
             DISPATCH();
         }

@@ -12,6 +12,8 @@ namespace Nyx::Handlers {
 
     static inline Value handle_div(const Value a, const Value b) { return Ops::Integer::div(a, b); }
 
+    static inline Value handle_mod(const Value a, const Value b) { return Ops::Integer::mod(a, b); }
+
     static inline Value handle_lt(const Value a, const Value b) { return Ops::Integer::lt(a, b); }
 
     static inline Value handle_lte(const Value a, const Value b) { return Ops::Integer::lte(a, b); }

@@ -90,6 +90,11 @@ namespace Nyx {
                 m_pos++;
                 break;
             }
+            case '%': {
+                tag = TokenTag::Modulus;
+                m_pos++;
+                break;
+            }
             case '!': {
                 if (peek_char() == '=') {
                     tag = TokenTag::BangEqual;

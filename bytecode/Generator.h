@@ -44,6 +44,7 @@ namespace Nyx::bytecode {
         void lowerSub(const Node *node);
         void lowerMul(const Node *node);
         void lowerDiv(const Node *node);
+        void lowerMod(const Node *node);
         void lowerLt(const Node *node);
         void lowerLte(const Node *node);
         void lowerGt(const Node *node);

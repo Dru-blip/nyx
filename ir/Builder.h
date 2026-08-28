@@ -32,6 +32,7 @@ namespace Nyx::ir {
         void create_sub();
         void create_mul();
         void create_div();
+        void create_mod();
 
         void create_lt();
         void create_lte();

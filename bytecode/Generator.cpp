@@ -176,10 +176,11 @@ namespace Nyx::bytecode {
 
     void Generator::lowerBlockStmt(const Node *node) {
         const BlockStmt *blockStmt = static_cast<const BlockStmt *>(node);
-
+        m_scope.begin_block();
         for (const Node *stmt: blockStmt->stmts) {
             lowerRoot(stmt);
         }
+        m_scope.end_block();
     }
 
     void Generator::lowerExprStmt(const Node *node) {
@@ -226,6 +227,9 @@ namespace Nyx::bytecode {
             }
             case NodeTag::Div: {
                 return lowerDiv(node);
+            }
+            case NodeTag::Mod: {
+                return lowerMod(node);
             }
             case NodeTag::Neg: {
                 return lowerNeg(node);
@@ -328,6 +332,15 @@ namespace Nyx::bytecode {
 
         m_builder.create_div();
     }
+
+    void Generator::lowerMod(const Node *node) {
+        const Binary *mod = static_cast<const Binary *>(node);
+        lowerExpr(mod->left);
+        lowerExpr(mod->right);
+
+        m_builder.create_mod();
+    }
+
 
     void Generator::lowerLt(const Node *node) {
         const Binary *lt = static_cast<const Binary *>(node);

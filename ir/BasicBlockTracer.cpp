@@ -1,18 +1,19 @@
 #include "BasicBlockTracer.h"
 #include <cstdio>
-#include <print>
 #include <queue>
 #include <vector>
 #include "ir/BasicBlock.h"
 
-
+// TODO: should remove jumps to adjacent blocks.
+//
+//
 namespace Nyx::ir {
     std::vector<BasicBlock *> BasicBlockTracer::trace() {
         std::vector<bool> visited(m_blocks.size(), false);
         std::vector<BasicBlock *> ordered;
 
         while (true) {
-            // naively check for unvisited blocks to start the trace.
+            // check for unvisited blocks to start the trace.
             BasicBlock *start = nullptr;
             for (auto block: m_blocks) {
                 if (!visited[block->id()]) {
@@ -45,7 +46,7 @@ namespace Nyx::ir {
                     }
                 }
 
-                if (likely_successor){
+                if (likely_successor) {
                     queue.push(likely_successor);
                 }
             }

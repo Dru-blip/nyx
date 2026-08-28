@@ -31,7 +31,7 @@ namespace Nyx::bytecode {
         void begin_block() { depth++; }
 
         void end_block() {
-            std::erase_if(symbols, [this](const Symbol &symbol) { return symbol.depth == depth; });
+            std::erase_if(symbols, [&](const Symbol &symbol) { return symbol.depth == depth; });
             depth--;
         }
 

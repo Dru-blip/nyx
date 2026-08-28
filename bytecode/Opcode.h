@@ -21,6 +21,7 @@ namespace Nyx::bytecode {
         Sub,
         Mul,
         Div,
+        Mod,
         Lt,
         Lte,
 

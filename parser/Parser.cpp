@@ -34,6 +34,7 @@ namespace Nyx {
             {TokenTag::Minus, {NodeTag::Sub, 50, 51}},
             {TokenTag::Asterisk, {NodeTag::Mul, 52, 53}},
             {TokenTag::Slash, {NodeTag::Div, 52, 53}},
+            {TokenTag::Modulus, {NodeTag::Mod, 52, 53}},
 
             {TokenTag::LeftParen, {NodeTag::Call, 100, 101, true}},
     };

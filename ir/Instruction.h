@@ -118,6 +118,7 @@ namespace Nyx::ir {
             return sizeof(uint16_t) + sizeof(bytecode::Opcode);
         }
         int stack_cost() const override { return 1; }
+
     private:
         uint16_t m_slot;
     };
@@ -179,6 +180,12 @@ namespace Nyx::ir {
     class Div : public Binary {
     public:
         Div() : Binary() {}
+        void lower(std::vector<uint8_t> &buffer) override;
+    };
+
+    class Mod : public Binary {
+    public:
+        Mod() : Binary() {}
         void lower(std::vector<uint8_t> &buffer) override;
     };
 

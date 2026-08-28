@@ -1,8 +1,6 @@
 #pragma once
 
-
 #include "runtime/Value.h"
-
 
 namespace Nyx::Ops::Integer {
     static inline Value add(const Value a, const Value b) {
@@ -26,6 +24,12 @@ namespace Nyx::Ops::Integer {
         return Value(a.as_int() / b.as_int());
     }
 
+    static inline Value mod(const Value a, const Value b) {
+        // TODO: handle overflow
+        // TODO: handle division by zero
+        return Value(a.as_int() % b.as_int());
+    }
+
     static inline Value lt(const Value a, const Value b) {
         return Value::from_bool(static_cast<bool>(a.as_int() < b.as_int()));
     }
@@ -41,13 +45,10 @@ namespace Nyx::Ops::Integer {
     static inline Value gte(const Value a, const Value b) {
         return Value::from_bool(static_cast<bool>(a.as_int() >= b.as_int()));
     }
-    static inline Value eq(const Value a, const Value b) {
-        return Value::from_bool(static_cast<bool>(a.as_int() == b.as_int()));
-    }
 
-    static inline Value neq(const Value a, const Value b) {
-        return Value::from_bool(static_cast<bool>(a.as_int() != b.as_int()));
-    }
+    static inline Value eq(const Value a, const Value b) { return Value::from_bool(a == b); }
+
+    static inline Value neq(const Value a, const Value b) { return Value::from_bool(a != b); }
 
     static inline Value neg(const Value a) { return Value(-a.as_int()); }
 

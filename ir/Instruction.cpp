@@ -77,6 +77,10 @@ namespace Nyx::ir {
         buffer.push_back(static_cast<uint8_t>(bytecode::Opcode::Div));
     }
 
+    void Mod::lower(std::vector<uint8_t> &buffer) {
+        buffer.push_back(static_cast<uint8_t>(bytecode::Opcode::Mod));
+    }
+
     void Lt::lower(std::vector<uint8_t> &buffer) {
         buffer.push_back(static_cast<uint8_t>(bytecode::Opcode::Lt));
     }

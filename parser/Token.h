@@ -13,6 +13,7 @@ namespace Nyx {
         Minus,
         Asterisk,
         Slash,
+        Modulus,
 
         Bang,
         Tilde,

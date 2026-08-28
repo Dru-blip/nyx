@@ -24,6 +24,7 @@ namespace Nyx {
         Sub,
         Mul,
         Div,
+        Mod,
 
         Lt,
         Gt,

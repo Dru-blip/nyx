@@ -22,7 +22,6 @@ namespace Nyx::bytecode {
     static uint8_t read_u8(const uint8_t *&pc) { return *pc++; }
 
     void Executable::print_code() {
-        // AI:
         std::println("Max Stack Size : {}", m_stack_size);
         std::println("Constants Count: {}", m_constants.size());
         std::println("Code Size      : {} bytes", m_code.size());
@@ -96,6 +95,9 @@ namespace Nyx::bytecode {
                 case Opcode::Div:
                     std::println("[{}] Div", offset);
                     break;
+                case Opcode::Mod:
+                    std::println("[{}] Mod", offset);
+                    break;
                 case Opcode::Lt:
                     std::println("[{}] Lt", offset);
                     break;
@@ -149,5 +151,4 @@ namespace Nyx::bytecode {
             }
         }
     }
-
 } // namespace Nyx::bytecode
